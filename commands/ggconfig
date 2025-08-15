@@ -1,0 +1,84 @@
+#!/bin/bash
+
+source $(dirname $0)/_utils.sh
+
+print_usage() {
+    print_text "NAME"
+    print_text "    ggconfig - Show Git and ggGit configuration"
+    print_text ""
+    print_text "DESCRIPTION"
+    print_text "    This command shows the current Git configuration and ggGit installation status."
+    print_text ""
+    print_text "SYNOPSIS"
+    print_text "    ggconfig"
+    print_text ""
+    print_text "OPTIONS"
+    print_text "    -h, --help"
+    print_text "        Display this help message"
+}
+
+main() {
+    print_start
+    
+    print_info "Git Configuration" "Checking Git configuration..."
+    echo ""
+    
+    # Git version
+    print_info "Git Version" "$(git --version)"
+    
+    # Git user config
+    echo ""
+    print_info "User Configuration" "Git user settings:"
+    git config --list --local | grep -E "(user\.name|user\.email)" || print_warning "No local user configuration found"
+    
+    # Git global config
+    echo ""
+    print_info "Global Configuration" "Git global settings:"
+    git config --list --global | grep -E "(user\.name|user\.email)" || print_warning "No global user configuration found"
+    
+    # Repository info
+    echo ""
+    print_info "Repository" "Current repository information:"
+    git remote -v || print_warning "No remote repositories configured"
+    
+    # ggGit installation status
+    echo ""
+    print_info "ggGit Installation" "Checking ggGit installation..."
+    
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    if [[ ":$PATH:" == *":$SCRIPT_DIR:"* ]]; then
+        print_success "ggGit is properly installed and in PATH"
+    else
+        print_warning "ggGit is not in PATH"
+        print_info "Add to PATH" "Add this line to your shell configuration:"
+        echo "export PATH=\$PATH:$SCRIPT_DIR"
+    fi
+    
+    # Check script permissions
+    echo ""
+    print_info "Script Permissions" "Checking script permissions..."
+    if [ -x "$SCRIPT_DIR/ggv" ]; then
+        print_success "All scripts are executable"
+    else
+        print_error "Some scripts are not executable"
+        print_info "Fix" "Run: chmod +x $SCRIPT_DIR/*"
+    fi
+    
+    print_end
+}
+
+if [ "$#" -eq 0 ]; then
+    main
+    exit 0
+fi
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -h | --help )           print_usage
+                                exit 0
+                                ;;
+        * )                     print_invalid_argument
+                                exit 1
+    esac
+    shift
+done

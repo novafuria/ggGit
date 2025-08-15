@@ -42,3 +42,8 @@ print_invalid_argument() {
     print_text ""
     print_usage
 }
+
+print_success() {
+    local msg="$1"
+    echo -e "\e[32m[SUCCESS] $msg\e[0m"
+}
