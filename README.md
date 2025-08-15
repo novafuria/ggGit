@@ -11,9 +11,7 @@
 [![Semantic Versioning: 2.0.0](https://img.shields.io/badge/Semantic--Versioning-2.0.0-a05f79?logo=semantic-release&logoColor=f97ff0)](https://semver.org/)
 
 [![Labeling](https://github.com/novafuria/ggGit/actions/workflows/labeling.yml/badge.svg)](https://github.com/novafuria/ggGit/actions/workflows/labeling.yml)
-[![Tests](https://github.com/novafuria/ggGit/actions/workflows/tests.yml/badge.svg)](https://github.com/novafuria/ggGit/actions/workflows/tests.yml)
 [![Liberation](https://github.com/novafuria/ggGit/actions/workflows/liberation.yml/badge.svg)](https://github.com/novafuria/ggGit/actions/workflows/liberation.yml)
-[![Deploy Release](https://github.com/novafuria/ggGit/actions/workflows/deploy-release.yml/badge.svg)](https://github.com/novafuria/ggGit/actions/workflows/deploy-release.yml)
 
 [Bug Report](./issues/new?assignees=&labels=bug%2Clifecycle%2Fneeds-triage&projects=novafuria%2F20&template=1-bug-report.yml&title=...+is+broken)
 ⭕
