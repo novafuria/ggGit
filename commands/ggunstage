@@ -1,0 +1,47 @@
+#!/bin/bash
+
+source $(dirname $0)/_utils.sh
+
+print_usage() {
+    print_text "NAME"
+    print_text "    ggunstage - Unstage changes"
+    print_text ""
+    print_text "SYNOPSIS"
+    print_text "    ggunstage [<options>] [--] [<pathspec>...]"
+    print_text ""
+    print_text "DESCRIPTION"
+    print_text "    This command unstages changes all changes in the index. Or only the given pathspec."
+    print_text ""
+    print_text "OPTIONS"
+    print_text "    [<options>] [--] [<pathspec>...]"
+    print_text "        Same as git reset HEAD"
+    print_text "    -h, --help"
+    print_text "        Display this help message"
+}
+
+# git restore --staged "$@"
+main() {
+
+    if [ "$#" -eq 0 ]; then
+        git restore --staged .
+        return
+    fi
+
+    git restore --staged "$@"
+}
+
+if [ "$#" -eq 0 ]; then
+    main
+    exit
+fi
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -h | --help )           print_usage
+                                exit
+                                ;;
+        * )                     main "$@"
+                                exit 1
+    esac
+    shift
+done

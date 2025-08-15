@@ -1,0 +1,41 @@
+#!/bin/bash
+
+source $(dirname $0)/_utils.sh
+
+print_usage() {
+    print_text "NAME"
+    print_text "    ggs - Show git status"
+    print_text ""
+    print_text "SYNOPSIS"
+    print_text "    ggs [<options>] [--] [<pathspec>...]"
+    print_text ""
+    print_text "DESCRIPTION"
+    print_text "    This command shows git status."
+    print_text ""
+    print_text "OPTIONS"
+    print_text "    [<options>] [--] [<pathspec>...]"
+    print_text "        Same as git status"
+    print_text "    -h, --help"
+    print_text "        Display this help message"
+}
+
+main() {
+    git status "$@"
+}
+
+if [ "$#" -eq 0 ]; then
+    main
+    exit
+fi
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -h | --help )           print_usage
+                                exit
+                                ;;
+        * )                     main "$@"
+                                exit
+                                ;;
+    esac
+    shift
+done

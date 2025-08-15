@@ -1,0 +1,82 @@
+#!/bin/bash
+
+source $(dirname $0)/_utils.sh
+
+print_usage() {
+    print_text "NAME"
+    print_text "    ggfeat - Commit changes adding the feat prefix to the message"
+    print_text ""
+    print_text "SYNOPSIS"
+    print_text "    ggfeat [options] -s <scope> <message without quotes...>"
+    print_text ""
+    print_text "DESCRIPTION"
+    print_text "    According to the Conventional Commits specification, this command commits"
+    print_text "    changes adding the feat prefix to the message."
+    print_text "    The message is required and must not be empty."
+    print_text "    If stage area is empty, all changes are staged before committing."
+    print_text ""
+    print_text "EXAMPLES"
+    print_text "    ggfeat Add new feature"
+    print_text "    ggfeat -s auth Add new feature"
+    print_text ""
+    print_text "OPTIONS"
+    print_text "    -a, --amend"
+    print_text "        Amend the last commit with the new message"
+    print_text "    -s, --scope <scope>"
+    print_text "        Add a scope to the prefix (e.g. feat(scope): message). The scope must be"
+    print_text "        a single word"
+    print_text "    -h, --help"
+    print_text "        Display this help message"
+}
+
+main() {
+    local amend=false
+    local scope=""
+
+    while [ "$1" != "" ]; do
+        case $1 in
+            -a | --amend )          amend=true
+                                    ;;
+            -s | --scope )          shift
+                                    scope=$1
+                                    ;;
+            -h | --help )           print_usage
+                                    exit
+                                    ;;
+            * )                     break
+        esac
+        shift
+    done
+
+    if [ "$#" -eq 0 ]; then
+        print_error "Message is required"
+        print_text ""
+        print_usage
+        exit 1
+    fi
+
+    local message="$@"
+    local prefix="feat"
+
+    if [ "$scope" != "" ]; then
+        prefix="$prefix($scope)"
+    fi
+
+    if [ "$amend" = true ]; then
+        git commit --amend -m "$prefix: $message"
+    else
+        if [ -z "$(git diff --cached)" ]; then
+            git add .
+        fi
+        git commit -m "$prefix: $message"
+    fi
+}
+
+if [ "$#" -eq 0 ]; then
+    print_error "Message is required"
+    print_text ""
+    print_usage
+    exit 1
+fi
+
+main "$@"

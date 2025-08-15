@@ -1,0 +1,44 @@
+#!/bin/bash
+
+source $(dirname $0)/_utils.sh
+
+print_usage() {
+    print_text "NAME"
+    print_text "    gga - Add file contents to the index"
+    print_text ""
+    print_text "SYNOPSIS"
+    print_text "    gga [<file>...]"
+    print_text ""
+    print_text "DESCRIPTION"
+    print_text "    This command updates the index using the current content found in the working tree, to prepare the content staged for the next commit."
+    print_text ""
+    print_text "OPTIONS"
+    print_text "    [<file>...]"
+    print_text "        Files to add content to the index"
+    print_text "    -h, --help"
+    print_text "        Display this help message"
+}
+
+main() {
+    if [ $# -eq 0 ]; then
+        git add .
+    else
+        git add "$@"
+    fi
+}
+
+if [ "$#" -eq 0 ]; then
+    main
+    exit
+fi
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -h | --help )           print_usage
+                                exit
+                                ;;
+        * )                     main "$@"
+                                exit 1
+    esac
+    shift
+done

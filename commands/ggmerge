@@ -1,0 +1,47 @@
+#!/bin/bash
+
+source $(dirname $0)/_utils.sh
+
+print_usage() {
+    print_text "NAME"
+    print_text "    ggmerge - Merge branches without fast-forward"
+    print_text ""
+    print_text "SYNOPSIS"
+    print_text "    ggmerge [<options>] [<commit>...]"
+    print_text "    ggmerge -a | --abort"
+    print_text "    ggmerge -c | --continue"
+    print_text ""
+    print_text "DESCRIPTION"
+    print_text "    This command merges branches without fast-forward."
+    print_text ""
+    print_text "OPTIONS"
+    print_text "    [<options>] [<commit>...]"
+    print_text "        Same as git merge --no-ff"
+    print_text "    -a, --abort"
+    print_text "        Abort the current conflict resolution process"
+    print_text "    -c, --continue"
+    print_text "        Continue the current conflict resolution process"
+    print_text "    -h, --help"
+    print_text "        Display this help message"
+}
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -h | --help )           print_usage
+                                exit
+                                ;;
+        -a | --abort )          print_operation "Abort the current conflict resolution process"
+                                git merge --abort
+                                exit
+                                ;;
+        -c | --continue )       print_operation "Continue the current conflict resolution process"
+                                git merge --continue
+                                exit
+                                ;;
+        * )                     print_operation "Merge branches without fast-forward"
+                                git merge --no-ff "$@"
+                                exit
+                                ;;
+    esac
+    shift
+done
