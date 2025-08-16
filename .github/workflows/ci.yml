@@ -15,7 +15,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       
     - name: Quick syntax check
       run: |
@@ -45,7 +45,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       
     - name: Setup environment
       run: |
@@ -85,7 +85,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       
     - name: Setup environment
       run: |
@@ -117,7 +117,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       
     - name: Security checks
       run: |
@@ -170,7 +170,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       
     - name: Setup test environment
       run: |
@@ -218,7 +218,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       
     - name: Final checks
       run: |
