@@ -11,7 +11,11 @@
 [![Semantic Versioning: 2.0.0](https://img.shields.io/badge/Semantic--Versioning-2.0.0-a05f79?logo=semantic-release&logoColor=f97ff0)](https://semver.org/)
 
 [![Labeling](https://github.com/novafuria/ggGit/actions/workflows/labeling.yml/badge.svg)](https://github.com/novafuria/ggGit/actions/workflows/labeling.yml)
+[![Test ggGit Commands](https://github.com/novafuria/ggGit/actions/workflows/test-commands.yml/badge.svg)](https://github.com/novafuria/ggGit/actions/workflows/test-commands.yml)
+[![Cross-Platform Testing](https://github.com/novafuria/ggGit/actions/workflows/cross-platform-test.yml/badge.svg)](https://github.com/novafuria/ggGit/actions/workflows/cross-platform-test.yml)
+[![Continuous Integration](https://github.com/novafuria/ggGit/actions/workflows/ci.yml/badge.svg)](https://github.com/novafuria/ggGit/actions/workflows/ci.yml)
 [![Liberation](https://github.com/novafuria/ggGit/actions/workflows/liberation.yml/badge.svg)](https://github.com/novafuria/ggGit/actions/workflows/liberation.yml)
+[![Dependabot Updates](https://github.com/novafuria/ggGit/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/novafuria/ggGit/actions/workflows/dependabot/dependabot-updates)
 
 [Bug Report](./issues/new?assignees=&labels=bug%2Clifecycle%2Fneeds-triage&projects=novafuria%2F20&template=1-bug-report.yml&title=...+is+broken)
 ⭕
