@@ -1,0 +1,120 @@
+name: Bug Report
+description: Report a bug in ggGit
+title: "[BUG] "
+labels: ["bug", "lifecycle/needs-triage"]
+assignees: ["novafuria"]
+projects: ["novafuria/6"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+        
+  - type: input
+    id: bug-description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is
+      placeholder: "Describe the bug here..."
+    validations:
+      required: true
+      
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. See error
+    validations:
+      required: true
+      
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: A clear and concise description of what you expected to happen
+      placeholder: "Describe what you expected to happen..."
+    validations:
+      required: true
+      
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Actual Behavior
+      description: A clear and concise description of what actually happened
+      placeholder: "Describe what actually happened..."
+    validations:
+      required: true
+      
+  - type: input
+    id: command-used
+    attributes:
+      label: Command Used
+      description: The exact ggGit command that caused the issue
+      placeholder: "e.g., ggfeat -s auth Add authentication"
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: operating-system
+    attributes:
+      label: Operating System
+      description: What operating system are you using?
+      options:
+        - Linux (Ubuntu)
+        - Linux (Debian)
+        - Linux (CentOS/RHEL)
+        - Linux (Other)
+        - macOS
+        - Windows 10/11
+        - Windows (Git Bash)
+        - Windows (WSL)
+        - Other
+    validations:
+      required: true
+      
+  - type: input
+    id: git-version
+    attributes:
+      label: Git Version
+      description: What version of Git are you using?
+      placeholder: "e.g., git version 2.43.0"
+    validations:
+      required: true
+      
+  - type: textarea
+    id: ggconfig-output
+    attributes:
+      label: ggconfig Output
+      description: Run `ggconfig` and paste the output here
+      placeholder: "Paste the output of ggconfig here..."
+    validations:
+      required: true
+      
+  - type: textarea
+    id: error-messages
+    attributes:
+      label: Error Messages
+      description: Any error messages or stack traces
+      placeholder: "Paste any error messages here..."
+      
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here
+      placeholder: "Any additional information that might be helpful..."
+      
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our Code of Conduct
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

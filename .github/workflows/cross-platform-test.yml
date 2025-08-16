@@ -1,0 +1,94 @@
+name: Cross-Platform Testing
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize, labeled, unlabeled]
+  workflow_dispatch:
+
+jobs:
+  test-linux:
+    name: Test on Ubuntu
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Git
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        
+    - name: Test on Ubuntu
+      run: |
+        chmod +x commands/*
+        ./health-check.sh
+        
+  test-macos:
+    name: Test on macOS
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Git
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        
+    - name: Test on macOS
+      run: |
+        chmod +x commands/*
+        ./health-check.sh
+        
+  test-windows:
+    name: Test on Windows
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Git
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        
+    - name: Test on Windows (Git Bash)
+      shell: bash
+      run: |
+        chmod +x commands/*
+        ./health-check.sh
+        
+  test-windows-powershell:
+    name: Test on Windows (PowerShell)
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Test PowerShell installation script
+      shell: pwsh
+      run: |
+        # Test PowerShell script syntax
+        $null = [System.Management.Automation.PSParser]::Tokenize((Get-Content install.ps1 -Raw), [ref]$null)
+        Write-Host "✅ PowerShell script syntax is valid"
+        
+        # Test if commands directory exists
+        if (Test-Path "commands") {
+          Write-Host "✅ Commands directory exists"
+        } else {
+          Write-Error "❌ Commands directory not found"
+          exit 1
+        }
+        
+        # Count commands
+        $commandCount = (Get-ChildItem commands/gg*).Count
+        Write-Host "✅ Found $commandCount ggGit commands"
+        
+        if ($commandCount -lt 10) {
+          Write-Warning "⚠️  Expected at least 10 commands, found $commandCount"
+        }

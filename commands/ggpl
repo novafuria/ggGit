@@ -1,0 +1,39 @@
+#!/bin/bash
+
+source $(dirname $0)/_utils.sh
+
+print_usage() {
+    print_text "NAME"
+    print_text "    ggpl - Pull all branches and tags"
+    print_text ""
+    print_text "SYNOPSIS"
+    print_text "    ggpl"
+    print_text ""
+    print_text "DESCRIPTION"
+    print_text "    This command pulls all branches and tags."
+    print_text ""
+    print_text "OPTIONS"
+    print_text "    -h, --help"
+    print_text "        Display this help message"
+}
+
+main() {
+    git pull --all --prune
+    git fetch --tags --force
+}
+
+if [ "$#" -eq 0 ]; then
+    main
+    exit
+fi
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -h | --help )           print_usage
+                                exit
+                                ;;
+        * )                     print_invalid_argument
+                                exit 1
+    esac
+    shift
+done
