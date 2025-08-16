@@ -16,7 +16,7 @@ jobs:
       uses: actions/checkout@v4
       
     - name: Run ShellCheck
-      uses: super-linter/super-linter@v5
+      uses: super-linter/super-linter@v8
       env:
         DEFAULT_WORKSPACE: .
         FILTER_REGEX_EXCLUDE: .*\.md
