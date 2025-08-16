@@ -1,1 +1,29 @@
+# Code owners for ggGit project
+# This file defines who is responsible for different parts of the codebase
+
+# Global owners - responsible for the entire project
 * @novafuria
+
+# Core commands and utilities
+commands/ @novafuria
+commands/_utils.sh @novafuria
+
+# Installation and configuration scripts
+install.sh @novafuria
+install.ps1 @novafuria
+health-check.sh @novafuria
+
+# Documentation
+README.md @novafuria
+CONTRIBUTING.md @novafuria
+CODE_OF_CONDUCT.md @novafuria
+LICENSE @novafuria
+
+# GitHub Actions and CI/CD
+.github/ @novafuria
+.github/workflows/ @novafuria
+.github/ISSUE_TEMPLATE/ @novafuria
+
+# Shell scripts and configuration
+*.sh @novafuria
+*.ps1 @novafuria

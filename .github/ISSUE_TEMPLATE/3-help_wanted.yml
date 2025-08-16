@@ -1,0 +1,94 @@
+name: Help Wanted
+description: Ask for help with ggGit
+title: "[HELP] "
+labels: ["help wanted", "lifecycle/needs-triage"]
+assignees: ["novafuria"]
+projects: ["novafuria/6"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reaching out for help! We're here to assist you.
+        
+  - type: textarea
+    id: help-description
+    attributes:
+      label: What do you need help with?
+      description: A clear description of what you're trying to do and where you're stuck
+      placeholder: "I'm trying to... but I'm getting stuck on..."
+    validations:
+      required: true
+      
+  - type: textarea
+    id: what-you-tried
+    attributes:
+      label: What have you tried?
+      description: Describe the steps you've already taken to solve this
+      placeholder: "I've tried... but it didn't work because..."
+    validations:
+      required: true
+      
+  - type: textarea
+    id: error-messages
+    attributes:
+      label: Error Messages
+      description: Any error messages or unexpected behavior you're seeing
+      placeholder: "I'm getting this error: ..."
+      
+  - type: input
+    id: operating-system
+    attributes:
+      label: Operating System
+      description: What operating system are you using?
+      placeholder: "e.g., Ubuntu 22.04, macOS 13, Windows 11"
+    validations:
+      required: true
+      
+  - type: input
+    id: git-version
+    attributes:
+      label: Git Version
+      description: What version of Git are you using?
+      placeholder: "e.g., git version 2.43.0"
+    validations:
+      required: true
+      
+  - type: textarea
+    id: ggconfig-output
+    attributes:
+      label: ggconfig Output
+      description: Run `ggconfig` and paste the output here
+      placeholder: "Paste the output of ggconfig here..."
+    validations:
+      required: true
+      
+  - type: textarea
+    id: current-setup
+    attributes:
+      label: Current Setup
+      description: Describe how you currently have ggGit set up
+      placeholder: "I installed ggGit by... and added it to PATH by..."
+      
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: "I expected that when I run... it would..."
+      
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other information that might be helpful
+      placeholder: "Additional context, screenshots, or files..."
+      
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this help request, you agree to follow our Code of Conduct
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
