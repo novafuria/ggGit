@@ -1,0 +1,253 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize, labeled, unlabeled]
+  workflow_dispatch:
+
+jobs:
+  # Quick validation job that runs first
+  quick-validate:
+    name: Quick Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Quick syntax check
+      run: |
+        echo "Quick validation of critical files..."
+        
+        # Check if critical files exist
+        required_files=("README.md" "commands/_utils.sh" "install.sh")
+        for file in "${required_files[@]}"; do
+          if [ ! -f "$file" ]; then
+            echo "❌ Critical file missing: $file"
+            exit 1
+          fi
+        done
+        
+        # Quick syntax check
+        bash -n commands/_utils.sh
+        bash -n install.sh
+        
+        echo "✅ Quick validation passed"
+        
+  # Main testing job
+  test-commands:
+    name: Test Commands
+    needs: quick-validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup environment
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        chmod +x commands/*
+        
+    - name: Run comprehensive tests
+      run: |
+        echo "Running comprehensive test suite..."
+        
+        # Run health check
+        ./health-check.sh
+        
+        # Test all commands
+        for cmd in commands/gg*; do
+          if [ -f "$cmd" ]; then
+            echo "Testing $(basename "$cmd")"
+            "$cmd" --help > /dev/null 2>&1 || {
+              echo "❌ $(basename "$cmd") failed"
+              exit 1
+            }
+          fi
+        done
+        
+        echo "✅ All commands working correctly"
+        
+  # Cross-platform testing
+  cross-platform:
+    name: Cross-Platform Test
+    needs: quick-validate
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    timeout-minutes: 10
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup environment
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        chmod +x commands/*
+        
+    - name: Test on ${{ matrix.os }}
+      shell: bash
+      run: |
+        echo "Testing on ${{ matrix.os }}..."
+        
+        # Basic functionality test
+        ./commands/ggv --help > /dev/null 2>&1
+        ./commands/ggs --help > /dev/null 2>&1
+        
+        # Test utility functions
+        source commands/_utils.sh
+        print_success "Test" > /dev/null
+        
+        echo "✅ Tests passed on ${{ matrix.os }}"
+        
+  # Security and quality checks
+  security-quality:
+    name: Security & Quality
+    needs: quick-validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Security checks
+      run: |
+        echo "Running security checks..."
+        
+        # Check for dangerous patterns
+        if grep -r "rm -rf\|dd if=\|mkfs\|fdisk" commands/; then
+          echo "❌ Found potentially dangerous commands"
+          exit 1
+        fi
+        
+        # Check for hardcoded paths
+        if grep -r "/home/\|/root/\|C:\\\|D:\\" commands/; then
+          echo "❌ Found hardcoded paths"
+          exit 1
+        fi
+        
+        echo "✅ Security checks passed"
+        
+    - name: Quality checks
+      run: |
+        echo "Running quality checks..."
+        
+        # Check file permissions
+        for script in commands/*; do
+          if [ -f "$script" ] && [ ! -x "$script" ]; then
+            echo "❌ Script not executable: $script"
+            exit 1
+          fi
+        done
+        
+        # Check script headers
+        for script in commands/*; do
+          if [ -f "$script" ]; then
+            if ! head -1 "$script" | grep -q "#!/bin/bash"; then
+              echo "❌ Missing shebang in: $script"
+              exit 1
+            fi
+          fi
+        done
+        
+        echo "✅ Quality checks passed"
+        
+  # Integration testing
+  integration:
+    name: Integration Test
+    needs: [quick-validate, test-commands]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup test environment
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        chmod +x commands/*
+        
+    - name: Run integration tests
+      run: |
+        echo "Setting up test repository..."
+        
+        # Create test repo
+        mkdir -p /tmp/gggit-test
+        cd /tmp/gggit-test
+        git init
+        echo "Test" > test.txt
+        git add test.txt
+        git commit -m "Test commit"
+        
+        # Add ggGit to PATH
+        export PATH=$PATH:$(pwd)/../ggGit/commands
+        
+        # Test basic workflow
+        ggs
+        echo "More content" >> test.txt
+        gga test.txt
+        ggfeat -s test "Add more content"
+        ggl
+        
+        echo "✅ Integration tests passed"
+        
+        # Cleanup
+        cd /
+        rm -rf /tmp/gggit-test
+        
+  # Final validation
+  final-validation:
+    name: Final Validation
+    needs: [quick-validate, test-commands, cross-platform, security-quality, integration]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Final checks
+      run: |
+        echo "Running final validation..."
+        
+        # Count commands
+        command_count=$(ls commands/gg* 2>/dev/null | wc -l)
+        echo "Found $command_count ggGit commands"
+        
+        if [ "$command_count" -lt 10 ]; then
+          echo "⚠️  Warning: Expected at least 10 commands"
+        fi
+        
+        # Check documentation
+        if [ ! -f "README.md" ] || [ ! -s "README.md" ]; then
+          echo "❌ README.md is missing or empty"
+          exit 1
+        fi
+        
+        echo "✅ Final validation passed"
+        
+    - name: Success message
+      run: |
+        echo ""
+        echo "🎉 All CI checks passed successfully!"
+        echo ""
+        echo "📊 CI Summary:"
+        echo "  ✅ Quick validation"
+        echo "  ✅ Command testing"
+        echo "  ✅ Cross-platform compatibility"
+        echo "  ✅ Security & quality"
+        echo "  ✅ Integration testing"
+        echo "  ✅ Final validation"
+        echo ""
+        echo "🚀 ggGit is ready for production!"

@@ -1,0 +1,208 @@
+name: Test ggGit Commands
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize, labeled, unlabeled]
+  workflow_dispatch:
+
+jobs:
+  test-commands:
+    name: Test ggGit Commands
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Git
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        
+    - name: Make scripts executable
+      run: chmod +x commands/*
+      
+    - name: Run health check
+      run: ./health-check.sh
+      
+    - name: Test individual commands
+      run: |
+        echo "Testing individual command functionality..."
+        
+        # Test help for all commands
+        for cmd in commands/gg*; do
+          if [ -f "$cmd" ]; then
+            echo "Testing $(basename "$cmd") --help"
+            "$cmd" --help > /dev/null 2>&1 || {
+              echo "❌ $(basename "$cmd") --help failed"
+              exit 1
+            }
+            echo "✅ $(basename "$cmd") --help passed"
+          fi
+        done
+        
+    - name: Test command syntax
+      run: |
+        echo "Checking script syntax..."
+        for script in commands/*.sh commands/gg*; do
+          if [ -f "$script" ]; then
+            echo "Checking syntax: $(basename "$script")"
+            bash -n "$script" || {
+              echo "❌ Syntax error in $(basename "$script")"
+              exit 1
+            }
+            echo "✅ $(basename "$script") syntax OK"
+          fi
+        done
+        
+    - name: Test command execution
+      run: |
+        echo "Testing command execution..."
+        
+        # Test basic commands that don't require git repo
+        echo "Testing ggv (should show help)"
+        ./commands/ggv --help > /dev/null 2>&1
+        
+        echo "Testing ggs (should show help)"
+        ./commands/ggs --help > /dev/null 2>&1
+        
+        echo "Testing ggl (should show help)"
+        ./commands/ggl --help > /dev/null 2>&1
+        
+        echo "Testing gga (should show help)"
+        ./commands/gga --help > /dev/null 2>&1
+        
+        echo "Testing ggconfig (should show help)"
+        ./commands/ggconfig --help > /dev/null 2>&1
+        
+    - name: Test error handling
+      run: |
+        echo "Testing error handling..."
+        
+        # Test invalid arguments
+        echo "Testing gga with invalid args (should exit with error)"
+        if ./commands/gga --invalid-arg 2>/dev/null; then
+          echo "❌ gga should have failed with invalid args"
+          exit 1
+        else
+          echo "✅ gga correctly handled invalid args"
+        fi
+        
+        # Test missing required arguments for commit commands
+        echo "Testing ggfeat without message (should fail)"
+        if ./commands/ggfeat 2>/dev/null; then
+          echo "❌ ggfeat should have failed without message"
+          exit 1
+        else
+          echo "✅ ggfeat correctly failed without message"
+        fi
+        
+    - name: Test utility functions
+      run: |
+        echo "Testing utility functions..."
+        
+        # Test _utils.sh functions
+        source commands/_utils.sh
+        
+        # Test print functions
+        print_error "Test error message" > /dev/null
+        print_info "Test" "info message" > /dev/null
+        print_warning "Test warning message" > /dev/null
+        print_success "Test success message" > /dev/null
+        print_text "Test text message" > /dev/null
+        
+        echo "✅ All utility functions work correctly"
+        
+    - name: Test installation script
+      run: |
+        echo "Testing installation script..."
+        
+        # Test install.sh syntax
+        bash -n install.sh
+        
+        # Test health-check.sh syntax
+        bash -n health-check.sh
+        
+        echo "✅ Installation scripts syntax OK"
+        
+    - name: Verify file structure
+      run: |
+        echo "Verifying project structure..."
+        
+        # Check required files exist
+        required_files=(
+          "README.md"
+          "CONTRIBUTING.md"
+          "LICENSE"
+          "CODE_OF_CONDUCT.md"
+          "install.sh"
+          "health-check.sh"
+          "commands/_utils.sh"
+        )
+        
+        for file in "${required_files[@]}"; do
+          if [ ! -f "$file" ]; then
+            echo "❌ Required file missing: $file"
+            exit 1
+          fi
+          echo "✅ Found: $file"
+        done
+        
+        # Check commands directory
+        if [ ! -d "commands" ]; then
+          echo "❌ Commands directory missing"
+          exit 1
+        fi
+        
+        # Count commands
+        command_count=$(ls commands/gg* 2>/dev/null | wc -l)
+        echo "✅ Found $command_count ggGit commands"
+        
+        if [ "$command_count" -lt 10 ]; then
+          echo "⚠️  Warning: Expected at least 10 commands, found $command_count"
+        fi
+        
+    - name: Test cross-platform compatibility
+      run: |
+        echo "Testing cross-platform compatibility..."
+        
+        # Check for Windows-specific line endings
+        if grep -l $'\r' commands/* 2>/dev/null; then
+          echo "⚠️  Warning: Found Windows line endings in some files"
+        else
+          echo "✅ No Windows line endings found"
+        fi
+        
+        # Check for bash-specific syntax
+        bash_specific_patterns=(
+          "#!/bin/bash"
+          "source "
+          "if \["
+          "while \["
+        )
+        
+        for pattern in "${bash_specific_patterns[@]}"; do
+          if ! grep -q "$pattern" commands/_utils.sh; then
+            echo "⚠️  Warning: Bash-specific pattern not found: $pattern"
+          fi
+        done
+        
+        echo "✅ Cross-platform compatibility checks passed"
+        
+    - name: Summary
+      run: |
+        echo ""
+        echo "🎉 All tests passed successfully!"
+        echo ""
+        echo "📊 Test Summary:"
+        echo "  ✅ Script permissions"
+        echo "  ✅ Command syntax"
+        echo "  ✅ Help functionality"
+        echo "  ✅ Error handling"
+        echo "  ✅ Utility functions"
+        echo "  ✅ Installation scripts"
+        echo "  ✅ Project structure"
+        echo "  ✅ Cross-platform compatibility"
+        echo ""
+        echo "🚀 ggGit is ready for production!"

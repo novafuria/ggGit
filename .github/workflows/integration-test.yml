@@ -1,0 +1,249 @@
+name: Integration Testing
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize, labeled, unlabeled]
+  workflow_dispatch:
+
+jobs:
+  integration-test:
+    name: Integration Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Git
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        
+    - name: Make scripts executable
+      run: chmod +x commands/*
+      
+    - name: Setup test repository
+      run: |
+        echo "Setting up test repository..."
+        
+        # Create a temporary directory for testing
+        mkdir -p /tmp/gggit-test
+        cd /tmp/gggit-test
+        
+        # Initialize git repository
+        git init
+        echo "Initial commit" > README.md
+        git add README.md
+        git commit -m "Initial commit"
+        
+        # Create a test branch
+        git checkout -b feature/test-branch
+        
+        # Add ggGit to PATH
+        export PATH=$PATH:$(pwd)/../ggGit/commands
+        
+    - name: Test basic workflow
+      run: |
+        cd /tmp/gggit-test
+        
+        echo "Testing basic git workflow with ggGit..."
+        
+        # Test status
+        echo "Testing ggs (status)"
+        ggs
+        
+        # Test adding files
+        echo "Testing gga (add)"
+        echo "Test content" > test.txt
+        gga test.txt
+        
+        # Test status after add
+        ggs
+        
+        # Test commit with ggfeat
+        echo "Testing ggfeat"
+        ggfeat -s test Add test file
+        
+        # Test log
+        echo "Testing ggl (log)"
+        ggl
+        
+        # Test checkout main
+        echo "Testing ggmain"
+        ggmain
+        
+        # Test merge
+        echo "Testing ggmerge"
+        ggmerge feature/test-branch
+        
+        # Test log after merge
+        ggl
+        
+        echo "✅ Basic workflow test passed"
+        
+    - name: Test conventional commits
+      run: |
+        cd /tmp/gggit-test
+        
+        echo "Testing conventional commit commands..."
+        
+        # Create another test file
+        echo "Another test" > another.txt
+        gga another.txt
+        
+        # Test feat commit
+        echo "Testing ggfeat with scope"
+        ggfeat -s integration Add integration test file
+        
+        # Test fix commit
+        echo "Testing ggfix"
+        echo "Fixed content" > fixed.txt
+        gga fixed.txt
+        ggfix -s test Fix test file content
+        
+        # Test break commit
+        echo "Testing ggbreak"
+        echo "Breaking change" > breaking.txt
+        gga breaking.txt
+        ggbreak -s api Remove deprecated API
+        
+        # Test log to see all commits
+        echo "Testing ggl to see all commits"
+        ggl
+        
+        echo "✅ Conventional commits test passed"
+        
+    - name: Test error handling
+      run: |
+        cd /tmp/gggit-test
+        
+        echo "Testing error handling..."
+        
+        # Test commit without message
+        echo "Testing ggfeat without message (should fail)"
+        if ggfeat; then
+          echo "❌ ggfeat should have failed without message"
+          exit 1
+        else
+          echo "✅ ggfeat correctly failed without message"
+        fi
+        
+        # Test invalid arguments
+        echo "Testing gga with invalid args (should fail)"
+        if gga --invalid-arg; then
+          echo "❌ gga should have failed with invalid args"
+          exit 1
+        else
+          echo "✅ gga correctly failed with invalid args"
+        fi
+        
+        echo "✅ Error handling test passed"
+        
+    - name: Test utility functions
+      run: |
+        cd /tmp/gggit-test
+        
+        echo "Testing utility functions..."
+        
+        # Source utils and test functions
+        source ../ggGit/commands/_utils.sh
+        
+        # Test all print functions
+        print_error "Test error" > /dev/null
+        print_info "Test" "info" > /dev/null
+        print_warning "Test warning" > /dev/null
+        print_success "Test success" > /dev/null
+        print_text "Test text" > /dev/null
+        
+        echo "✅ Utility functions test passed"
+        
+    - name: Test installation scripts
+      run: |
+        cd /tmp/gggit-test
+        
+        echo "Testing installation scripts..."
+        
+        # Test health check
+        echo "Testing health-check.sh"
+        ../ggGit/health-check.sh
+        
+        # Test install script (dry run)
+        echo "Testing install.sh syntax"
+        bash -n ../ggGit/install.sh
+        
+        echo "✅ Installation scripts test passed"
+        
+    - name: Test cross-command compatibility
+      run: |
+        cd /tmp/gggit-test
+        
+        echo "Testing cross-command compatibility..."
+        
+        # Test that all commands work together
+        echo "Testing command chain..."
+        
+        # Create a complex workflow
+        echo "Complex content" > complex.txt
+        gga complex.txt
+        ggfeat -s workflow Add complex workflow test
+        
+        # Switch branches
+        git checkout -b feature/complex
+        echo "More content" >> complex.txt
+        gga complex.txt
+        ggfix -s workflow Fix complex workflow
+        
+        # Switch back and merge
+        ggmain
+        ggmerge feature/complex
+        
+        # View results
+        ggl
+        ggs
+        
+        echo "✅ Cross-command compatibility test passed"
+        
+    - name: Test edge cases
+      run: |
+        cd /tmp/gggit-test
+        
+        echo "Testing edge cases..."
+        
+        # Test empty staging area
+        echo "Testing commit with empty staging area"
+        ggfeat -s edge Test empty staging area
+        
+        # Test with special characters in message
+        echo "Testing special characters in commit message"
+        echo "Special chars" > special.txt
+        gga special.txt
+        ggfeat -s test "Test with special chars: !@#$%^&*()"
+        
+        # Test with very long message
+        echo "Testing very long commit message"
+        echo "Long content" > long.txt
+        gga long.txt
+        long_msg="This is a very long commit message that tests the ability of the system to handle extremely long commit messages without breaking or causing issues with the git commit command or any other related functionality"
+        ggfeat -s test "$long_msg"
+        
+        echo "✅ Edge cases test passed"
+        
+    - name: Cleanup and summary
+      run: |
+        echo ""
+        echo "🎉 Integration Testing Summary:"
+        echo "  ✅ Basic git workflow"
+        echo "  ✅ Conventional commits"
+        echo "  ✅ Error handling"
+        echo "  ✅ Utility functions"
+        echo "  ✅ Installation scripts"
+        echo "  ✅ Cross-command compatibility"
+        echo "  ✅ Edge cases"
+        echo ""
+        echo "🚀 All integration tests passed!"
+        echo "ggGit is working correctly in real-world scenarios!"
+        
+        # Cleanup
+        cd /
+        rm -rf /tmp/gggit-test

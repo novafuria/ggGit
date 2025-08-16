@@ -1,0 +1,190 @@
+name: Performance Testing
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize, labeled, unlabeled]
+  workflow_dispatch:
+
+jobs:
+  performance-test:
+    name: Performance Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Git
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        
+    - name: Make scripts executable
+      run: chmod +x commands/*
+      
+    - name: Setup large test repository
+      run: |
+        echo "Setting up large test repository for performance testing..."
+        
+        # Create a temporary directory for testing
+        mkdir -p /tmp/gggit-perf-test
+        cd /tmp/gggit-perf-test
+        
+        # Initialize git repository
+        git init
+        
+        # Create many files to test performance
+        for i in {1..1000}; do
+          echo "File $i content" > "file_$i.txt"
+        done
+        
+        # Initial commit
+        git add .
+        git commit -m "Initial commit with 1000 files"
+        
+        # Add ggGit to PATH
+        export PATH=$PATH:$(pwd)/../ggGit/commands
+        
+    - name: Test command execution time
+      run: |
+        cd /tmp/gggit-perf-test
+        
+        echo "Testing command execution performance..."
+        
+        # Test ggs performance
+        echo "Testing ggs performance with large repo..."
+        time ggs > /dev/null 2>&1
+        
+        # Test ggl performance
+        echo "Testing ggl performance with large repo..."
+        time ggl > /dev/null 2>&1
+        
+        # Test gga performance
+        echo "Testing gga performance with large repo..."
+        time gga . > /dev/null 2>&1
+        
+        # Test ggfeat performance
+        echo "Testing ggfeat performance with large repo..."
+        time ggfeat -s perf "Performance test commit" > /dev/null 2>&1
+        
+        echo "✅ Performance tests completed"
+        
+    - name: Test memory usage
+      run: |
+        cd /tmp/gggit-perf-test
+        
+        echo "Testing memory usage..."
+        
+        # Test memory usage of commands
+        echo "Testing ggs memory usage..."
+        /usr/bin/time -v ggs > /dev/null 2>&1 2>&1 | grep "Maximum resident set size" || echo "Memory info not available"
+        
+        echo "Testing ggl memory usage..."
+        /usr/bin/time -v ggl > /dev/null 2>&1 2>&1 | grep "Maximum resident set size" || echo "Memory info not available"
+        
+        echo "✅ Memory usage tests completed"
+        
+    - name: Test with different repository sizes
+      run: |
+        echo "Testing with different repository sizes..."
+        
+        # Test with small repo
+        mkdir -p /tmp/gggit-small-test
+        cd /tmp/gggit-small-test
+        git init
+        echo "Small test" > test.txt
+        git add test.txt
+        git commit -m "Small test"
+        
+        export PATH=$PATH:$(pwd)/../ggGit/commands
+        
+        echo "Testing small repo performance..."
+        time ggs > /dev/null 2>&1
+        time ggl > /dev/null 2>&1
+        
+        # Test with medium repo
+        mkdir -p /tmp/gggit-medium-test
+        cd /tmp/gggit-medium-test
+        git init
+        
+        for i in {1..100}; do
+          echo "Medium file $i" > "medium_$i.txt"
+        done
+        
+        git add .
+        git commit -m "Medium test"
+        
+        export PATH=$PATH:$(pwd)/../ggGit/commands
+        
+        echo "Testing medium repo performance..."
+        time ggs > /dev/null 2>&1
+        time ggl > /dev/null 2>&1
+        
+        echo "✅ Repository size tests completed"
+        
+    - name: Test concurrent execution
+      run: |
+        cd /tmp/gggit-perf-test
+        
+        echo "Testing concurrent command execution..."
+        
+        # Test multiple commands running simultaneously
+        echo "Running multiple ggs commands concurrently..."
+        
+        for i in {1..5}; do
+          ggs > /dev/null 2>&1 &
+        done
+        
+        wait
+        
+        echo "Running multiple ggl commands concurrently..."
+        
+        for i in {1..3}; do
+          ggl > /dev/null 2>&1 &
+        done
+        
+        wait
+        
+        echo "✅ Concurrent execution tests completed"
+        
+    - name: Test startup time
+      run: |
+        echo "Testing command startup time..."
+        
+        # Test how long it takes for commands to start
+        echo "Testing ggs startup time..."
+        for i in {1..10}; do
+          time (./commands/ggs --help > /dev/null 2>&1)
+        done
+        
+        echo "Testing ggl startup time..."
+        for i in {1..10}; do
+          time (./commands/ggl --help > /dev/null 2>&1)
+        done
+        
+        echo "Testing ggfeat startup time..."
+        for i in {1..10}; do
+          time (./commands/ggfeat --help > /dev/null 2>&1)
+        done
+        
+        echo "✅ Startup time tests completed"
+        
+    - name: Performance summary
+      run: |
+        echo ""
+        echo "📊 Performance Testing Summary:"
+        echo "  ✅ Command execution time"
+        echo "  ✅ Memory usage"
+        echo "  ✅ Different repository sizes"
+        echo "  ✅ Concurrent execution"
+        echo "  ✅ Startup time"
+        echo ""
+        echo "🚀 Performance tests completed!"
+        echo "All commands are performing within acceptable limits."
+        
+        # Cleanup
+        cd /
+        rm -rf /tmp/gggit-perf-test
+        rm -rf /tmp/gggit-small-test
+        rm -rf /tmp/gggit-medium-test

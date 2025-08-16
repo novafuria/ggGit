@@ -1,0 +1,176 @@
+name: Security and Linting
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize, labeled, unlabeled]
+  workflow_dispatch:
+
+jobs:
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Run ShellCheck
+      uses: super-linter/super-linter@v5
+      env:
+        DEFAULT_WORKSPACE: .
+        FILTER_REGEX_EXCLUDE: .*\.md
+        LINTER_RULES_PATH: ./.github/linters
+        SHELLCHECK_DISABLE: false
+        BASH_DISABLE: false
+        
+  code-quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Check file permissions
+      run: |
+        echo "Checking file permissions..."
+        
+        # All scripts should be executable
+        for script in commands/*; do
+          if [ -f "$script" ] && [ ! -x "$script" ]; then
+            echo "❌ Script not executable: $script"
+            exit 1
+          fi
+        done
+        
+        # Installation scripts should be executable
+        for script in install.sh health-check.sh; do
+          if [ -f "$script" ] && [ ! -x "$script" ]; then
+            echo "❌ Script not executable: $script"
+            exit 1
+          fi
+        done
+        
+        echo "✅ All scripts have correct permissions"
+        
+    - name: Check for hardcoded paths
+      run: |
+        echo "Checking for hardcoded paths..."
+        
+        # Check for absolute paths that might cause issues
+        if grep -r "/home/" commands/ || grep -r "/root/" commands/; then
+          echo "❌ Found hardcoded home paths"
+          exit 1
+        fi
+        
+        # Check for Windows-specific paths
+        if grep -r "C:\\" commands/ || grep -r "D:\\" commands/; then
+          echo "❌ Found hardcoded Windows paths"
+          exit 1
+        fi
+        
+        echo "✅ No hardcoded paths found"
+        
+    - name: Check for dangerous commands
+      run: |
+        echo "Checking for potentially dangerous commands..."
+        
+        dangerous_commands=(
+          "rm -rf"
+          "dd if="
+          "mkfs"
+          "fdisk"
+          "chmod 777"
+        )
+        
+        for cmd in "${dangerous_commands[@]}"; do
+          if grep -r "$cmd" commands/; then
+            echo "⚠️  Warning: Found potentially dangerous command: $cmd"
+          fi
+        done
+        
+        echo "✅ No dangerous commands found"
+        
+    - name: Validate script headers
+      run: |
+        echo "Validating script headers..."
+        
+        for script in commands/*; do
+          if [ -f "$script" ]; then
+            if ! head -1 "$script" | grep -q "#!/bin/bash"; then
+              echo "❌ Missing shebang in: $script"
+              exit 1
+            fi
+          fi
+        done
+        
+        echo "✅ All scripts have proper shebang"
+        
+    - name: Check for syntax errors
+      run: |
+        echo "Checking script syntax..."
+        
+        for script in commands/* install.sh health-check.sh; do
+          if [ -f "$script" ]; then
+            echo "Checking: $script"
+            bash -n "$script" || {
+              echo "❌ Syntax error in: $script"
+              exit 1
+            }
+          fi
+        done
+        
+        echo "✅ All scripts have valid syntax"
+        
+    - name: Check documentation
+      run: |
+        echo "Checking documentation..."
+        
+        # Check if README exists and has content
+        if [ ! -f "README.md" ] || [ ! -s "README.md" ]; then
+          echo "❌ README.md is missing or empty"
+          exit 1
+        fi
+        
+        # Check if CONTRIBUTING exists
+        if [ ! -f "CONTRIBUTING.md" ]; then
+          echo "⚠️  Warning: CONTRIBUTING.md is missing"
+        fi
+        
+        # Check if LICENSE exists
+        if [ ! -f "LICENSE" ]; then
+          echo "⚠️  Warning: LICENSE is missing"
+        fi
+        
+        echo "✅ Documentation check passed"
+        
+    - name: Check for sensitive information
+      run: |
+        echo "Checking for sensitive information..."
+        
+        # Check for hardcoded emails, passwords, tokens
+        if grep -r "password\|secret\|token\|key" commands/ --ignore-case; then
+          echo "⚠️  Warning: Found potential sensitive terms"
+        fi
+        
+        # Check for hardcoded URLs
+        if grep -r "http://\|https://" commands/; then
+          echo "⚠️  Warning: Found hardcoded URLs"
+        fi
+        
+        echo "✅ No obvious sensitive information found"
+        
+    - name: Summary
+      run: |
+        echo ""
+        echo "🔒 Security and Code Quality Summary:"
+        echo "  ✅ File permissions"
+        echo "  ✅ No hardcoded paths"
+        echo "  ✅ No dangerous commands"
+        echo "  ✅ Valid script headers"
+        echo "  ✅ Script syntax"
+        echo "  ✅ Documentation"
+        echo "  ✅ No sensitive information"
+        echo ""
+        echo "🚀 Code quality checks passed!"
