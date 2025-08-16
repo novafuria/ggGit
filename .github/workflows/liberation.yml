@@ -12,4 +12,4 @@ jobs:
   call-liberation-workflow:
     uses: mauroalderete/workflows/.github/workflows/liberation.yml@v0
     secrets:
-      github-token: ${{ secrets.GH_PROJECT_AUTOMATION }}
+      github-token: ${{ secrets.NOVAFURIA_WORKFLOWS }}

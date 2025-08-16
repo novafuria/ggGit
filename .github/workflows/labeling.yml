@@ -12,4 +12,4 @@ jobs:
   call-labeling-workflow:
     uses: mauroalderete/workflows/.github/workflows/labeling.yml@v0
     secrets:
-      github-token: ${{ secrets.GH_PROJECT_AUTOMATION }}
+      github-token: ${{ secrets.NOVAFURIA_WORKFLOWS }}

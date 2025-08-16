@@ -182,6 +182,9 @@ jobs:
       run: |
         echo "Setting up test repository..."
         
+        # Store the original workspace path before changing directories
+        WORKSPACE_PATH=$(pwd)
+        
         # Create test repo
         mkdir -p /tmp/gggit-test
         cd /tmp/gggit-test
@@ -190,8 +193,8 @@ jobs:
         git add test.txt
         git commit -m "Test commit"
         
-        # Add ggGit to PATH
-        export PATH=$PATH:$(pwd)/../ggGit/commands
+        # Add ggGit to PATH using the stored workspace path
+        export PATH=$PATH:$WORKSPACE_PATH/commands
         
         # Test basic workflow
         ggs
