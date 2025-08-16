@@ -88,7 +88,9 @@ Write-Info "Test the installation with:"
 Write-Host "  ggv --help"
 Write-Host ""
 Write-Info "Available commands:"
-Write-Host "  gga, ggs, ggl, ggdif, ggfeat, ggfix, ggbreak, ggmain, ggmaster, ggmerge, ggpl, ggpp, ggreset, ggunstage, ggv, ggconfig"
+$commandFiles = Get-ChildItem -Path $CommandsPath -File | Select-Object -ExpandProperty BaseName
+$commandList = ($commandFiles -join ", ")
+Write-Host "  $commandList"
 Write-Host ""
 Write-Info "For help with any command, use:"
 Write-Host "  <command> --help"
