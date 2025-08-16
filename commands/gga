@@ -19,10 +19,24 @@ print_usage() {
     print_text "        Display this help message"
 }
 
+validate_files() {
+    local files=("$@")
+    
+    for file in "${files[@]}"; do
+        if [[ "$file" == -* ]] && [[ "$file" != "-h" ]] && [[ "$file" != "--help" ]]; then
+            print_error "Error: Invalid option '$file'"
+            print_text ""
+            print_usage
+            exit 1
+        fi
+    done
+}
+
 main() {
     if [ $# -eq 0 ]; then
         git add .
     else
+        validate_files "$@"
         git add "$@"
     fi
 }
