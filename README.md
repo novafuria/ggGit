@@ -37,6 +37,15 @@
 
 Internally, `ggGit` uses the `git` command to execute the operations.
 
+## 🧭 Vibedoc Methodology
+
+This project follows the **Vibedoc** methodology for collaborative human-AI design. Vibedoc emphasizes clear documentation, iterative dialogue, and thoughtful design before coding. Our project documentation is maintained in the [`.vibedoc/`](./.vibedoc/) directory, following a structured approach to product development.
+
+**Current Stage**: Project Definition ✅  
+**Next Stage**: Problem Research and Assessment 🔍
+
+Learn more about our methodology: [Vibedoc Documentation](./.vibedoc/README.md)
+
 ## 🚀 Installation
 
 The installation process is simple and fast. You can use our automatic installation scripts or manually configure your PATH.
