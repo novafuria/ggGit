@@ -151,7 +151,7 @@ Como herramienta de línea de comandos, ggGit no tiene interfaces gráficas trad
 
 ## Contexto: Terminal de Comandos
 
-> Con la información de la infografía se debe crear un texto extensivo que permita comprender la solución y sus dinámicas de forma completa solo con la lectura. Por cada pantalla, vista o proceso backend que se incluya en la infografía se debe incluir una imagen y una serie de secciones que describan las acciones y eventos, el ciclo de vida y los componentes involucrados. Estas secciones se llamarán contextos.
+El contexto de Terminal de Comandos es el entorno principal donde los usuarios interactúan con ggGit. Todos los comandos ggGit se ejecutan desde la línea de comandos, proporcionando una interfaz unificada y consistente para operaciones Git optimizadas. Este contexto representa la experiencia del usuario al ejecutar comandos, gestionar configuraciones, y obtener feedback sobre las operaciones realizadas.
 
 ### Ciclo de vida
 
