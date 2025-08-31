@@ -63,74 +63,142 @@ ggGit es una suite de comandos independientes de línea de comandos que simplifi
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-## Arquitectura Legacy vs Nueva Propuesta
+## Arquitectura Unificada en Python
 
-### Arquitectura Legacy (Implementación Actual)
+### Principios de Diseño
 
-**Características:**
-- Todos los comandos implementados en bash
-- Sistema de utilidades compartido (`_utils.sh`)
-- Configuración básica sin jerarquía
-- Instalación manual en PATH
-- Colores hardcodeados en cada script
+**Lenguaje Unificado**: Todos los comandos se implementarán en Python para mantener consistencia, facilitar el mantenimiento y aprovechar las capacidades de IA.
 
-**Limitaciones:**
-- Dificultad para implementar funcionalidades complejas en bash
-- Falta de validación de esquemas
-- Configuración limitada
-- No soporte para múltiples lenguajes
-- Difícil testing y mantenimiento
+**Comandos Independientes**: Cada comando es un script Python ejecutable independiente que reutiliza abstracciones comunes.
 
-### Nueva Propuesta Arquitectónica
+**Reutilización de Código**: Las funcionalidades comunes se implementan como módulos Python reutilizables.
 
-**Mejoras:**
-- Comandos independientes en múltiples lenguajes
-- Sistema de configuración jerárquica con YAML
-- Interfaz CLI unificada y consistente
-- Validación de esquemas
-- Sistema de módulos por contexto
-- Mejor testing y mantenimiento
+**Configuración Jerárquica**: Sistema de configuración local con prioridad repositorio > módulo > usuario > default.
+
+### Ventajas de la Arquitectura Unificada
+
+- **Consistencia**: Todos los comandos comparten el mismo entorno y patrones
+- **Mantenibilidad**: Un solo lenguaje reduce la complejidad de mantenimiento
+- **Capacidades de IA**: Python es ideal para integración con APIs de IA
+- **Testing**: Framework de testing unificado para todos los comandos
+- **Dependencias**: Gestión simplificada de dependencias
 
 ## Sistema de comandos independientes
 
 ### Descripción
-Cada comando ggGit es un ejecutable independiente que puede estar implementado en la tecnología más apropiada para su funcionalidad específica.
-
-### Componentes
-
-#### 1. Comandos Básicos (Bash)
-- **ggfeat, ggfix, ggbreak**: Comandos de commit simples
-- **gga, ggs, ggl**: Comandos de visualización básicos
-- **ggmain, ggmaster, ggmerge**: Comandos de ramas
-
-**Justificación**: Bash es ideal para comandos simples que principalmente ejecutan Git y formatean salida.
-
-#### 2. Comandos de Configuración (Python)
-- **ggconfig**: Gestión de configuración jerárquica
-- **ggsetup**: Configuración inicial y módulos
-
-**Justificación**: Python es ideal para manejo de archivos YAML, validación de esquemas, y lógica compleja de configuración.
-
-#### 3. Comandos de IA (Go/Python)
-- **ggai**: Generación de mensajes con IA
-- **ggsuggest**: Autocompletado inteligente
-
-**Justificación**: Go para rendimiento en análisis de código, Python para integración con APIs de IA.
+Cada comando ggGit es un script Python ejecutable independiente que reutiliza abstracciones comunes. Todos los comandos comparten la misma estructura y patrones de implementación.
 
 ### Estructura de Comandos
 
 ```
 commands/
-├── _utils.sh              # Utilidades compartidas (legacy)
-├── _cli_interface.py      # Interfaz CLI unificada (nueva)
-├── _config_manager.py     # Gestor de configuración (nueva)
-├── _git_interface.py      # Interfaz con Git (nueva)
-├── ggfeat                 # Comando bash (legacy)
-├── ggfix                  # Comando bash (legacy)
-├── ggconfig               # Comando Python (nueva)
-├── ggai                   # Comando Go/Python (nueva)
+├── _cli_interface.py      # Interfaz CLI unificada
+├── _config_manager.py     # Gestor de configuración jerárquica
+├── _git_interface.py      # Interfaz con Git
+├── _ai_interface.py       # Interfaz con servicios de IA
+├── _validators.py         # Validadores de esquemas y argumentos
+├── _logger.py             # Sistema de logging unificado
+├── ggfeat.py              # Comando de feature commits
+├── ggfix.py               # Comando de fix commits
+├── ggbreak.py             # Comando de breaking changes
+├── ggconfig.py            # Gestión de configuración
+├── ggai.py                # Generación de commits con IA
+├── gga.py                 # Git add simplificado
+├── ggs.py                 # Git status simplificado
+├── ggl.py                 # Git log simplificado
 └── ...
 ```
+
+### Especificación de Implementación de Comandos
+
+#### Estructura Estándar de un Comando
+Cada comando debe seguir esta estructura:
+
+```python
+#!/usr/bin/env python3
+"""
+ggfeat - Commit changes adding the feat prefix to the message
+
+Usage: ggfeat [options] <message>
+"""
+
+import sys
+from _cli_interface import CLIInterface
+from _config_manager import ConfigManager
+from _git_interface import GitInterface
+from _validators import ArgumentValidator
+
+def print_usage():
+    """Imprime la ayuda del comando"""
+    CLIInterface.print_help(
+        command_name="ggfeat",
+        description="Commit changes adding the feat prefix to the message",
+        usage="ggfeat [options] <message>",
+        examples=[
+            ("ggfeat Add new feature", "Commit simple sin scope"),
+            ("ggfeat -s auth Add authentication", "Commit con scope específico")
+        ],
+        options=[
+            ("-s, --scope", "Add scope to commit type"),
+            ("-a, --amend", "Amend the last commit"),
+            ("-h, --help", "Show this help message")
+        ]
+    )
+
+def main():
+    """Función principal del comando"""
+    try:
+        # Inicializar componentes
+        config = ConfigManager()
+        git = GitInterface()
+        validator = ArgumentValidator()
+        
+        # Procesar argumentos
+        args = sys.argv[1:]
+        # ... lógica de procesamiento de argumentos
+        
+        # Validar entrada
+        validator.validate_commit_message(message)
+        
+        # Ejecutar operación
+        git.stage_all_changes()
+        git.commit(f"feat{scope}: {message}")
+        
+        # Mostrar resultado
+        CLIInterface.print_success("Commit realizado exitosamente")
+        
+    except Exception as e:
+        CLIInterface.print_error(str(e))
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+```
+
+#### Abstracciones Reutilizables
+
+**CLIInterface**: Proporciona métodos unificados para:
+- `print_success(message)`: Mensajes de éxito
+- `print_error(message)`: Mensajes de error
+- `print_warning(message)`: Mensajes de advertencia
+- `print_info(section, message)`: Mensajes informativos
+- `print_help(...)`: Sistema de ayuda unificado
+
+**ConfigManager**: Gestiona configuración jerárquica:
+- `get_config(key, default=None)`: Obtener valor de configuración
+- `load_hierarchical_config()`: Cargar configuración siguiendo jerarquía
+- `validate_config(config)`: Validar configuración con esquemas
+
+**GitInterface**: Interfaz unificada con Git:
+- `stage_all_changes()`: Stage todos los cambios
+- `commit(message)`: Realizar commit
+- `get_current_branch()`: Obtener rama actual
+- `is_git_repository()`: Verificar si es repositorio Git
+
+**ArgumentValidator**: Validación de argumentos:
+- `validate_commit_message(message)`: Validar mensaje de commit
+- `validate_scope(scope)`: Validar scope
+- `validate_required_args(args, count)`: Validar argumentos requeridos
 
 ### Interfaz Unificada
 
@@ -207,40 +275,45 @@ ui:
   verbose: false
 ```
 
-### Componentes del Sistema
+### Especificación del Sistema de Configuración
 
-#### 1. Config Manager (Python)
-```python
-class ConfigManager:
-    def __init__(self):
-        self.config = self.load_hierarchical_config()
-    
-    def load_hierarchical_config(self):
-        # Cargar configuración siguiendo jerarquía
-        pass
-    
-    def get_config(self, key, default=None):
-        # Obtener valor de configuración
-        pass
-    
-    def validate_config(self, config):
-        # Validar configuración con esquema
-        pass
-```
+#### 1. Estructura de Archivos de Configuración
 
-#### 2. Esquemas de Validación
+**Ubicaciones de Configuración:**
+- `~/.gggit/default-config.yaml` - Configuración por defecto del sistema
+- `~/.gggit/user-config.yaml` - Configuración personal del usuario
+- `~/.gggit/modules/<module>.yaml` - Configuraciones de módulos específicos
+- `.gggit/repo-config.yaml` - Configuración específica del repositorio
+
+**Prioridad de Carga:**
+1. Configuración de repositorio (más alta)
+2. Configuración de módulo activo
+3. Configuración de usuario
+4. Configuración por defecto (más baja)
+
+#### 2. Esquema de Configuración
+
+**Archivo: `config-schema.yaml`**
 ```yaml
-# config-schema.yaml
 type: object
 properties:
   version:
     type: string
     pattern: "^[0-9]+\.[0-9]+$"
+    description: "Versión del esquema de configuración"
+  
   git:
     type: object
     properties:
       default_branch:
         type: string
+        default: "main"
+        description: "Rama por defecto del repositorio"
+      commit_template:
+        type: string
+        default: "{type}({scope}): {description}"
+        description: "Template para mensajes de commit"
+  
   conventional_commits:
     type: object
     properties:
@@ -248,7 +321,77 @@ properties:
         type: array
         items:
           type: string
+        default: ["feat", "fix", "docs", "style", "refactor", "test", "chore"]
+        description: "Tipos de commit permitidos"
+      scopes:
+        type: array
+        items:
+          type: string
+        description: "Scopes permitidos para commits"
+      require_scope:
+        type: boolean
+        default: false
+        description: "Si se requiere scope en todos los commits"
+  
+  ai:
+    type: object
+    properties:
+      enabled:
+        type: boolean
+        default: false
+        description: "Habilitar funcionalidades de IA"
+      provider:
+        type: string
+        enum: ["openai", "anthropic", "local"]
+        default: "openai"
+        description: "Proveedor de servicios de IA"
+      api_key_env:
+        type: string
+        description: "Variable de entorno para API key"
+      model:
+        type: string
+        default: "gpt-3.5-turbo"
+        description: "Modelo de IA a utilizar"
+  
+  ui:
+    type: object
+    properties:
+      colors:
+        type: object
+        properties:
+          success:
+            type: string
+            default: "green"
+          error:
+            type: string
+            default: "red"
+          warning:
+            type: string
+            default: "yellow"
+          info:
+            type: string
+            default: "blue"
+      verbose:
+        type: boolean
+        default: false
+        description: "Modo verboso para salida detallada"
+      quiet:
+        type: boolean
+        default: false
+        description: "Modo silencioso para salida mínima"
+
+required: ["version"]
 ```
+
+#### 3. Especificación de ConfigManager
+
+**Métodos Requeridos:**
+- `load_hierarchical_config()`: Carga configuración siguiendo jerarquía de prioridad
+- `get_config(key, default=None)`: Obtiene valor de configuración
+- `set_config(key, value, level='user')`: Establece valor de configuración
+- `validate_config(config)`: Valida configuración contra esquema
+- `get_active_module()`: Detecta y retorna módulo activo basado en directorio actual
+- `create_module_config(module_name, config_data)`: Crea nueva configuración de módulo
 
 ## Sistema de interfaz de usuario CLI
 
@@ -257,67 +400,63 @@ Sistema unificado para proporcionar una experiencia de usuario consistente en to
 
 ### Componentes
 
-#### 1. Sistema de Colores Unificado
-```python
-# _cli_interface.py
-class Colors:
-    SUCCESS = "\033[32m"
-    ERROR = "\033[31m"
-    WARNING = "\033[33m"
-    INFO = "\033[34m"
-    RESET = "\033[0m"
+#### 1. Especificación del Sistema de Colores
 
-class CLIInterface:
-    @staticmethod
-    def print_success(message):
-        print(f"{Colors.SUCCESS}[SUCCESS] {message}{Colors.RESET}")
-    
-    @staticmethod
-    def print_error(message):
-        print(f"{Colors.ERROR}[ERROR] {message}{Colors.RESET}")
-    
-    @staticmethod
-    def print_warning(message):
-        print(f"{Colors.WARNING}[WARNING] {message}{Colors.RESET}")
-    
-    @staticmethod
-    def print_info(section, message):
-        print(f"{Colors.INFO}{section}{Colors.RESET}: {message}")
+**Paleta de Colores Estándar:**
+- **Success**: Verde (`\033[32m`) - Operaciones exitosas
+- **Error**: Rojo (`\033[31m`) - Errores y fallos
+- **Warning**: Amarillo (`\033[33m`) - Advertencias
+- **Info**: Azul (`\033[34m`) - Información general
+- **Reset**: (`\033[0m`) - Reset de colores
+
+**Métodos de Salida Requeridos:**
+- `print_success(message)`: Mensajes de éxito con formato `[SUCCESS] mensaje`
+- `print_error(message)`: Mensajes de error con formato `[ERROR] mensaje`
+- `print_warning(message)`: Mensajes de advertencia con formato `[WARNING] mensaje`
+- `print_info(section, message)`: Mensajes informativos con formato `section: mensaje`
+- `print_text(message)`: Texto normal sin formato especial
+
+#### 2. Especificación del Sistema de Ayuda
+
+**Formato de Ayuda Estándar:**
+```
+NAME
+    <comando> - <descripción>
+
+SYNOPSIS
+    <comando> [opciones] <argumentos>
+
+DESCRIPTION
+    <descripción detallada>
+
+EXAMPLES
+    <comando> <ejemplo1>    <descripción1>
+    <comando> <ejemplo2>    <descripción2>
+
+OPTIONS
+    -s, --scope <scope>     <descripción de la opción>
+    -a, --amend             <descripción de la opción>
+    -h, --help              Show this help message
 ```
 
-#### 2. Sistema de Ayuda Unificado
-```python
-class HelpSystem:
-    def __init__(self, command_name, description):
-        self.command_name = command_name
-        self.description = description
-        self.examples = []
-        self.options = []
-    
-    def add_example(self, command, description):
-        self.examples.append((command, description))
-    
-    def add_option(self, short, long, description):
-        self.options.append((short, long, description))
-    
-    def print_help(self):
-        # Generar ayuda consistente
-        pass
-```
+**Método de Ayuda:**
+- `print_help(command_name, description, usage, examples, options)`: Genera ayuda con formato estándar
 
-#### 3. Sistema de Validación de Argumentos
-```python
-class ArgumentValidator:
-    @staticmethod
-    def validate_required_args(args, required_count):
-        if len(args) < required_count:
-            raise ValueError(f"Se requieren {required_count} argumentos")
-    
-    @staticmethod
-    def validate_commit_message(message):
-        if not message or len(message.strip()) == 0:
-            raise ValueError("El mensaje de commit no puede estar vacío")
-```
+#### 3. Especificación de Validación de Argumentos
+
+**Validaciones Estándar:**
+- `validate_required_args(args, count)`: Verifica número mínimo de argumentos
+- `validate_commit_message(message)`: Valida formato y contenido de mensaje de commit
+- `validate_scope(scope)`: Valida formato de scope (letras minúsculas, números, guiones)
+- `validate_branch_name(branch)`: Valida nombre de rama Git
+- `validate_file_path(path)`: Valida existencia y permisos de archivo
+
+**Códigos de Salida Estándar:**
+- `0`: Éxito
+- `1`: Error general
+- `2`: Error de sintaxis o argumentos inválidos
+- `3`: Error de configuración
+- `4`: Error de Git (no es repositorio, conflictos, etc.)
 
 ### Consistencia entre Lenguajes
 
@@ -335,75 +474,54 @@ Sistema que facilita la instalación, actualización y distribución de ggGit en
 
 ### Componentes
 
-#### 1. Script de Instalación Mejorado
-```bash
-#!/bin/bash
-# install.sh mejorado
+#### 1. Especificación del Proceso de Instalación
 
-# Detectar sistema operativo
-detect_os() {
-    case "$(uname -s)" in
-        Linux*)     echo "linux";;
-        Darwin*)    echo "macos";;
-        CYGWIN*)    echo "windows";;
-        MINGW*)     echo "windows";;
-        *)          echo "unknown";;
-    esac
-}
+**Dependencias Requeridas:**
+- Python 3.8 o superior
+- Git instalado y configurado
+- Permisos de escritura en directorio home del usuario
 
-# Instalar dependencias
-install_dependencies() {
-    local os=$(detect_os)
-    case $os in
-        linux)
-            # Instalar Python, Go si es necesario
-            ;;
-        macos)
-            # Usar Homebrew si está disponible
-            ;;
-        windows)
-            # Usar Chocolatey o winget
-            ;;
-    esac
-}
-
-# Configurar PATH
-setup_path() {
-    # Agregar comandos al PATH
-    # Crear directorios de configuración
-    # Configurar archivos de configuración inicial
-}
+**Estructura de Instalación:**
+```
+~/.gggit/
+├── commands/              # Scripts Python ejecutables
+├── config/               # Archivos de configuración
+│   ├── default-config.yaml
+│   ├── user-config.yaml
+│   └── modules/
+├── logs/                 # Archivos de log
+└── cache/                # Cache temporal
 ```
 
-#### 2. Gestor de Paquetes
-```python
-# package_manager.py
-class PackageManager:
-    def __init__(self):
-        self.install_dir = "~/.gggit"
-        self.config_dir = "~/.gggit/config"
-    
-    def install(self):
-        # Instalar comandos
-        # Crear directorios
-        # Configurar PATH
-        pass
-    
-    def update(self):
-        # Actualizar comandos
-        # Mantener configuraciones
-        pass
-    
-    def uninstall(self):
-        # Remover comandos
-        # Limpiar configuraciones
-        pass
-```
+**Proceso de Instalación:**
+1. **Verificación de Dependencias**: Comprobar Python y Git
+2. **Creación de Directorios**: Estructura de directorios estándar
+3. **Copia de Comandos**: Instalar scripts Python ejecutables
+4. **Configuración de PATH**: Agregar `~/.gggit/commands` al PATH
+5. **Configuración Inicial**: Crear archivos de configuración por defecto
+6. **Verificación**: Comprobar que la instalación fue exitosa
 
-#### 3. Distribución Multiplataforma
+#### 2. Especificación de Gestores de Paquetes
+
+**Distribución Multiplataforma:**
 - **Linux**: Paquetes .deb, .rpm, AppImage
 - **macOS**: Homebrew, MacPorts
 - **Windows**: Chocolatey, winget, instalador MSI
+
+**Requisitos de Empaquetado:**
+- Script de instalación multiplataforma
+- Dependencias declaradas en archivo de manifiesto
+- Configuración automática de PATH
+- Verificación post-instalación
+
+#### 3. Especificación de Actualización
+
+**Proceso de Actualización:**
+- Descarga de nueva versión
+- Backup de configuraciones existentes
+- Actualización de comandos
+- Restauración de configuraciones personalizadas
+- Verificación de integridad
 
 ## Sistema de validación y esquemas
 
@@ -412,60 +530,78 @@ Sistema que valida configuraciones, argumentos de comandos y mensajes de commit 
 
 ### Componentes
 
-#### 1. Validador de Configuración
-```python
-# config_validator.py
-import yaml
-import jsonschema
+#### 1. Especificación de Validación de Configuración
 
-class ConfigValidator:
-    def __init__(self):
-        self.schemas = self.load_schemas()
-    
-    def validate_config(self, config, config_type):
-        schema = self.schemas.get(config_type)
-        if schema:
-            jsonschema.validate(config, schema)
-    
-    def validate_commit_message(self, message):
-        # Validar formato de Conventional Commits
-        pattern = r"^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?: .+"
-        if not re.match(pattern, message):
-            raise ValueError("Formato de commit inválido")
+**Validación de Esquemas:**
+- Todas las configuraciones deben validarse contra esquemas JSON Schema
+- Validación automática al cargar configuraciones
+- Mensajes de error descriptivos para configuraciones inválidas
+- Fallback a configuración por defecto en caso de error
+
+**Esquemas Requeridos:**
+- `config-schema.yaml`: Esquema principal de configuración
+- `commit-schema.yaml`: Esquema para validación de mensajes de commit
+- `module-schema.yaml`: Esquema para configuraciones de módulos
+
+#### 2. Especificación de Validación de Mensajes de Commit
+
+**Formato Conventional Commits:**
+```
+<type>(<scope>): <description>
+
+[optional body]
+
+[optional footer(s)]
 ```
 
-#### 2. Esquemas de Validación
+**Validaciones Requeridas:**
+- Tipo de commit debe estar en lista permitida
+- Scope debe seguir formato: letras minúsculas, números, guiones
+- Descripción no puede estar vacía y máximo 72 caracteres
+- Cuerpo opcional con máximo 1000 caracteres por línea
+- Footer opcional para referencias de issues
+
+**Esquema de Validación de Commit:**
 ```yaml
 # commit-schema.yaml
 type: object
 properties:
   type:
     type: string
-    enum: [feat, fix, docs, style, refactor, test, chore]
+    enum: [feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert]
+    description: "Tipo de commit según Conventional Commits"
   scope:
     type: string
     pattern: "^[a-z0-9-]+$"
+    description: "Scope del commit (opcional)"
   description:
     type: string
     minLength: 1
     maxLength: 72
+    description: "Descripción del commit"
+  body:
+    type: string
+    maxLength: 1000
+    description: "Cuerpo del commit (opcional)"
+  footer:
+    type: string
+    description: "Footer del commit (opcional)"
 required: [type, description]
 ```
 
-#### 3. Validación de Argumentos
-```python
-# argument_validator.py
-class ArgumentValidator:
-    @staticmethod
-    def validate_scope(scope):
-        if scope and not re.match(r"^[a-z0-9-]+$", scope):
-            raise ValueError("Scope debe contener solo letras minúsculas, números y guiones")
-    
-    @staticmethod
-    def validate_branch_name(branch):
-        if not re.match(r"^[a-zA-Z0-9/_-]+$", branch):
-            raise ValueError("Nombre de rama inválido")
-```
+#### 3. Especificación de Validación de Argumentos
+
+**Validaciones Estándar:**
+- `validate_scope(scope)`: Scope debe ser alfanumérico con guiones
+- `validate_branch_name(branch)`: Nombre de rama válido para Git
+- `validate_file_path(path)`: Archivo existe y es accesible
+- `validate_url(url)`: URL válida para descarga de configuraciones
+- `validate_module_name(name)`: Nombre de módulo válido
+
+**Mensajes de Error:**
+- Mensajes claros y descriptivos
+- Sugerencias de corrección cuando sea posible
+- Códigos de error específicos para diferentes tipos de validación
 
 ## Sistema de integración con Git
 
@@ -474,84 +610,56 @@ Sistema que proporciona una interfaz unificada para interactuar con Git, manejan
 
 ### Componentes
 
-#### 1. Interfaz Git Unificada
-```python
-# git_interface.py
-import subprocess
-import os
+#### 1. Especificación de Interfaz Git
 
-class GitInterface:
-    def __init__(self):
-        self.check_git_installed()
-    
-    def check_git_installed(self):
-        try:
-            subprocess.run(["git", "--version"], check=True, capture_output=True)
-        except (subprocess.CalledProcessError, FileNotFoundError):
-            raise RuntimeError("Git no está instalado")
-    
-    def is_git_repository(self):
-        return os.path.exists(".git")
-    
-    def get_current_branch(self):
-        result = subprocess.run(
-            ["git", "branch", "--show-current"],
-            capture_output=True, text=True, check=True
-        )
-        return result.stdout.strip()
-    
-    def stage_all_changes(self):
-        subprocess.run(["git", "add", "."], check=True)
-    
-    def commit(self, message):
-        subprocess.run(["git", "commit", "-m", message], check=True)
-    
-    def get_staged_files(self):
-        result = subprocess.run(
-            ["git", "diff", "--cached", "--name-only"],
-            capture_output=True, text=True, check=True
-        )
-        return result.stdout.strip().split("\n") if result.stdout.strip() else []
-```
+**Verificaciones Requeridas:**
+- Verificar que Git esté instalado y disponible en PATH
+- Verificar que el directorio actual sea un repositorio Git válido
+- Verificar permisos de escritura en el repositorio
 
-#### 2. Manejo de Errores Git
-```python
-# git_error_handler.py
-class GitErrorHandler:
-    @staticmethod
-    def handle_git_error(error, context=""):
-        if "not a git repository" in str(error):
-            raise RuntimeError(f"No es un repositorio Git válido. {context}")
-        elif "nothing to commit" in str(error):
-            raise RuntimeError("No hay cambios para hacer commit")
-        elif "merge conflict" in str(error):
-            raise RuntimeError("Hay conflictos de merge que resolver")
-        else:
-            raise RuntimeError(f"Error de Git: {error}")
-```
+**Operaciones Git Principales:**
+- `stage_all_changes()`: Stage todos los cambios modificados
+- `stage_files(files)`: Stage archivos específicos
+- `commit(message)`: Realizar commit con mensaje
+- `get_current_branch()`: Obtener rama actual
+- `get_staged_files()`: Obtener lista de archivos staged
+- `get_unstaged_files()`: Obtener lista de archivos modificados no staged
+- `get_repository_status()`: Obtener estado completo del repositorio
 
-#### 3. Validación de Estado
-```python
-# git_state_validator.py
-class GitStateValidator:
-    @staticmethod
-    def validate_clean_working_directory():
-        result = subprocess.run(
-            ["git", "status", "--porcelain"],
-            capture_output=True, text=True, check=True
-        )
-        if result.stdout.strip():
-            raise RuntimeError("El directorio de trabajo no está limpio")
-    
-    @staticmethod
-    def validate_staged_changes():
-        result = subprocess.run(
-            ["git", "diff", "--cached", "--quiet"],
-            capture_output=True
-        )
-        if result.returncode != 0:
-            raise RuntimeError("No hay cambios staged para commit")
-```
+**Validaciones de Estado:**
+- `validate_git_repository()`: Verificar que es repositorio Git
+- `validate_clean_working_directory()`: Verificar directorio limpio
+- `validate_staged_changes()`: Verificar que hay cambios staged
+- `validate_no_conflicts()`: Verificar que no hay conflictos de merge
+
+#### 2. Especificación de Manejo de Errores Git
+
+**Errores Comunes y Respuestas:**
+- **"not a git repository"**: Error 4 - No es un repositorio Git válido
+- **"nothing to commit"**: Error 4 - No hay cambios para hacer commit
+- **"merge conflict"**: Error 4 - Hay conflictos de merge que resolver
+- **"permission denied"**: Error 4 - Sin permisos de escritura
+- **"detached HEAD"**: Error 4 - Estado HEAD desconectado
+
+**Mensajes de Error:**
+- Mensajes descriptivos y accionables
+- Sugerencias de comandos para resolver problemas
+- Códigos de error específicos para diferentes situaciones
+
+#### 3. Especificación de Comandos Git Wrapper
+
+**Comandos Simplificados:**
+- `gga`: Equivalente a `git add .`
+- `ggs`: Equivalente a `git status` con formato mejorado
+- `ggl`: Equivalente a `git log` con formato compacto
+- `ggdif`: Equivalente a `git diff` con colores
+- `ggunstage`: Equivalente a `git reset HEAD <file>`
+- `ggreset`: Equivalente a `git reset --hard HEAD`
+
+**Formato de Salida Mejorado:**
+- Colores consistentes para diferentes tipos de información
+- Formato compacto para información de estado
+- Resaltado de archivos modificados, staged, y untracked
 
 ## Sistema de IA para generación de commits
 
@@ -560,190 +668,83 @@ Sistema que utiliza inteligencia artificial para analizar cambios y generar mens
 
 ### Componentes
 
-#### 1. Analizador de Cambios
-```python
-# change_analyzer.py
-import difflib
-import os
+#### 1. Especificación del Analizador de Cambios
 
-class ChangeAnalyzer:
-    def __init__(self):
-        self.git_interface = GitInterface()
-    
-    def analyze_staged_changes(self):
-        """Analiza los cambios staged para determinar el tipo de commit"""
-        staged_files = self.git_interface.get_staged_files()
-        
-        analysis = {
-            'files_changed': len(staged_files),
-            'file_types': self.categorize_files(staged_files),
-            'change_patterns': self.analyze_change_patterns(staged_files),
-            'suggested_type': self.suggest_commit_type(staged_files)
-        }
-        
-        return analysis
-    
-    def categorize_files(self, files):
-        """Categoriza archivos por tipo"""
-        categories = {
-            'source': [],
-            'test': [],
-            'docs': [],
-            'config': [],
-            'assets': []
-        }
-        
-        for file in files:
-            ext = os.path.splitext(file)[1].lower()
-            if ext in ['.py', '.js', '.java', '.cpp', '.c']:
-                categories['source'].append(file)
-            elif 'test' in file.lower() or ext in ['.test', '.spec']:
-                categories['test'].append(file)
-            elif ext in ['.md', '.txt', '.rst']:
-                categories['docs'].append(file)
-            elif ext in ['.yml', '.yaml', '.json', '.toml']:
-                categories['config'].append(file)
-            else:
-                categories['assets'].append(file)
-        
-        return categories
-    
-    def analyze_change_patterns(self, files):
-        """Analiza patrones de cambios"""
-        patterns = []
-        
-        # Analizar diffs para detectar patrones
-        for file in files:
-            diff = self.get_file_diff(file)
-            if self.is_bug_fix(diff):
-                patterns.append('bug_fix')
-            elif self.is_feature_addition(diff):
-                patterns.append('feature')
-            elif self.is_refactoring(diff):
-                patterns.append('refactor')
-        
-        return patterns
-    
-    def suggest_commit_type(self, files):
-        """Sugiere el tipo de commit basado en el análisis"""
-        categories = self.categorize_files(files)
-        patterns = self.analyze_change_patterns(files)
-        
-        if 'bug_fix' in patterns:
-            return 'fix'
-        elif 'feature' in patterns:
-            return 'feat'
-        elif 'refactor' in patterns:
-            return 'refactor'
-        elif categories['docs']:
-            return 'docs'
-        elif categories['test']:
-            return 'test'
-        else:
-            return 'chore'
+**Análisis de Archivos Staged:**
+- Categorización automática de archivos por tipo (source, test, docs, config, assets)
+- Detección de patrones de cambios (bug fix, feature, refactor, docs)
+- Análisis de diffs para determinar el tipo de cambio
+- Sugerencia automática del tipo de commit
+
+**Categorización de Archivos:**
+- **Source**: `.py`, `.js`, `.java`, `.cpp`, `.c`, `.go`, `.rs`
+- **Test**: Archivos con `test`, `spec`, `.test`, `.spec`
+- **Docs**: `.md`, `.txt`, `.rst`, `.adoc`
+- **Config**: `.yml`, `.yaml`, `.json`, `.toml`, `.ini`
+- **Assets**: Imágenes, fuentes, archivos binarios
+
+**Patrones de Cambio:**
+- **Bug Fix**: Cambios en lógica de manejo de errores, correcciones de bugs
+- **Feature**: Nuevas funcionalidades, métodos, clases
+- **Refactor**: Reestructuración de código sin cambiar funcionalidad
+- **Docs**: Cambios en documentación
+- **Test**: Agregado o modificación de tests
+
+#### 2. Especificación del Generador de Mensajes con IA
+
+**Proveedores de IA Soportados:**
+- **OpenAI**: GPT-3.5-turbo, GPT-4
+- **Anthropic**: Claude
+- **Local**: Modelos locales (opcional)
+
+**Configuración de IA:**
+```yaml
+ai:
+  enabled: true
+  provider: "openai"
+  api_key_env: "OPENAI_API_KEY"
+  model: "gpt-3.5-turbo"
+  max_tokens: 100
+  temperature: 0.7
+  prompt_template: "custom_prompt.txt"  # Opcional
 ```
 
-#### 2. Generador de Mensajes con IA
-```python
-# ai_message_generator.py
-import openai
-import os
+**Prompt Estándar:**
+El sistema debe generar prompts que incluyan:
+- Lista de archivos modificados
+- Categorización de archivos
+- Patrones de cambio detectados
+- Tipo de commit sugerido
+- Instrucciones para formato Conventional Commits
 
-class AIMessageGenerator:
-    def __init__(self):
-        self.api_key = os.getenv('OPENAI_API_KEY')
-        if not self.api_key:
-            raise RuntimeError("OPENAI_API_KEY no está configurada")
-        
-        openai.api_key = self.api_key
-    
-    def generate_commit_message(self, analysis):
-        """Genera un mensaje de commit usando IA"""
-        prompt = self.build_prompt(analysis)
-        
-        try:
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {
-                        "role": "system",
-                        "content": "Eres un experto en Conventional Commits. Genera mensajes de commit concisos y descriptivos."
-                    },
-                    {
-                        "role": "user",
-                        "content": prompt
-                    }
-                ],
-                max_tokens=100,
-                temperature=0.7
-            )
-            
-            return response.choices[0].message.content.strip()
-        
-        except Exception as e:
-            raise RuntimeError(f"Error al generar mensaje con IA: {e}")
-    
-    def build_prompt(self, analysis):
-        """Construye el prompt para la IA"""
-        prompt = f"""
-        Analiza los siguientes cambios y genera un mensaje de commit siguiendo Conventional Commits:
-        
-        Archivos cambiados: {analysis['files_changed']}
-        Tipos de archivo: {analysis['file_types']}
-        Patrones detectados: {analysis['change_patterns']}
-        Tipo sugerido: {analysis['suggested_type']}
-        
-        Genera un mensaje de commit que sea:
-        1. Conciso (máximo 50 caracteres)
-        2. Descriptivo
-        3. Siga el formato: <type>(<scope>): <description>
-        
-        Solo devuelve el mensaje, sin explicaciones adicionales.
-        """
-        
-        return prompt
-```
+**Validación de Respuesta:**
+- Verificar que el mensaje siga formato Conventional Commits
+- Validar longitud máxima de descripción
+- Confirmar que el tipo sugerido sea válido
+- Proponer correcciones si es necesario
 
-#### 3. Integración con Comandos
-```python
-# ggai command implementation
-#!/usr/bin/env python3
+#### 3. Especificación del Comando ggai
 
-import sys
-from change_analyzer import ChangeAnalyzer
-from ai_message_generator import AIMessageGenerator
-from cli_interface import CLIInterface
+**Funcionalidad:**
+- Analizar automáticamente cambios staged
+- Generar mensaje de commit con IA
+- Mostrar sugerencia al usuario
+- Permitir aceptar, rechazar o modificar el mensaje
+- Realizar commit si se acepta
 
-def main():
-    try:
-        # Analizar cambios
-        analyzer = ChangeAnalyzer()
-        analysis = analyzer.analyze_staged_changes()
-        
-        # Generar mensaje con IA
-        ai_generator = AIMessageGenerator()
-        message = ai_generator.generate_commit_message(analysis)
-        
-        # Mostrar sugerencia
-        CLIInterface.print_info("Mensaje sugerido", message)
-        
-        # Preguntar si aceptar
-        response = input("¿Aceptar este mensaje? (y/N): ")
-        if response.lower() in ['y', 'yes']:
-            # Hacer commit
-            git_interface = GitInterface()
-            git_interface.commit(message)
-            CLIInterface.print_success("Commit realizado exitosamente")
-        else:
-            CLIInterface.print_info("Operación cancelada", "Puedes escribir tu propio mensaje")
-    
-    except Exception as e:
-        CLIInterface.print_error(str(e))
-        sys.exit(1)
+**Opciones del Comando:**
+- `--auto`: Aceptar automáticamente la sugerencia
+- `--provider <provider>`: Especificar proveedor de IA
+- `--model <model>`: Especificar modelo de IA
+- `--verbose`: Mostrar análisis detallado
+- `--dry-run`: Solo mostrar sugerencia sin hacer commit
 
-if __name__ == "__main__":
-    main()
-```
+**Flujo de Interacción:**
+1. Analizar cambios staged
+2. Generar mensaje con IA
+3. Mostrar sugerencia
+4. Preguntar confirmación
+5. Realizar commit o cancelar
 
 ## Sistema de observabilidad y logging
 
@@ -752,133 +753,89 @@ Sistema que proporciona logging, métricas y debugging para facilitar el manteni
 
 ### Componentes
 
-#### 1. Sistema de Logging
-```python
-# logger.py
-import logging
-import os
-from datetime import datetime
+#### 1. Especificación del Sistema de Logging
 
-class GGLogger:
-    def __init__(self, command_name):
-        self.logger = logging.getLogger(f"gggit.{command_name}")
-        self.setup_logging()
-    
-    def setup_logging(self):
-        """Configura el sistema de logging"""
-        log_dir = os.path.expanduser("~/.gggit/logs")
-        os.makedirs(log_dir, exist_ok=True)
-        
-        log_file = os.path.join(log_dir, f"gggit_{datetime.now().strftime('%Y%m')}.log")
-        
-        formatter = logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-        )
-        
-        file_handler = logging.FileHandler(log_file)
-        file_handler.setFormatter(formatter)
-        
-        self.logger.addHandler(file_handler)
-        self.logger.setLevel(logging.INFO)
-    
-    def log_command_execution(self, command, args, result):
-        """Registra la ejecución de un comando"""
-        self.logger.info(f"Command: {command} Args: {args} Result: {result}")
-    
-    def log_error(self, error, context=""):
-        """Registra errores"""
-        self.logger.error(f"Error: {error} Context: {context}")
-    
-    def log_configuration_change(self, config_type, changes):
-        """Registra cambios de configuración"""
-        self.logger.info(f"Config change: {config_type} Changes: {changes}")
+**Estructura de Logs:**
+- **Ubicación**: `~/.gggit/logs/`
+- **Formato**: `gggit_YYYYMM.log` (rotación mensual)
+- **Nivel**: INFO por defecto, DEBUG si está habilitado
+- **Formato de Entrada**: `YYYY-MM-DD HH:MM:SS - gggit.<command> - LEVEL - message`
+
+**Eventos a Registrar:**
+- Ejecución de comandos con argumentos
+- Errores y excepciones con contexto
+- Cambios de configuración
+- Operaciones de IA (solicitudes, respuestas, errores)
+- Operaciones Git (commits, stage, etc.)
+
+**Configuración de Logging:**
+```yaml
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  max_size: "10MB"
+  backup_count: 5
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 ```
 
-#### 2. Métricas de Uso
-```python
-# metrics.py
-import json
-import os
-from datetime import datetime
+#### 2. Especificación de Métricas de Uso
 
-class MetricsCollector:
-    def __init__(self):
-        self.metrics_file = os.path.expanduser("~/.gggit/metrics.json")
-        self.load_metrics()
-    
-    def load_metrics(self):
-        """Carga métricas existentes"""
-        if os.path.exists(self.metrics_file):
-            with open(self.metrics_file, 'r') as f:
-                self.metrics = json.load(f)
-        else:
-            self.metrics = {
-                'commands_used': {},
-                'errors': {},
-                'daily_usage': {},
-                'total_executions': 0
-            }
-    
-    def record_command_usage(self, command):
-        """Registra el uso de un comando"""
-        self.metrics['commands_used'][command] = self.metrics['commands_used'].get(command, 0) + 1
-        self.metrics['total_executions'] += 1
-        
-        today = datetime.now().strftime('%Y-%m-%d')
-        if today not in self.metrics['daily_usage']:
-            self.metrics['daily_usage'][today] = 0
-        self.metrics['daily_usage'][today] += 1
-        
-        self.save_metrics()
-    
-    def record_error(self, command, error_type):
-        """Registra errores"""
-        if command not in self.metrics['errors']:
-            self.metrics['errors'][command] = {}
-        
-        self.metrics['errors'][command][error_type] = self.metrics['errors'][command].get(error_type, 0) + 1
-        self.save_metrics()
-    
-    def save_metrics(self):
-        """Guarda métricas en archivo"""
-        with open(self.metrics_file, 'w') as f:
-            json.dump(self.metrics, f, indent=2)
-    
-    def get_usage_stats(self):
-        """Obtiene estadísticas de uso"""
-        return {
-            'total_executions': self.metrics['total_executions'],
-            'most_used_command': max(self.metrics['commands_used'].items(), key=lambda x: x[1])[0] if self.metrics['commands_used'] else None,
-            'commands_used': self.metrics['commands_used'],
-            'recent_errors': self.metrics['errors']
-        }
+**Métricas a Recolectar:**
+- **Uso de Comandos**: Frecuencia de uso de cada comando
+- **Errores**: Tipos y frecuencia de errores por comando
+- **Uso Diario**: Actividad diaria del usuario
+- **Configuraciones**: Módulos y configuraciones más usadas
+- **IA**: Uso de funcionalidades de IA
+
+**Almacenamiento de Métricas:**
+- **Archivo**: `~/.gggit/metrics.json`
+- **Formato**: JSON estructurado
+- **Privacidad**: Solo datos de uso, sin información personal
+- **Retención**: Historial de 12 meses
+
+**Estructura de Métricas:**
+```json
+{
+  "commands_used": {
+    "ggfeat": 150,
+    "ggfix": 89,
+    "ggai": 45
+  },
+  "errors": {
+    "ggfeat": {
+      "invalid_message": 5,
+      "no_changes": 12
+    }
+  },
+  "daily_usage": {
+    "2024-01-15": 25,
+    "2024-01-16": 18
+  },
+  "total_executions": 284,
+  "ai_usage": {
+    "requests": 45,
+    "success_rate": 0.93
+  }
+}
 ```
 
-#### 3. Debug Mode
-```python
-# debug.py
-import os
-import sys
+#### 3. Especificación del Modo Debug
 
-class DebugMode:
-    def __init__(self):
-        self.debug_enabled = os.getenv('GGGIT_DEBUG', 'false').lower() == 'true'
-    
-    def debug_print(self, message):
-        """Imprime mensajes de debug si está habilitado"""
-        if self.debug_enabled:
-            print(f"[DEBUG] {message}", file=sys.stderr)
-    
-    def debug_config(self, config):
-        """Imprime configuración en modo debug"""
-        if self.debug_enabled:
-            print(f"[DEBUG] Config: {config}", file=sys.stderr)
-    
-    def debug_command(self, command, args):
-        """Imprime información del comando en modo debug"""
-        if self.debug_enabled:
-            print(f"[DEBUG] Command: {command} Args: {args}", file=sys.stderr)
-```
+**Activación del Debug:**
+- **Variable de Entorno**: `GGGIT_DEBUG=true`
+- **Configuración**: `debug: true` en configuración
+- **Comando**: `--debug` flag en comandos
+
+**Información de Debug:**
+- Configuración cargada y valores utilizados
+- Argumentos de comandos procesados
+- Operaciones Git ejecutadas
+- Llamadas a APIs de IA
+- Validaciones realizadas
+
+**Salida de Debug:**
+- **Destino**: stderr para no interferir con salida normal
+- **Formato**: `[DEBUG] <context>: <message>`
+- **Nivel**: Detallado para troubleshooting
 
 ## Integraciones con terceros
 
@@ -887,151 +844,83 @@ Sistema que maneja integraciones con servicios externos como APIs de IA, gestore
 
 ### Componentes
 
-#### 1. Gestor de APIs de IA
-```python
-# ai_provider_manager.py
-import os
-from abc import ABC, abstractmethod
+#### 1. Especificación de Integración con APIs de IA
 
-class AIProvider(ABC):
-    @abstractmethod
-    def generate_commit_message(self, analysis):
-        pass
+**Proveedores Soportados:**
+- **OpenAI**: GPT-3.5-turbo, GPT-4
+- **Anthropic**: Claude
+- **Local**: Modelos locales (opcional)
 
-class OpenAIProvider(AIProvider):
-    def __init__(self):
-        self.api_key = os.getenv('OPENAI_API_KEY')
-        if not self.api_key:
-            raise RuntimeError("OPENAI_API_KEY no configurada")
-    
-    def generate_commit_message(self, analysis):
-        # Implementación específica de OpenAI
-        pass
-
-class AnthropicProvider(AIProvider):
-    def __init__(self):
-        self.api_key = os.getenv('ANTHROPIC_API_KEY')
-        if not self.api_key:
-            raise RuntimeError("ANTHROPIC_API_KEY no configurada")
-    
-    def generate_commit_message(self, analysis):
-        # Implementación específica de Anthropic
-        pass
-
-class AIProviderManager:
-    def __init__(self):
-        self.providers = {
-            'openai': OpenAIProvider,
-            'anthropic': AnthropicProvider
-        }
-    
-    def get_provider(self, provider_name):
-        """Obtiene el proveedor de IA especificado"""
-        if provider_name not in self.providers:
-            raise ValueError(f"Proveedor no soportado: {provider_name}")
-        
-        return self.providers[provider_name]()
+**Configuración de Proveedores:**
+```yaml
+ai_providers:
+  openai:
+    api_key_env: "OPENAI_API_KEY"
+    models: ["gpt-3.5-turbo", "gpt-4"]
+    rate_limit: 60  # requests per minute
+    timeout: 30     # seconds
+  
+  anthropic:
+    api_key_env: "ANTHROPIC_API_KEY"
+    models: ["claude-3-sonnet", "claude-3-haiku"]
+    rate_limit: 50
+    timeout: 30
+  
+  local:
+    endpoint: "http://localhost:8000"
+    models: ["local-model"]
+    timeout: 10
 ```
 
-#### 2. Integración con CI/CD
-```python
-# cicd_integration.py
-import os
+**Manejo de Errores de IA:**
+- **Rate Limiting**: Reintentos automáticos con backoff exponencial
+- **Timeouts**: Configuración de timeouts por proveedor
+- **Fallbacks**: Cambio automático de proveedor en caso de error
+- **Cache**: Cache de respuestas para evitar llamadas repetidas
 
-class CICDIntegration:
-    def __init__(self):
-        self.is_ci_environment = self.detect_ci_environment()
-    
-    def detect_ci_environment(self):
-        """Detecta si estamos en un entorno de CI/CD"""
-        ci_vars = ['CI', 'GITHUB_ACTIONS', 'GITLAB_CI', 'JENKINS_URL']
-        return any(os.getenv(var) for var in ci_vars)
-    
-    def get_ci_info(self):
-        """Obtiene información del entorno de CI/CD"""
-        if os.getenv('GITHUB_ACTIONS'):
-            return {
-                'provider': 'github',
-                'repository': os.getenv('GITHUB_REPOSITORY'),
-                'workflow': os.getenv('GITHUB_WORKFLOW'),
-                'run_id': os.getenv('GITHUB_RUN_ID')
-            }
-        elif os.getenv('GITLAB_CI'):
-            return {
-                'provider': 'gitlab',
-                'project': os.getenv('CI_PROJECT_PATH'),
-                'pipeline': os.getenv('CI_PIPELINE_ID')
-            }
-        else:
-            return None
-    
-    def validate_commit_in_ci(self, commit_message):
-        """Valida el commit en entorno de CI/CD"""
-        if not self.is_ci_environment:
-            return True
-        
-        # Implementar validación específica para CI/CD
-        # Por ejemplo, verificar que el commit siga las reglas del equipo
-        return True
+#### 2. Especificación de Integración con CI/CD
+
+**Entornos de CI/CD Soportados:**
+- **GitHub Actions**: Detección automática y validación
+- **GitLab CI**: Integración con pipelines
+- **Jenkins**: Soporte para builds automatizados
+- **Azure DevOps**: Integración con pipelines de Azure
+
+**Validaciones en CI/CD:**
+- Verificación de formato de Conventional Commits
+- Validación de tipos de commit permitidos
+- Verificación de scopes requeridos
+- Validación de longitud de mensajes
+
+**Configuración de CI/CD:**
+```yaml
+cicd:
+  enabled: true
+  strict_mode: false  # Validación estricta en CI
+  allowed_types: ["feat", "fix", "docs", "style", "refactor", "test", "chore"]
+  require_scope: false
+  max_description_length: 72
 ```
 
-#### 3. Gestor de Paquetes
-```python
-# package_manager_integration.py
-import subprocess
-import sys
+#### 3. Especificación de Gestores de Paquetes
 
-class PackageManagerIntegration:
-    def __init__(self):
-        self.package_managers = {
-            'npm': self.check_npm,
-            'pip': self.check_pip,
-            'go': self.check_go,
-            'cargo': self.check_cargo
-        }
-    
-    def check_dependencies(self):
-        """Verifica que las dependencias estén instaladas"""
-        missing_deps = []
-        
-        for manager, check_func in self.package_managers.items():
-            if not check_func():
-                missing_deps.append(manager)
-        
-        return missing_deps
-    
-    def check_npm(self):
-        """Verifica si npm está disponible"""
-        try:
-            subprocess.run(['npm', '--version'], check=True, capture_output=True)
-            return True
-        except (subprocess.CalledProcessError, FileNotFoundError):
-            return False
-    
-    def check_pip(self):
-        """Verifica si pip está disponible"""
-        try:
-            subprocess.run([sys.executable, '-m', 'pip', '--version'], check=True, capture_output=True)
-            return True
-        except subprocess.CalledProcessError:
-            return False
-    
-    def check_go(self):
-        """Verifica si Go está disponible"""
-        try:
-            subprocess.run(['go', 'version'], check=True, capture_output=True)
-            return True
-        except (subprocess.CalledProcessError, FileNotFoundError):
-            return False
-    
-    def check_cargo(self):
-        """Verifica si Cargo está disponible"""
-        try:
-            subprocess.run(['cargo', '--version'], check=True, capture_output=True)
-            return True
-        except (subprocess.CalledProcessError, FileNotFoundError):
-            return False
-```
+**Distribución Multiplataforma:**
+- **Linux**: Paquetes .deb, .rpm, AppImage
+- **macOS**: Homebrew, MacPorts
+- **Windows**: Chocolatey, winget, instalador MSI
+
+**Requisitos de Empaquetado:**
+- Script de instalación multiplataforma
+- Dependencias declaradas en archivo de manifiesto
+- Configuración automática de PATH
+- Verificación post-instalación
+- Actualizaciones automáticas
+
+**Integración con Gestores:**
+- **Homebrew**: Formula para macOS
+- **Chocolatey**: Package para Windows
+- **Snap**: Package para Linux
+- **Flatpak**: Package universal
 
 ### Consideraciones de Seguridad
 
