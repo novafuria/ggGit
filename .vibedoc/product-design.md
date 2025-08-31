@@ -44,46 +44,7 @@
     - [Flujo de proceso 1: Commit con Conventional Commits](#flujo-de-proceso-1-commit-con-conventional-commits)
     - [Flujo de proceso 2: Configuración y gestión de módulos](#flujo-de-proceso-2-configuración-y-gestión-de-módulos)
     - [Flujo de proceso 3: Integración con CI/CD](#flujo-de-proceso-3-integración-con-cicd)
-- [Contexto: Sistema de Configuración](#contexto-sistema-de-configuración)
-  - [Ciclo de vida](#ciclo-de-vida-1)
-    - [Al iniciar el contexto](#al-iniciar-el-contexto-1)
-    - [Al pasar a segundo plano](#al-pasar-a-segundo-plano-1)
-    - [Al volver a primer plano](#al-volver-a-primer-plano-1)
-    - [Al volver a la aplicación](#al-volver-a-la-aplicación-1)
-    - [Al finalizar el contexto](#al-finalizar-el-contexto-1)
-  - [Acciones](#acciones-1)
-    - [Crear configuración de equipo](#crear-configuración-de-equipo)
-      - [Descripción](#descripción-3)
-      - [Beneficios](#beneficios-3)
-      - [Casos de uso](#casos-de-uso-3)
-        - [Tech Lead que define estándares del proyecto](#tech-lead-que-define-estándares-del-proyecto)
-    - [Distribuir configuración](#distribuir-configuración)
-      - [Descripción](#descripción-4)
-      - [Beneficios](#beneficios-4)
-      - [Casos de uso](#casos-de-uso-4)
-        - [Onboarding de nuevos desarrolladores](#onboarding-de-nuevos-desarrolladores)
-  - [Flujos de procesos](#flujos-de-procesos-1)
-    - [Flujo de proceso 4: Gestión de configuraciones](#flujo-de-proceso-4-gestión-de-configuraciones)
-- [Contexto: Futuro Sistema de IA](#contexto-futuro-sistema-de-ia)
-  - [Ciclo de vida](#ciclo-de-vida-2)
-    - [Al iniciar el contexto](#al-iniciar-el-contexto-2)
-    - [Al pasar a segundo plano](#al-pasar-a-segundo-plano-2)
-    - [Al volver a primer plano](#al-volver-a-primer-plano-2)
-    - [Al volver a la aplicación](#al-volver-a-la-aplicación-2)
-    - [Al finalizar el contexto](#al-finalizar-el-contexto-2)
-  - [Acciones](#acciones-2)
-    - [Generar mensaje de commit con IA](#generar-mensaje-de-commit-con-ia)
-      - [Descripción](#descripción-5)
-      - [Beneficios](#beneficios-5)
-      - [Casos de uso](#casos-de-uso-5)
-        - [Desarrollador que no sabe qué escribir en el commit](#desarrollador-que-no-sabe-qué-escribir-en-el-commit)
-    - [Autocompletar mensaje de commit](#autocompletar-mensaje-de-commit)
-      - [Descripción](#descripción-6)
-      - [Beneficios](#beneficios-6)
-      - [Casos de uso](#casos-de-uso-6)
-        - [Desarrollador que quiere acelerar su flujo de trabajo](#desarrollador-que-quiere-acelerar-su-flujo-de-trabajo)
-  - [Flujos de procesos](#flujos-de-procesos-2)
-    - [Flujo de proceso 5: Generación de mensajes con IA](#flujo-de-proceso-5-generación-de-mensajes-con-ia)
+
 
 ## Descripción general
 
@@ -129,20 +90,13 @@
 │  ┌─────────────────────────────────────────────────────────────────────┐   │
 │  │                    Flujos de Proceso                               │   │
 │  │                                                                     │   │
-│  │  1. Commit → 2. Validación → 3. CI/CD → 4. Release                 │   │
+│  │  1. Commit → 2. CI/CD → 3. Validación → 4. Release                 │   │
 │  │     ↓           ↓           ↓         ↓                             │   │
-│  │  Conventional  Hooks      Pipeline  Automático                     │   │
-│  │  Commits      Git         GitHub    Changelog                      │   │
+│  │  Conventional  Pipeline   Validación Automático                     │   │
+│  │  Commits      GitHub     en la nube Changelog                      │   │
 │  └─────────────────────────────────────────────────────────────────────┘   │
 │                                                                             │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │                    Futuro: Sistema de IA                           │   │
-│  │                                                                     │   │
-│  │  $ ggai "analiza cambios y sugiere mensaje"                        │   │
-│  │  → feat: implementa autenticación OAuth2 con refresh tokens        │   │
-│  │                                                                     │
-│  │  Análisis automático de archivos staged → Sugerencia inteligente   │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
+
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -274,7 +228,7 @@ El usuario configura ggGit para su entorno específico usando el comando `ggconf
 
 ###### Nuevo desarrollador que se une al proyecto
 
-Ana es una nueva desarrolladora que se une al equipo. En lugar de configurar manualmente todos los alias Git, hooks, y configuraciones, simplemente ejecuta `ggconfig setup -m work-company-a --url https://company-a.com/gggit.yaml`. El sistema descarga automáticamente la configuración estándar del equipo, valida el esquema YAML, instala todos los hooks necesarios, y la prepara para trabajar inmediatamente con los estándares del proyecto.
+Ana es una nueva desarrolladora que se une al equipo. Simplemente ejecuta `ggconfig setup -m work-company-a --url https://company-a.com/gggit.yaml`. El sistema descarga automáticamente la configuración estándar del equipo, valida el esquema YAML, y la prepara para trabajar inmediatamente con los estándares del proyecto.
 
 ###### DevOps que necesita configurar el entorno
 
@@ -283,13 +237,13 @@ Roberto es DevOps y necesita configurar ggGit en un nuevo servidor de CI/CD. Eje
 #### Gestionar configuración de módulos
 ##### Descripción
 
-El usuario puede gestionar configuraciones específicas para diferentes contextos de trabajo (empresas, equipos, proyectos) usando el sistema de módulos. Cada vez que se ejecuta un comando ggGit, el sistema detecta automáticamente el contexto basándose en el directorio actual y aplica la configuración del módulo correspondiente. Esto permite usar diferentes configuraciones de IA, hooks, y templates según el contexto de trabajo.
+El usuario puede gestionar configuraciones específicas para diferentes contextos de trabajo (empresas, equipos, proyectos) usando el sistema de módulos. Cada vez que se ejecuta un comando ggGit, el sistema detecta automáticamente el contexto basándose en el directorio actual y aplica la configuración del módulo correspondiente. Esto permite usar diferentes configuraciones de IA y templates según el contexto de trabajo.
 
 ##### Beneficios
 
 - **Contexto automático**: El sistema detecta automáticamente el contexto de trabajo sin intervención manual
 - **Flexibilidad**: Diferentes configuraciones para diferentes contextos (personal, empresa, proyecto)
-- **Separación de configuraciones**: Configuraciones de IA, hooks y templates específicos por contexto
+- **Separación de configuraciones**: Configuraciones de IA y templates específicos por contexto
 - **Mantenimiento simple**: No hay sincronización automática, solo archivos YAML locales
 - **Portabilidad**: Las configuraciones funcionan offline y son fáciles de respaldar
 
@@ -297,7 +251,7 @@ El usuario puede gestionar configuraciones específicas para diferentes contexto
 
 ###### Equipo que actualiza estándares de commit
 
-El equipo decide agregar nuevos tipos de commit como "docs:" para documentación. El Tech Lead actualiza la configuración del módulo `work-company-a.yaml` y comparte el archivo con el equipo. Cada desarrollador ejecuta `ggconfig setup -m work-company-a --url <nueva-url>` para obtener la configuración actualizada, incluyendo el nuevo tipo de commit, templates actualizados, y validaciones mejoradas.
+El equipo decide agregar nuevos tipos de commit como "docs:" para documentación. El Tech Lead actualiza la configuración del módulo `work-company-a.yaml` y comparte el archivo con el equipo. Cada desarrollador ejecuta `ggconfig setup -m work-company-a --url <nueva-url>` para obtener la configuración actualizada, incluyendo el nuevo tipo de commit, templates actualizados, y configuraciones mejoradas.
 
 ###### Integración con CI/CD pipeline
 
@@ -335,158 +289,5 @@ El equipo actualiza las reglas de validación de commits para ser más estrictas
 [Rechazar commit]   [Rechazar commit] [Notificar equipo] [Rechazar commit] [Generar manual] [Intervención manual]
 ```
 
-## Contexto: Sistema de Configuración
 
-> Con la información de la infografía se debe crear un texto extensivo que permita comprender la solución y sus dinámicas de forma completa solo con la lectura. Por cada pantalla, vista o proceso backend que se incluya en la infografía se debe incluir una imagen y una serie de secciones que describan las acciones y eventos, el ciclo de vida y los componentes involucrados. Estas secciones se llamarán contextos.
 
-### Ciclo de vida
-
-#### Al iniciar el contexto
-
-Cuando se inicia el sistema de configuración, el contexto se inicializa cargando la configuración base desde el repositorio central del equipo. El sistema verifica la conectividad con el repositorio de configuración, valida las credenciales de acceso, y descarga la configuración más reciente. Se establece el contexto de trabajo con todas las configuraciones disponibles y se prepara para responder a solicitudes de configuración.
-
-#### Al pasar a segundo plano
-
-Cuando el sistema de configuración no está procesando solicitudes activas, pasa a segundo plano. El sistema mantiene en memoria la configuración cargada, monitorea cambios en el repositorio central, y mantiene conexiones activas para respuestas rápidas. Se ejecutan procesos de limpieza y optimización en segundo plano.
-
-#### Al volver a primer plano
-
-Cuando se recibe una nueva solicitud de configuración, el contexto vuelve a primer plano. El sistema valida que la configuración en memoria esté actualizada, verifica la integridad de los archivos de configuración, y prepara el entorno para procesar la nueva solicitud. Se restauran las conexiones necesarias.
-
-#### Al volver a la aplicación
-
-Cuando el usuario regresa a la aplicación después de usar otras herramientas, el contexto se reactiva. El sistema verifica que no haya cambios en la configuración del repositorio central, valida la consistencia de la configuración local, y restaura el estado de la sesión anterior si es necesario.
-
-#### Al finalizar el contexto
-
-Cuando se finaliza el sistema de configuración, el contexto se cierra. El sistema guarda logs de todas las operaciones realizadas, cierra conexiones a repositorios externos, libera memoria y recursos del sistema, y asegura que no queden procesos activos. Se realiza una limpieza completa del entorno.
-
-### Acciones
-
-#### Crear configuración de equipo
-##### Descripción
-
-El Tech Lead o administrador del proyecto crea una nueva configuración de equipo que define estándares, templates, y reglas de validación. El sistema presenta un formulario de configuración, valida las entradas del usuario, genera archivos de configuración en formato estándar, y los sube al repositorio central del equipo. Esta configuración se convierte en la base para todos los miembros del equipo.
-
-##### Beneficios
-
-- **Estandarización**: Define reglas claras que todos los miembros del equipo deben seguir
-- **Consistencia**: Asegura que todos los entornos de desarrollo tengan la misma configuración
-- **Evolución**: Permite que el equipo mejore y refine sus estándares de manera colaborativa
-- **Automatización**: Reduce la necesidad de configurar manualmente cada entorno
-- **Calidad**: Establece estándares que mejoran la calidad del código y la documentación
-
-##### Casos de uso
-
-###### Tech Lead que define estándares del proyecto
-
-Sofía es Tech Lead de un proyecto de e-commerce. Quiere establecer estándares claros para commits que faciliten la generación automática de changelogs. Crea una configuración que define tipos de commit específicos como "feat:", "fix:", "docs:", "style:", "refactor:", "test:", y "chore:". También define templates para cada tipo y reglas de validación que aseguran que los mensajes sean descriptivos y útiles. Una vez creada, la configuración se distribuye automáticamente a todo el equipo.
-
-#### Distribuir configuración
-##### Descripción
-
-El sistema distribuye automáticamente la configuración del equipo a todos los entornos de desarrollo. Cuando se detecta un cambio en la configuración central, el sistema notifica a todos los usuarios registrados, descarga la nueva configuración, y la aplica automáticamente. Los usuarios pueden también forzar una sincronización manual cuando lo deseen.
-
-##### Beneficios
-
-- **Distribución automática**: Los usuarios reciben nuevas configuraciones sin intervención manual
-- **Sincronización**: Todos los entornos mantienen la misma configuración actualizada
-- **Notificación**: Los usuarios son informados de cambios en la configuración
-- **Rollback**: Posibilidad de revertir a configuraciones anteriores si es necesario
-- **Auditoría**: Registro completo de todas las distribuciones y cambios de configuración
-
-##### Casos de uso
-
-###### Onboarding de nuevos desarrolladores
-
-Lucas es un nuevo desarrollador que se une al equipo. En lugar de configurar manualmente su entorno Git con todos los alias, hooks, y configuraciones del proyecto, simplemente ejecuta `ggconfig --team`. El sistema detecta automáticamente que es un nuevo usuario, descarga la configuración estándar del equipo, instala todos los componentes necesarios, y lo prepara para trabajar inmediatamente con los estándares del proyecto. El proceso completo toma menos de 2 minutos.
-
-### Flujos de procesos
-
-#### Flujo de proceso 4: Gestión de configuraciones
-
-```
-[Cambio en configuración] → [Sistema detecta cambio] → [Valida configuración] → [Notifica usuarios] → [Distribuye cambios] → [Confirma aplicación]
-     ↓                           ↓                        ↓                      ↓                ↓                ↓
-[Configuración inválida]   [Error de detección]     [Validación falla]    [Notificación falla] [Distribución falla] [Aplicación exitosa]
-     ↓                           ↓                        ↓                      ↓                ↓
-[Rechazar cambio]          [Reportar error]          [Rechazar cambio]     [Reintentar]         [Rollback]          [Confirmar distribución]
-```
-
-## Contexto: Futuro Sistema de IA
-
-> Con la información de la infografía se debe crear un texto extensivo que permita comprender la solución y sus dinámicas de forma completa solo con la lectura. Por cada pantalla, vista o proceso backend que se incluya en la infografía se debe incluir una imagen y una serie de secciones que describan las acciones y eventos, el ciclo de vida y los componentes involucrados. Estas secciones se llamarán contextos.
-
-### Ciclo de vida
-
-#### Al iniciar el contexto
-
-Cuando se inicia el sistema de IA, el contexto se inicializa cargando modelos de lenguaje pre-entrenados, configurando APIs de servicios de IA, y estableciendo conexiones con repositorios de código. El sistema verifica la disponibilidad de recursos de IA, valida las credenciales de acceso a servicios externos, y prepara el entorno para análisis de código y generación de mensajes.
-
-#### Al pasar a segundo plano
-
-Cuando el sistema de IA no está procesando solicitudes activas, pasa a segundo plano. El sistema mantiene los modelos de IA en memoria para respuestas rápidas, monitorea el uso de recursos, y ejecuta procesos de optimización y limpieza. Se mantienen conexiones activas con servicios de IA externos.
-
-#### Al volver a primer plano
-
-Cuando se recibe una nueva solicitud de análisis de código o generación de mensaje, el contexto vuelve a primer plano. El sistema valida que los modelos de IA estén actualizados, verifica la disponibilidad de servicios externos, y prepara el entorno para procesar la nueva solicitud. Se restauran las conexiones necesarias.
-
-#### Al volver a la aplicación
-
-Cuando el usuario regresa a la aplicación después de usar otras herramientas, el contexto se reactiva. El sistema verifica que no haya cambios en los modelos de IA, valida la consistencia de las configuraciones, y restaura el estado de la sesión anterior si es necesario.
-
-#### Al finalizar el contexto
-
-Cuando se finaliza el sistema de IA, el contexto se cierra. El sistema guarda logs de todas las operaciones realizadas, cierra conexiones a servicios externos de IA, libera memoria y recursos del sistema, y asegura que no queden procesos activos. Se realiza una limpieza completa del entorno.
-
-### Acciones
-
-#### Generar mensaje de commit con IA
-##### Descripción
-
-El sistema analiza automáticamente los cambios en los archivos staged para commit y genera un mensaje de commit descriptivo y bien estructurado usando inteligencia artificial. El usuario ejecuta un comando como `ggai` y el sistema analiza el código modificado, identifica el tipo de cambio, y sugiere un mensaje que sigue los estándares de Conventional Commits.
-
-##### Beneficios
-
-- **Automatización**: Elimina la necesidad de escribir manualmente mensajes de commit
-- **Consistencia**: Asegura que todos los mensajes sigan los mismos estándares
-- **Calidad**: Genera mensajes más descriptivos y útiles que los escritos manualmente
-- **Eficiencia**: Acelera el flujo de trabajo al reducir el tiempo de escritura de commits
-- **Aprendizaje**: Los usuarios aprenden mejores prácticas observando los mensajes generados
-
-##### Casos de uso
-
-###### Desarrollador que no sabe qué escribir en el commit
-
-Diego está trabajando en una nueva funcionalidad pero no está seguro de cómo describir los cambios en el mensaje de commit. En lugar de escribir algo vago como "cambios varios", ejecuta `ggai`. El sistema analiza los archivos modificados, detecta que se agregó autenticación OAuth2, y sugiere el mensaje "feat: implementa autenticación OAuth2 con refresh tokens". Diego puede aceptar la sugerencia o modificarla según sus preferencias.
-
-#### Autocompletar mensaje de commit
-##### Descripción
-
-El sistema proporciona autocompletado inteligente mientras el usuario escribe un mensaje de commit. A medida que el usuario escribe, el sistema analiza el contexto del código modificado y sugiere completaciones basadas en patrones comunes y mejores prácticas. El usuario puede aceptar las sugerencias o continuar escribiendo manualmente.
-
-##### Beneficios
-
-- **Asistencia**: Ayuda al usuario a escribir mensajes más completos y descriptivos
-- **Flexibilidad**: Permite al usuario mantener control total sobre el mensaje final
-- **Aprendizaje**: Enseña mejores prácticas a través de sugerencias contextuales
-- **Eficiencia**: Acelera la escritura sin eliminar la creatividad del usuario
-- **Consistencia**: Sugiere formatos que siguen los estándares del equipo
-
-##### Casos de uso
-
-###### Desarrollador que quiere acelerar su flujo de trabajo
-
-Valentina está escribiendo un mensaje de commit y comienza con "feat:". El sistema detecta que está trabajando en una nueva funcionalidad y sugiere "feat: implementa sistema de notificaciones push". Valentina puede aceptar la sugerencia completa o modificar solo la parte descriptiva. El sistema continúa sugiriendo mejoras mientras escribe, como agregar el scope del cambio o detalles adicionales sobre la implementación.
-
-### Flujos de procesos
-
-#### Flujo de proceso 5: Generación de mensajes con IA
-
-```
-[Usuario ejecuta ggai] → [Sistema analiza cambios] → [IA genera mensaje] → [Usuario revisa] → [Usuario acepta/modifica] → [Commit exitoso]
-     ↓                        ↓                        ↓                ↓                ↓                ↓
-[Comando inválido]      [Error en análisis]      [IA falla]        [Usuario rechaza] [Usuario modifica] [Commit exitoso]
-     ↓                        ↓                        ↓                ↓                ↓
-[Mostrar error]         [Reintentar análisis]    [Fallback manual] [Solicitar input] [Regenerar con IA] [Confirmar commit]
-```
