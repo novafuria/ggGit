@@ -11,6 +11,7 @@
   - [Texto Descriptivo de la Propuesta de Valor](#texto-descriptivo-de-la-propuesta-de-valor)
   - [Eventos y Actividades Clave](#eventos-y-actividades-clave)
   - [Explosión de Componentes](#explosión-de-componentes)
+  - [Flexibilidad de Desarrollo por Comandos Independientes](#flexibilidad-de-desarrollo-por-comandos-independientes)
   - [Distribución de Vistas y Páginas](#distribución-de-vistas-y-páginas)
 - [Glosario de términos y definiciones](#glosario-de-términos-y-definiciones)
 - [Contexto: Terminal de Comandos](#contexto-terminal-de-comandos)
@@ -33,7 +34,7 @@
       - [Casos de uso](#casos-de-uso-1)
         - [Nuevo desarrollador que se une al proyecto](#nuevo-desarrollador-que-se-une-al-proyecto)
         - [DevOps que necesita configurar el entorno](#devops-que-necesita-configurar-el-entorno)
-    - [Sincronizar configuración](#sincronizar-configuración)
+    - [Gestionar configuración de módulos](#gestionar-configuración-de-módulos)
       - [Descripción](#descripción-2)
       - [Beneficios](#beneficios-2)
       - [Casos de uso](#casos-de-uso-2)
@@ -41,7 +42,7 @@
         - [Integración con CI/CD pipeline](#integración-con-cicd-pipeline)
   - [Flujos de procesos](#flujos-de-procesos)
     - [Flujo de proceso 1: Commit con Conventional Commits](#flujo-de-proceso-1-commit-con-conventional-commits)
-    - [Flujo de proceso 2: Configuración y sincronización](#flujo-de-proceso-2-configuración-y-sincronización)
+    - [Flujo de proceso 2: Configuración y gestión de módulos](#flujo-de-proceso-2-configuración-y-gestión-de-módulos)
     - [Flujo de proceso 3: Integración con CI/CD](#flujo-de-proceso-3-integración-con-cicd)
 - [Contexto: Sistema de Configuración](#contexto-sistema-de-configuración)
   - [Ciclo de vida](#ciclo-de-vida-1)
@@ -101,17 +102,17 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                           ggGit - Suite de Comandos Git                    │
+│                    ggGit - Suite de Comandos Git Independientes           │
 │                                                                             │
 │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐        │
 │  │   Comandos      │    │  Configuración  │    │   Sistema de    │        │
-│  │   Principales   │    │   Automática    │    │   Distribución  │        │
+│  │   Principales   │    │   Jerárquica    │    │   Validación    │        │
 │  │                 │    │                 │    │                 │        │
-│  │ • ggfeat        │    │ • Alias Git     │    │ • Sincronización│        │
-│  │ • ggfix         │    │ • Hooks         │    │   automática    │        │
-│  │ • ggbreak       │    │ • Config        │    │ • Repositorio   │        │
-│  │ • ggmerge       │    │ • Variables     │    │   central       │        │
-│  │ • gga/ggs       │    │ • Templates     │    │ • CI/CD         │        │
+│  │ • ggfeat (bash)│    │ • ~/.gggit/     │    │ • Esquemas YAML │        │
+│  │ • ggfix (bash) │    │ • Módulos por   │    │ • Validación    │        │
+│  │ • ggbreak (bash)│   │   contexto      │    │   automática    │        │
+│  │ • ggmerge (bash)│   │ • Config local  │    │ • Diferentes    │        │
+│  │ • ggconfig (py)│    │ • Módulos       │    │   tecnologías   │        │
 │  └─────────────────┘    └─────────────────┘    └─────────────────┘        │
 │           │                       │                       │                │
 │           ▼                       ▼                       ▼                │
@@ -121,8 +122,8 @@
 │  │  $ ggfeat "nueva funcionalidad de login"                          │   │
 │  │  → feat: nueva funcionalidad de login                              │   │
 │  │                                                                     │   │
-│  │  $ ggconfig --team                                                 │   │
-│  │  → Configuración sincronizada con el equipo                        │   │
+│  │  $ ggconfig show -m work-company-a                                │   │
+│  │  → Configuración del módulo empresa A                             │   │
 │  └─────────────────────────────────────────────────────────────────────┘   │
 │                                                                             │
 │  ┌─────────────────────────────────────────────────────────────────────┐   │
@@ -147,46 +148,58 @@
 
 ### Texto Descriptivo de la Propuesta de Valor
 
-ggGit es una suite completa de comandos de línea de comandos que transforma la experiencia de trabajo con Git. La solución se compone de tres pilares principales:
+ggGit es una suite de comandos independientes de línea de comandos que transforma la experiencia de trabajo con Git. La solución se compone de tres pilares principales:
 
-1. **Comandos Principales**: Una colección de comandos mnemotécnicos que simplifican operaciones Git comunes, especialmente enfocados en Conventional Commits.
+1. **Comandos Principales**: Una colección de comandos independientes (no alias) que simplifican operaciones Git comunes, especialmente enfocados en Conventional Commits. Cada comando puede estar implementado en diferentes tecnologías según sus necesidades específicas.
 
-2. **Sistema de Configuración Automática**: Un mecanismo que distribuye automáticamente configuraciones de equipo, incluyendo alias, hooks, y templates, asegurando consistencia entre todos los entornos de desarrollo.
+2. **Sistema de Configuración Jerárquica**: Un mecanismo local que permite configuraciones específicas por contexto, incluyendo módulos por empresa/equipo, configuración de usuario, y configuraciones específicas de repositorio, todo basado en archivos YAML locales.
 
-3. **Sistema de Distribución**: Una infraestructura que sincroniza configuraciones desde un repositorio central, facilitando la adopción y mantenimiento de estándares de equipo.
+3. **Sistema de Validación Robusto**: Un sistema que valida configuraciones usando esquemas YAML, asegurando consistencia y robustez en todos los entornos de desarrollo sin necesidad de sincronización automática.
 
 ### Eventos y Actividades Clave
 
 - **Commit de Código**: El desarrollador ejecuta un comando ggGit que genera automáticamente un Conventional Commit válido
-- **Configuración de Equipo**: El Tech Lead define estándares que se distribuyen automáticamente a todos los miembros
-- **Sincronización**: El sistema detecta cambios en la configuración y los propaga a todos los entornos
+- **Configuración de Equipo**: El Tech Lead define estándares en archivos YAML que se comparten con el equipo
+- **Gestión de Módulos**: El sistema detecta automáticamente el contexto de trabajo y aplica configuraciones específicas
 - **Integración CI/CD**: Los commits estructurados activan automáticamente pipelines de build y deploy
 - **Generación de Changelog**: El sistema genera automáticamente documentación de cambios basada en el historial de commits
 
 ### Explosión de Componentes
 
-- **CLI Commands**: Scripts ejecutables que encapsulan lógica Git compleja
-- **Configuration Manager**: Sistema que gestiona y distribuye configuraciones
-- **Hook System**: Integración con Git hooks para validación automática
-- **Template Engine**: Generador de mensajes de commit basado en templates
-- **Sync Service**: Servicio que mantiene configuraciones sincronizadas
-- **Validation Engine**: Motor que valida formato y contenido de commits
+- **CLI Commands**: Comandos independientes ejecutables que encapsulan lógica Git compleja, cada uno implementado en la tecnología más apropiada (bash, Python, etc.)
+- **Configuration Manager**: Sistema local que gestiona configuraciones jerárquicas basadas en archivos YAML
+- **Hook System**: Integración con Git hooks para validación automática de commits
+- **Template Engine**: Generador de mensajes de commit basado en templates configurables
+- **Validation Engine**: Motor que valida configuraciones usando esquemas YAML y valida formato de commits
+- **Module System**: Sistema que detecta automáticamente el contexto de trabajo y aplica configuraciones específicas
+
+### Flexibilidad de Desarrollo por Comandos Independientes
+
+ggGit está diseñado como una suite de comandos independientes, no como un conjunto de alias Git. Esta arquitectura proporciona varias ventajas clave:
+
+- **Tecnologías Específicas**: Cada comando puede estar implementado en la tecnología más apropiada (bash para comandos simples, Python para validación y configuración, etc.)
+- **Desarrollo Independiente**: Los comandos pueden ser desarrollados, probados y mantenidos de forma independiente
+- **Instalación Flexible**: El script de instalación maneja las dependencias específicas de cada comando
+- **Mantenimiento Simplificado**: Cada comando tiene su propia lógica y responsabilidades claras
+- **Extensibilidad**: Nuevos comandos pueden ser agregados sin afectar la funcionalidad existente
 
 ### Distribución de Vistas y Páginas
 
 Como herramienta de línea de comandos, ggGit no tiene interfaces gráficas tradicionales, pero se organiza en:
 
 - **Terminal de Comandos**: Interfaz principal donde se ejecutan todos los comandos
-- **Archivos de Configuración**: Archivos YAML/JSON que definen comportamientos
+- **Archivos de Configuración**: Archivos YAML que definen comportamientos con validación de esquemas
 - **Sistema de Ayuda**: Comandos de ayuda integrados con documentación
 - **Logs y Feedback**: Salida visual que proporciona información sobre operaciones
 
 ## Glosario de términos y definiciones
 
-- **ggGit**: Suite de comandos Git optimizados que simplifica el flujo de trabajo de desarrollo
+- **ggGit**: Suite de comandos Git independientes que simplifica el flujo de trabajo de desarrollo
 - **Conventional Commits**: Estándar para mensajes de commit que facilita la automatización y generación de changelogs
 - **Git Hooks**: Scripts que se ejecutan automáticamente en eventos específicos de Git
-- **Alias Git**: Abreviaciones personalizadas para comandos Git complejos
+- **Comandos Independientes**: Comandos ejecutables separados (no alias) que pueden estar implementados en diferentes tecnologías
+- **Sistema de Módulos**: Configuraciones específicas por contexto de trabajo (empresa, equipo, proyecto) basadas en archivos YAML
+- **Validación de Esquemas**: Verificación automática de configuraciones YAML usando esquemas predefinidos
 - **Pipeline CI/CD**: Flujo automatizado de integración continua y despliegue continuo
 - **Changelog**: Documento que registra cambios, mejoras y correcciones en cada versión del software
 - **Staging Area**: Área temporal donde se preparan los cambios antes de hacer commit
@@ -248,7 +261,7 @@ Carlos es Tech Lead de un equipo de 8 desarrolladores. Quiere asegurar que todos
 #### Configurar ggGit
 ##### Descripción
 
-El usuario configura ggGit para su entorno específico, incluyendo preferencias personales, configuración del equipo, y opciones de integración. El sistema presenta opciones de configuración, valida las entradas del usuario, aplica la configuración, y confirma que los cambios se han aplicado correctamente. Esta acción es fundamental para personalizar la experiencia de uso.
+El usuario configura ggGit para su entorno específico usando el comando `ggconfig` con subcomandos y flags. El sistema permite mostrar, editar, crear y eliminar configuraciones tanto para el usuario principal como para módulos específicos (empresas, equipos). La configuración se basa en archivos YAML locales con validación de esquemas, proporcionando flexibilidad para diferentes contextos de trabajo.
 
 ##### Beneficios
 
@@ -262,34 +275,34 @@ El usuario configura ggGit para su entorno específico, incluyendo preferencias 
 
 ###### Nuevo desarrollador que se une al proyecto
 
-Ana es una nueva desarrolladora que se une al equipo. En lugar de configurar manualmente todos los alias Git, hooks, y configuraciones, simplemente ejecuta `ggconfig --init --team`. El sistema descarga automáticamente la configuración estándar del equipo, configura todos los alias necesarios, instala los hooks de validación, y la prepara para trabajar inmediatamente con los estándares del proyecto.
+Ana es una nueva desarrolladora que se une al equipo. En lugar de configurar manualmente todos los alias Git, hooks, y configuraciones, simplemente ejecuta `ggconfig setup -m work-company-a --url https://company-a.com/gggit.yaml`. El sistema descarga automáticamente la configuración estándar del equipo, valida el esquema YAML, instala todos los hooks necesarios, y la prepara para trabajar inmediatamente con los estándares del proyecto.
 
 ###### DevOps que necesita configurar el entorno
 
-Roberto es DevOps y necesita configurar ggGit en un nuevo servidor de CI/CD. Ejecuta `ggconfig --ci --team` para obtener la configuración optimizada para entornos automatizados. El sistema instala solo los componentes necesarios para CI/CD, configura las variables de entorno apropiadas, y establece la integración con el pipeline existente, todo sin intervención manual.
+Roberto es DevOps y necesita configurar ggGit en un nuevo servidor de CI/CD. Ejecuta `ggconfig setup -m ci-cd --interactive` para crear una configuración optimizada para entornos automatizados. El sistema le guía a través de las opciones necesarias, valida la configuración con esquemas YAML, y establece la integración con el pipeline existente, todo sin intervención manual.
 
-#### Sincronizar configuración
+#### Gestionar configuración de módulos
 ##### Descripción
 
-El sistema detecta cambios en la configuración del equipo y los propaga automáticamente a todos los entornos de desarrollo. El usuario puede forzar una sincronización manual o el sistema puede detectar cambios automáticamente. La sincronización incluye actualizaciones de templates, hooks, alias, y configuraciones de validación, asegurando que todos los miembros del equipo trabajen con la misma configuración.
+El usuario puede gestionar configuraciones específicas para diferentes contextos de trabajo (empresas, equipos, proyectos) usando el sistema de módulos. Cada vez que se ejecuta un comando ggGit, el sistema detecta automáticamente el contexto basándose en el directorio actual y aplica la configuración del módulo correspondiente. Esto permite usar diferentes configuraciones de IA, hooks, y templates según el contexto de trabajo.
 
 ##### Beneficios
 
-- **Actualización automática**: Los usuarios reciben nuevas configuraciones sin intervención manual
-- **Consistencia**: Todos los entornos mantienen la misma configuración actualizada
-- **Colaboración**: Los cambios de configuración se comparten inmediatamente con todo el equipo
-- **Mantenimiento**: Reduce el esfuerzo de mantener configuraciones sincronizadas manualmente
-- **Evolución**: Permite que el equipo evolucione y mejore sus estándares de manera colaborativa
+- **Contexto automático**: El sistema detecta automáticamente el contexto de trabajo sin intervención manual
+- **Flexibilidad**: Diferentes configuraciones para diferentes contextos (personal, empresa, proyecto)
+- **Separación de configuraciones**: Configuraciones de IA, hooks y templates específicos por contexto
+- **Mantenimiento simple**: No hay sincronización automática, solo archivos YAML locales
+- **Portabilidad**: Las configuraciones funcionan offline y son fáciles de respaldar
 
 ##### Casos de uso
 
 ###### Equipo que actualiza estándares de commit
 
-El equipo decide agregar nuevos tipos de commit como "docs:" para documentación. El Tech Lead actualiza la configuración y ejecuta `ggconfig --sync`. Todos los miembros del equipo reciben automáticamente la nueva configuración, incluyendo el nuevo tipo de commit, templates actualizados, y validaciones mejoradas. No necesitan hacer nada manualmente.
+El equipo decide agregar nuevos tipos de commit como "docs:" para documentación. El Tech Lead actualiza la configuración del módulo `work-company-a.yaml` y comparte el archivo con el equipo. Cada desarrollador ejecuta `ggconfig setup -m work-company-a --url <nueva-url>` para obtener la configuración actualizada, incluyendo el nuevo tipo de commit, templates actualizados, y validaciones mejoradas.
 
 ###### Integración con CI/CD pipeline
 
-El equipo actualiza las reglas de validación de commits para ser más estrictas. La nueva configuración se sincroniza automáticamente con el pipeline de CI/CD. Ahora todos los commits que no cumplan con las nuevas reglas serán rechazados automáticamente, asegurando que solo código de calidad pase a producción.
+El equipo actualiza las reglas de validación de commits para ser más estrictas. La nueva configuración se aplica localmente usando `ggconfig setup -m work-company-a --interactive`. Ahora todos los commits que no cumplan con las nuevas reglas serán rechazados automáticamente por los hooks locales, asegurando que solo código de calidad pase a producción.
 
 ### Flujos de procesos
 
@@ -303,14 +316,14 @@ El equipo actualiza las reglas de validación de commits para ser más estrictas
 [Mostrar error]              [Solicitar parámetros]  [Mostrar error]  [Mostrar error]   [Corregir formato] [Mostrar confirmación]
 ```
 
-#### Flujo de proceso 2: Configuración y sincronización
+#### Flujo de proceso 2: Configuración y gestión de módulos
 
 ```
-[Usuario ejecuta ggconfig] → [Sistema detecta tipo] → [Descarga configuración] → [Valida integridad] → [Aplica cambios] → [Confirma aplicación]
-     ↓                           ↓                        ↓                      ↓                ↓
-[Configuración local]      [Configuración equipo]   [Error de descarga]    [Validación falla] [Error aplicación] [Configuración exitosa]
-     ↓                           ↓                        ↓                      ↓                ↓
-[Configurar local]         [Sincronizar equipo]     [Reintentar]          [Reportar error]   [Rollback]         [Confirmar cambios]
+[Usuario ejecuta ggconfig] → [Sistema detecta subcomando] → [Procesa operación] → [Valida esquema YAML] → [Aplica cambios] → [Confirma aplicación]
+     ↓                              ↓                        ↓                      ↓                ↓
+[Comando inválido]             [Subcomando inválido]    [Error de operación] [Validación falla] [Error aplicación] [Configuración exitosa]
+     ↓                              ↓                        ↓                      ↓                ↓
+[Mostrar error]               [Mostrar ayuda]           [Reintentar]          [Reportar error]   [Rollback]         [Confirmar cambios]
 ```
 
 #### Flujo de proceso 3: Integración con CI/CD
