@@ -22,6 +22,8 @@ Los flujos de trabajo actuales se basan en comandos Git nativos que son verbosos
 
 El problema se manifiesta en múltiples niveles: desde el desarrollador individual que pierde tiempo escribiendo comandos largos, hasta equipos completos que no pueden implementar estándares de commit consistentes, y organizaciones que no pueden automatizar procesos basados en el historial de Git debido a la falta de estructura en los mensajes.
 
+Un factor adicional crítico es la **resistencia cultural y técnica a la consola** que existe en muchos equipos de desarrollo. Esta resistencia se manifiesta especialmente en desarrolladores que provienen de entornos donde las herramientas gráficas son la norma, o en equipos que han adoptado Git recientemente y no tienen la familiaridad histórica con terminales. Esta barrera cultural afecta significativamente la adopción de herramientas basadas en línea de comandos, incluso cuando estas herramientas resuelven problemas reales de productividad.
+
 ## 👥 Actores
 
 ### Desarrolladores Individuales
@@ -64,7 +66,14 @@ El problema se manifiesta en múltiples niveles: desde el desarrollador individu
 **Tipo**: Actor externo  
 **Responsabilidades**: Seguimiento de tareas, releases, documentación  
 **Restricciones**: No pueden extraer información estructurada de commits  
-**Capacidades**: Integraciones con Git, APIs de gestión  
+**Capacidades**: Integraciones con Git, APIs de gestión
+
+### Desarrolladores Resistentes a la Consola
+**Tipo**: Actor interno  
+**Responsabilidades**: Desarrollar código, colaborar en repositorios  
+**Restricciones**: Prefieren herramientas gráficas, resistencia a comandos de terminal  
+**Capacidades**: Conocimiento de Git básico, familiaridad con IDEs gráficos  
+**Características especiales**: Representan un segmento significativo del mercado objetivo, especialmente en equipos que adoptaron Git recientemente o en organizaciones con cultura de herramientas visuales  
 
 ### Diagrama de Flujo de Datos del problema de Nivel 0
 
@@ -129,7 +138,12 @@ graph TD
 ### Proceso 5: Automatización de CI/CD
 **Descripción**: Los ingenieros DevOps intentan automatizar procesos basándose en mensajes de commit  
 **Puntos de dolor**: Mensajes no estructurados, falta de metadatos consistentes  
-**Frecuencia**: Durante la configuración y mantenimiento de pipelines  
+**Frecuencia**: Durante la configuración y mantenimiento de pipelines
+
+### Proceso 6: Adopción de Herramientas de Línea de Comandos
+**Descripción**: Los equipos intentan adoptar herramientas basadas en terminal para mejorar la productividad  
+**Puntos de dolor**: Resistencia cultural a la consola, curva de aprendizaje empinada, falta de familiaridad con terminales  
+**Frecuencia**: Durante la introducción de nuevas herramientas o estándares de equipo  
 
 ### Diagrama de Flujo de Datos del problema de Nivel 1
 
@@ -283,6 +297,28 @@ graph TD
 - **Inconsistencias persistentes**: Los errores se repiten
 - **Falta de métricas**: No hay forma de medir el cumplimiento
 
+### Flujo 4: Proceso de Adopción de Herramientas de Terminal
+
+**Descripción**: Un equipo intenta adoptar herramientas basadas en línea de comandos para mejorar su flujo de trabajo con Git.
+
+**Pasos del proceso actual**:
+1. El líder técnico identifica la necesidad de mejorar la productividad con Git
+2. Investiga herramientas disponibles y encuentra ggGit o similares
+3. Propone la adopción al equipo
+4. Encuentra resistencia de desarrolladores acostumbrados a herramientas gráficas
+5. Debe justificar el cambio cultural y técnico
+6. Implementa un período de transición con capacitación
+7. Enfrenta rechazo de desarrolladores que prefieren mantener su flujo actual
+8. Debe demostrar beneficios tangibles para mantener la adopción
+9. Gestiona la curva de aprendizaje de diferentes niveles de experiencia
+
+**Puntos de dolor identificados**:
+- **Resistencia cultural**: Preferencia por herramientas visuales establecidas
+- **Curva de aprendizaje**: Diferentes niveles de familiaridad con terminales
+- **Justificación del cambio**: Necesidad de demostrar ROI claro
+- **Gestión de transición**: Período de adaptación que puede afectar productividad
+- **Fragilidad de adopción**: Herramientas pueden ser abandonadas si no hay beneficios inmediatos visibles
+
 ## 🔗 Integraciones con otros sistemas
 
 ### Sistema de Control de Versiones Git
@@ -313,7 +349,13 @@ graph TD
 **Propósito**: Analizar patrones de desarrollo y métricas del equipo  
 **Tipo de datos**: Frecuencia de commits, tipos de cambios  
 **Método de comunicación**: Análisis del historial Git  
-**Estado actual**: Limitado por la falta de metadatos estructurados  
+**Estado actual**: Limitado por la falta de metadatos estructurados
+
+### Herramientas de Gestión de Cambio Organizacional
+**Propósito**: Facilitar la adopción de nuevas herramientas y procesos en equipos de desarrollo  
+**Tipo de datos**: Métricas de adopción, feedback de usuarios, ROI de herramientas  
+**Método de comunicación**: Encuestas, análisis de uso, métricas de productividad  
+**Estado actual**: Limitado por la falta de herramientas que faciliten la transición desde entornos gráficos  
 
 ## 🌐 Entorno de Implementación
 
