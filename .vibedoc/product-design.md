@@ -108,11 +108,11 @@
 │  │   Comandos      │    │  Configuración  │    │   Sistema de    │        │
 │  │   Principales   │    │   Jerárquica    │    │   Validación    │        │
 │  │                 │    │                 │    │                 │        │
-│  │ • ggfeat (bash)│    │ • ~/.gggit/     │    │ • Esquemas YAML │        │
-│  │ • ggfix (bash) │    │ • Módulos por   │    │ • Validación    │        │
-│  │ • ggbreak (bash)│   │   contexto      │    │   automática    │        │
-│  │ • ggmerge (bash)│   │ • Config local  │    │ • Diferentes    │        │
-│  │ • ggconfig (py)│    │ • Módulos       │    │   tecnologías   │        │
+│  │ • ggfeat (bash)│    │ • ~/.gggit/     │    │ • Convenciones  │        │
+│  │ • ggfix (bash) │    │ • Módulos por   │    │   estándar      │        │
+│  │ • ggbreak (bash)│   │   contexto      │    │ • Validación    │        │
+│  │ • ggmerge (bash)│   │ • Config local  │    │   en la nube    │        │
+│  │ • ggconfig (py)│    │ • Módulos       │    │ • Diferentes    │        │
 │  └─────────────────┘    └─────────────────┘    └─────────────────┘        │
 │           │                       │                       │                │
 │           ▼                       ▼                       ▼                │
@@ -154,7 +154,7 @@ ggGit es una suite de comandos independientes de línea de comandos que transfor
 
 2. **Sistema de Configuración Jerárquica**: Un mecanismo local que permite configuraciones específicas por contexto, incluyendo módulos por empresa/equipo, configuración de usuario, y configuraciones específicas de repositorio, todo basado en archivos YAML locales.
 
-3. **Sistema de Validación Robusto**: Un sistema que valida configuraciones usando esquemas YAML, asegurando consistencia y robustez en todos los entornos de desarrollo sin necesidad de sincronización automática.
+3. **Sistema de Convenciones Estandarizadas**: Un sistema que genera commits con formato estándar usando comandos optimizados, asegurando consistencia en todos los entornos de desarrollo. La validación final se realiza en la nube (CI/CD, pull requests) donde se aplican los estándares del equipo.
 
 ### Eventos y Actividades Clave
 
@@ -168,9 +168,9 @@ ggGit es una suite de comandos independientes de línea de comandos que transfor
 
 - **CLI Commands**: Comandos independientes ejecutables que encapsulan lógica Git compleja, cada uno implementado en la tecnología más apropiada (bash, Python, etc.)
 - **Configuration Manager**: Sistema local que gestiona configuraciones jerárquicas basadas en archivos YAML
-- **Hook System**: Integración con Git hooks para validación automática de commits
 - **Template Engine**: Generador de mensajes de commit basado en templates configurables
-- **Validation Engine**: Motor que valida configuraciones usando esquemas YAML y valida formato de commits
+- **Validation Engine**: Motor que valida configuraciones usando esquemas YAML
+- **Convention Engine**: Motor que genera commits con formato estándar siguiendo Conventional Commits
 - **Module System**: Sistema que detecta automáticamente el contexto de trabajo y aplica configuraciones específicas
 
 ### Flexibilidad de Desarrollo por Comandos Independientes
@@ -196,7 +196,6 @@ Como herramienta de línea de comandos, ggGit no tiene interfaces gráficas trad
 
 - **ggGit**: Suite de comandos Git independientes que simplifica el flujo de trabajo de desarrollo
 - **Conventional Commits**: Estándar para mensajes de commit que facilita la automatización y generación de changelogs
-- **Git Hooks**: Scripts que se ejecutan automáticamente en eventos específicos de Git
 - **Comandos Independientes**: Comandos ejecutables separados (no alias) que pueden estar implementados en diferentes tecnologías
 - **Sistema de Módulos**: Configuraciones específicas por contexto de trabajo (empresa, equipo, proyecto) basadas en archivos YAML
 - **Validación de Esquemas**: Verificación automática de configuraciones YAML usando esquemas predefinidos
@@ -246,7 +245,7 @@ El usuario ejecuta un comando ggGit desde la terminal, especificando la operaci�
 - **Consistencia**: Todos los usuarios del equipo obtienen el mismo resultado con los mismos parámetros
 - **Validación**: El sistema valida automáticamente la entrada y previene errores comunes
 - **Feedback**: Información clara sobre el resultado de la operación y próximos pasos recomendados
-- **Automatización**: Integración automática con hooks y configuraciones del equipo
+- **Automatización**: Integración automática con configuraciones del equipo y estándares de commit
 
 ##### Casos de uso
 
@@ -256,7 +255,7 @@ María es una desarrolladora que acaba de terminar una corrección de bug. En lu
 
 ###### Tech Lead que quiere estandarizar commits del equipo
 
-Carlos es Tech Lead de un equipo de 8 desarrolladores. Quiere asegurar que todos los commits sigan el mismo formato. Configura ggGit con templates personalizados y ejecuta `ggconfig --team` para distribuir la configuración. Ahora todos los miembros del equipo pueden usar comandos como `ggfeat`, `ggfix`, y `ggbreak` que automáticamente generan commits consistentes, reduciendo la necesidad de revisar cada mensaje manualmente.
+Carlos es Tech Lead de un equipo de 8 desarrolladores. Quiere asegurar que todos los commits sigan el mismo formato. Configura ggGit con templates personalizados y ejecuta `ggconfig setup -m work-team --interactive` para crear la configuración del equipo. Ahora todos los miembros del equipo pueden usar comandos como `ggfeat`, `ggfix`, y `ggbreak` que automáticamente generan commits consistentes, reduciendo la necesidad de revisar cada mensaje manualmente.
 
 #### Configurar ggGit
 ##### Descripción
@@ -302,18 +301,18 @@ El equipo decide agregar nuevos tipos de commit como "docs:" para documentación
 
 ###### Integración con CI/CD pipeline
 
-El equipo actualiza las reglas de validación de commits para ser más estrictas. La nueva configuración se aplica localmente usando `ggconfig setup -m work-company-a --interactive`. Ahora todos los commits que no cumplan con las nuevas reglas serán rechazados automáticamente por los hooks locales, asegurando que solo código de calidad pase a producción.
+El equipo actualiza las reglas de validación de commits para ser más estrictas. La nueva configuración se aplica localmente usando `ggconfig setup -m work-company-a --interactive`. Ahora todos los commits generados por ggGit seguirán automáticamente el nuevo formato estándar, asegurando que solo código de calidad pase a producción a través de la validación en la nube (CI/CD).
 
 ### Flujos de procesos
 
 #### Flujo de proceso 1: Commit con Conventional Commits
 
 ```
-[Usuario ejecuta ggfeat] → [Sistema valida parámetros] → [Genera mensaje] → [Ejecuta git add] → [Ejecuta git commit] → [Valida formato] → [Confirma éxito]
-     ↓                              ↓                      ↓                ↓                ↓                ↓
-[Comando inválido]           [Parámetros faltantes]  [Error en add]   [Error en commit] [Formato inválido] [Commit exitoso]
+[Usuario ejecuta ggfeat] → [Sistema valida parámetros] → [Genera mensaje] → [Ejecuta git add] → [Ejecuta git commit] → [Confirma éxito]
      ↓                              ↓                      ↓                ↓                ↓
-[Mostrar error]              [Solicitar parámetros]  [Mostrar error]  [Mostrar error]   [Corregir formato] [Mostrar confirmación]
+[Comando inválido]           [Parámetros faltantes]  [Error en add]   [Error en commit] [Commit exitoso]
+     ↓                              ↓                      ↓                ↓
+[Mostrar error]              [Solicitar parámetros]  [Mostrar error]  [Mostrar error]   [Mostrar confirmación]
 ```
 
 #### Flujo de proceso 2: Configuración y gestión de módulos
@@ -329,11 +328,11 @@ El equipo actualiza las reglas de validación de commits para ser más estrictas
 #### Flujo de proceso 3: Integración con CI/CD
 
 ```
-[Commit exitoso] → [Git hook ejecuta] → [Valida formato] → [Ejecuta tests] → [Pipeline CI/CD] → [Genera changelog] → [Deploy automático]
-     ↓                   ↓                ↓                ↓                ↓                ↓                ↓
-[Commit inválido]   [Hook falla]     [Validación falla] [Tests fallan]   [Pipeline falla] [Error changelog] [Deploy manual]
+[Commit exitoso] → [Ejecuta tests] → [Pipeline CI/CD] → [Valida formato] → [Genera changelog] → [Deploy automático]
      ↓                   ↓                ↓                ↓                ↓                ↓
-[Rechazar commit]   [Reportar error] [Rechazar commit] [Rechazar commit] [Notificar equipo] [Generar manual] [Intervención manual]
+[Commit inválido]   [Tests fallan]   [Pipeline falla] [Validación falla] [Error changelog] [Deploy manual]
+     ↓                   ↓                ↓                ↓                ↓
+[Rechazar commit]   [Rechazar commit] [Notificar equipo] [Rechazar commit] [Generar manual] [Intervención manual]
 ```
 
 ## Contexto: Sistema de Configuración
