@@ -40,6 +40,12 @@
       - [Casos de uso](#casos-de-uso-2)
         - [Equipo que actualiza estándares de commit](#equipo-que-actualiza-estándares-de-commit)
         - [Integración con CI/CD pipeline](#integración-con-cicd-pipeline)
+    - [Configurar repositorio específico](#configurar-repositorio-específico)
+      - [Descripción](#descripción-3)
+      - [Beneficios](#beneficios-3)
+      - [Casos de uso](#casos-de-uso-3)
+        - [Proyecto open source con configuración única](#proyecto-open-source-con-configuración-única)
+        - [Repositorio de empresa con configuraciones específicas](#repositorio-de-empresa-con-configuraciones-específicas)
   - [Flujos de procesos](#flujos-de-procesos)
     - [Flujo de proceso 1: Commit con Conventional Commits](#flujo-de-proceso-1-commit-con-conventional-commits)
     - [Flujo de proceso 2: Configuración y gestión de módulos](#flujo-de-proceso-2-configuración-y-gestión-de-módulos)
@@ -74,6 +80,7 @@
 │  │ • ggbreak (bash)│   │   contexto      │    │ • Validación    │        │
 │  │ • ggmerge (bash)│   │ • Config local  │    │   en la nube    │        │
 │  │ • ggconfig (py)│    │ • Módulos       │    │ • Diferentes    │        │
+│  │                 │    │ • Repositorio   │    │   tecnologías   │        │
 │  └─────────────────┘    └─────────────────┘    └─────────────────┘        │
 │           │                       │                       │                │
 │           ▼                       ▼                       ▼                │
@@ -106,7 +113,7 @@ ggGit es una suite de comandos independientes de línea de comandos que transfor
 
 1. **Comandos Principales**: Una colección de comandos independientes (no alias) que simplifican operaciones Git comunes, especialmente enfocados en Conventional Commits. Cada comando puede estar implementado en diferentes tecnologías según sus necesidades específicas.
 
-2. **Sistema de Configuración Jerárquica**: Un mecanismo local que permite configuraciones específicas por contexto, incluyendo módulos por empresa/equipo, configuración de usuario, y configuraciones específicas de repositorio, todo basado en archivos YAML locales.
+2. **Sistema de Configuración Jerárquica**: Un mecanismo local que permite configuraciones específicas por contexto, incluyendo módulos por empresa/equipo, configuración de usuario, y configuraciones específicas de repositorio (con prioridad más alta), todo basado en archivos YAML locales.
 
 3. **Sistema de Convenciones Estandarizadas**: Un sistema que genera commits con formato estándar usando comandos optimizados, asegurando consistencia en todos los entornos de desarrollo. La validación final se realiza en la nube (CI/CD, pull requests) donde se aplican los estándares del equipo.
 
@@ -126,6 +133,7 @@ ggGit es una suite de comandos independientes de línea de comandos que transfor
 - **Validation Engine**: Motor que valida configuraciones usando esquemas YAML
 - **Convention Engine**: Motor que genera commits con formato estándar siguiendo Conventional Commits
 - **Module System**: Sistema que detecta automáticamente el contexto de trabajo y aplica configuraciones específicas
+- **Repository System**: Sistema que maneja configuraciones específicas de repositorio con prioridad más alta
 
 ### Flexibilidad de Desarrollo por Comandos Independientes
 
@@ -152,6 +160,7 @@ Como herramienta de línea de comandos, ggGit no tiene interfaces gráficas trad
 - **Conventional Commits**: Estándar para mensajes de commit que facilita la automatización y generación de changelogs
 - **Comandos Independientes**: Comandos ejecutables separados (no alias) que pueden estar implementados en diferentes tecnologías
 - **Sistema de Módulos**: Configuraciones específicas por contexto de trabajo (empresa, equipo, proyecto) basadas en archivos YAML
+- **Sistema de Repositorio**: Configuraciones específicas por repositorio con prioridad más alta, almacenadas localmente en `.gggit/repo-config.yaml`
 - **Validación de Esquemas**: Verificación automática de configuraciones YAML usando esquemas predefinidos
 - **Pipeline CI/CD**: Flujo automatizado de integración continua y despliegue continuo
 - **Changelog**: Documento que registra cambios, mejoras y correcciones en cada versión del software
@@ -256,6 +265,29 @@ El equipo decide agregar nuevos tipos de commit como "docs:" para documentación
 ###### Integración con CI/CD pipeline
 
 El equipo actualiza las reglas de validación de commits para ser más estrictas. La nueva configuración se aplica localmente usando `ggconfig setup -m work-company-a --interactive`. Ahora todos los commits generados por ggGit seguirán automáticamente el nuevo formato estándar, asegurando que solo código de calidad pase a producción a través de la validación en la nube (CI/CD).
+
+#### Configurar repositorio específico
+##### Descripción
+
+El usuario configura ggGit específicamente para el repositorio actual usando el comando `ggconfig setup --repo`. Esta configuración tiene la prioridad más alta en la jerarquía y se almacena localmente en `.gggit/repo-config.yaml` dentro del repositorio. Permite configuraciones muy específicas del proyecto que no se comparten con otros contextos de trabajo.
+
+##### Beneficios
+
+- **Especificidad máxima**: Configuraciones únicas para cada repositorio sin afectar otros proyectos
+- **Prioridad alta**: Sobrescribe configuraciones de módulo y usuario cuando es necesario
+- **Localización**: La configuración se mantiene dentro del repositorio para fácil portabilidad
+- **Flexibilidad**: Permite configuraciones muy específicas del proyecto
+- **Independencia**: No interfiere con configuraciones de otros contextos de trabajo
+
+##### Casos de uso
+
+###### Proyecto open source con configuración única
+
+Elena mantiene un proyecto open source que requiere tipos de commit muy específicos como "docs:", "ci:", "build:", y "release:". Ejecuta `ggconfig setup --repo --interactive` para crear una configuración única del repositorio que incluye estos tipos personalizados, templates específicos para documentación, y configuraciones de IA optimizadas para el proyecto. Esta configuración se mantiene localmente y no afecta sus otros proyectos.
+
+###### Repositorio de empresa con configuraciones específicas
+
+Miguel trabaja en un repositorio de empresa que requiere integración con herramientas internas específicas. Ejecuta `ggconfig setup --repo --url https://internal.company.com/gggit-repo-config.yaml` para descargar la configuración específica del repositorio que incluye tokens de API internos, URLs de servicios corporativos, y templates que siguen los estándares específicos de la empresa para ese proyecto.
 
 ### Flujos de procesos
 
