@@ -17,9 +17,6 @@
 - [Contexto: Terminal de Comandos](#contexto-terminal-de-comandos)
   - [Ciclo de vida](#ciclo-de-vida)
     - [Al iniciar el contexto](#al-iniciar-el-contexto)
-    - [Al pasar a segundo plano](#al-pasar-a-segundo-plano)
-    - [Al volver a primer plano](#al-volver-a-primer-plano)
-    - [Al volver a la aplicación](#al-volver-a-la-aplicación)
     - [Al finalizar el contexto](#al-finalizar-el-contexto)
   - [Acciones](#acciones)
     - [Ejecutar comando ggGit](#ejecutar-comando-gggit)
@@ -177,23 +174,13 @@ Como herramienta de línea de comandos, ggGit no tiene interfaces gráficas trad
 
 #### Al iniciar el contexto
 
-Cuando el usuario abre una terminal y ejecuta un comando ggGit, el sistema inicializa el contexto de la terminal. El sistema verifica que Git esté disponible en el PATH, valida que el directorio actual sea un repositorio Git válido, y carga la configuración local del usuario. Se establece el entorno de trabajo con variables de entorno necesarias y se inicializa el sistema de logging para registrar todas las operaciones.
-
-#### Al pasar a segundo plano
-
-Cuando el usuario ejecuta un comando ggGit y este termina, el contexto pasa a segundo plano. El sistema mantiene en memoria la configuración cargada para futuras operaciones, persiste logs de la operación en archivos temporales, y libera recursos del sistema que ya no son necesarios. El contexto permanece activo pero inactivo, esperando el siguiente comando.
-
-#### Al volver a primer plano
-
-Cuando el usuario ejecuta otro comando ggGit, el contexto vuelve a primer plano. El sistema restaura la configuración desde la memoria, verifica que no haya cambios en la configuración del repositorio, y prepara el entorno para la nueva operación. Se cargan logs previos si son relevantes para la nueva operación.
-
-#### Al volver a la aplicación
-
-Cuando el usuario regresa a la terminal después de usar otras aplicaciones, el contexto se reactiva. El sistema verifica la integridad del repositorio Git, valida que la configuración siga siendo consistente, y restaura el estado de la sesión anterior si es necesario. Se mantiene la continuidad del flujo de trabajo.
+Cuando se ejecuta un comando ggGit, el contexto se inicializa cargando la configuración jerárquica (repositorio > módulo > usuario > default), validando el estado del repositorio Git, y preparando el entorno para la operación específica. El sistema verifica que el comando sea válido para el contexto actual, valida los parámetros de entrada, y prepara la ejecución de la operación Git correspondiente.
 
 #### Al finalizar el contexto
 
-Cuando el usuario cierra la terminal o termina la sesión, el contexto se finaliza. El sistema limpia archivos temporales, guarda logs finales, libera memoria y recursos del sistema, y cierra conexiones a servicios externos si las hubiera. Se asegura que no queden procesos huérfanos.
+Cuando se completa la ejecución del comando ggGit, el contexto se cierra. El sistema ejecuta la operación Git correspondiente, proporciona feedback visual sobre el resultado, y retorna el control al usuario con el código de salida apropiado. Se liberan todos los recursos temporales utilizados durante la ejecución.
+
+**Nota**: Los comandos ggGit son ejecuciones independientes y breves que no mantienen estado entre comandos. No hay conceptos de "segundo plano", "primer plano" o "volver a la aplicación" como en aplicaciones GUI persistentes. Cada comando se ejecuta, completa su tarea, y termina completamente.
 
 ### Acciones
 
