@@ -104,6 +104,17 @@ Aunque los IDEs integrados proporcionan una experiencia más fluida para operaci
 #### Oportunidades de mejora
 Existe una oportunidad para crear herramientas que complementen la integración Git de los IDEs, proporcionando funcionalidades avanzadas y automatización sin sacrificar la flexibilidad de la línea de comandos.
 
+### 📦 Solución: Herramientas de IA para Generación de Código y Documentación
+
+#### Características
+Herramientas como GitHub Copilot, Tabnine, y otras utilizan IA para sugerir código, documentación, y mensajes de commit basándose en el contexto del código y los cambios realizados.
+
+#### Puntos de dolor
+Aunque estas herramientas son efectivas para sugerir código y documentación, su integración con Git y la generación de mensajes de commit específicos es limitada. Muchas están atadas a IDEs específicos y no proporcionan la flexibilidad de línea de comandos que prefieren algunos desarrolladores.
+
+#### Oportunidades de mejora
+Existe una oportunidad clara para crear herramientas de línea de comandos que integren capacidades de IA para la generación automática de mensajes de commit, proporcionando la flexibilidad de la terminal con la inteligencia de las herramientas de IA modernas.
+
 ## Colecciones
 
 ### 📦 Colección: Herramientas de Línea de Comandos Git
@@ -196,3 +207,16 @@ Colección de casos de estudio, artículos y experiencias relacionadas con la ad
 - [Atlassian Developer Blog](https://developer.atlassian.com/blog/) - Blog de desarrolladores de Atlassian
 - [Netflix Tech Blog](https://netflixtechblog.com/) - Blog técnico de Netflix
 - [Uber Engineering Blog](https://eng.uber.com/) - Blog de ingeniería de Uber
+
+### 📦 Colección: Herramientas de IA para Desarrollo
+
+#### Descripción
+Colección de herramientas, librerías y recursos relacionados con la integración de IA en el flujo de trabajo de desarrollo, especialmente para generación de código y documentación.
+
+#### Enlaces
+
+- [GitHub Copilot](https://github.com/features/copilot) - IA para generación de código y documentación
+- [Tabnine](https://www.tabnine.com/) - Autocompletado de código con IA
+- [OpenAI Codex](https://openai.com/blog/openai-codex/) - Modelo de IA para generación de código
+- [AI Commit Message Generator](https://github.com/di-sikshya/ai-commit-message-generator) - Generador de mensajes de commit con IA
+- [Conventional Commits with AI](https://github.com/search?q=conventional+commits+ai) - Búsqueda de herramientas de IA para Conventional Commits

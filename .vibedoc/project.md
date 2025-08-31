@@ -40,7 +40,7 @@ Se propone crear una suite de comandos cortos, mnemotécnicos y cross-platform q
 - **Instalación automática**: Scripts de instalación que configuren automáticamente el PATH y permisos en diferentes sistemas operativos
 - **Consistencia cross-platform**: Funcionamiento idéntico en Linux, macOS y Windows
 
-La herramienta se integrará perfectamente en el flujo de trabajo existente de los desarrolladores, proporcionando una capa de abstracción que simplifica Git sin ocultar su funcionalidad.
+La herramienta se integrará perfectamente en el flujo de trabajo existente de los desarrolladores, proporcionando una capa de abstracción que simplifica Git sin ocultar su funcionalidad. En el futuro, ggGit evolucionará para incorporar capacidades de IA que analicen automáticamente los cambios y sugieran mensajes de commit inteligentes, similar a las funcionalidades de autocompletado de los IDEs modernos.
 
 ## 📐 Alcance
 
@@ -65,7 +65,9 @@ La herramienta se integrará perfectamente en el flujo de trabajo existente de l
 - **Documentación interactiva**: Comando de ayuda que muestre ejemplos de uso
 - **Validación de mensajes**: Verificación automática del formato de Conventional Commits antes del commit
 - **Integración con IDEs**: Extensiones para VSCode, IntelliJ, etc.
-- **Sistema de autenticación**: No manejará credenciales o tokens de acceso para herramientas de IA.
+- **Sistema de autenticación**: No manejará credenciales o tokens de acceso para herramientas de IA
+- **Autocompletado con IA**: Análisis automático de cambios staged para sugerir mensajes de commit inteligentes
+- **Generación de Conventional Commits con IA**: Sugerencias automáticas de tipo, scope y descripción basadas en el código
 
 ### ❌ Fuera de Alcance
 

@@ -143,7 +143,12 @@ graph TD
 ### Proceso 6: Adopción de Herramientas de Línea de Comandos
 **Descripción**: Los equipos intentan adoptar herramientas basadas en terminal para mejorar la productividad  
 **Puntos de dolor**: Resistencia cultural a la consola, curva de aprendizaje empinada, falta de familiaridad con terminales  
-**Frecuencia**: Durante la introducción de nuevas herramientas o estándares de equipo  
+**Frecuencia**: Durante la introducción de nuevas herramientas o estándares de equipo
+
+### Proceso 7: Generación de Mensajes de Commit
+**Descripción**: Los desarrolladores deben escribir mensajes de commit descriptivos y estructurados basándose en los cambios realizados  
+**Puntos de dolor**: Dificultad para describir cambios complejos, inconsistencia en el nivel de detalle, tiempo dedicado a pensar en el mensaje  
+**Frecuencia**: En cada commit, múltiples veces por día por desarrollador  
 
 ### Diagrama de Flujo de Datos del problema de Nivel 1
 
@@ -318,6 +323,26 @@ graph TD
 - **Justificación del cambio**: Necesidad de demostrar ROI claro
 - **Gestión de transición**: Período de adaptación que puede afectar productividad
 - **Fragilidad de adopción**: Herramientas pueden ser abandonadas si no hay beneficios inmediatos visibles
+
+### Flujo 5: Proceso de Generación de Mensajes de Commit
+
+**Descripción**: Un desarrollador necesita escribir un mensaje de commit descriptivo y estructurado basándose en los cambios realizados en el código.
+
+**Pasos del proceso actual**:
+1. El desarrollador revisa los cambios staged para el commit
+2. Debe analizar mentalmente qué cambios se realizaron
+3. Debe decidir qué tipo de commit es (feat, fix, docs, etc.)
+4. Debe determinar si hay un scope relevante
+5. Debe escribir una descripción clara y concisa
+6. Debe verificar que el mensaje siga el formato de Conventional Commits
+7. Debe asegurarse de que el mensaje sea descriptivo para futuras referencias
+
+**Puntos de dolor identificados**:
+- **Análisis manual**: Debe revisar cada archivo cambiado para entender el contexto
+- **Tiempo de decisión**: Dedicar tiempo a pensar en el tipo y scope apropiados
+- **Inconsistencia**: Diferentes desarrolladores pueden describir cambios similares de manera diferente
+- **Falta de contexto**: No siempre es claro qué cambios son más importantes o relevantes
+- **Dificultad de descripción**: Cambios complejos pueden ser difíciles de resumir en una línea
 
 ## 🔗 Integraciones con otros sistemas
 

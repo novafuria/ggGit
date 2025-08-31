@@ -42,6 +42,13 @@
     - [Qué dicen?](#qué-dicen-4)
     - [Qué hacen?](#qué-hacen-4)
     - [Qué oyen?](#qué-oyen-4)
+  - [Perfil de usuario 6: Desarrollador que Busca Automatización con IA](#perfil-de-usuario-6-desarrollador-que-busca-automatización-con-ia)
+    - [Con quíen vamos a empatizar?](#con-quíen-vamos-a-empatizar-5)
+    - [Qué necesitan hacer?](#qué-necesitan-hacer-5)
+    - [Qué ven?](#qué-ven-5)
+    - [Qué dicen?](#qué-dicen-5)
+    - [Qué hacen?](#qué-hacen-5)
+    - [Qué oyen?](#qué-oyen-5)
 
 ## Perfil de usuario 1: Desarrollador Junior
 
@@ -182,3 +189,31 @@ Laura usa principalmente IDEs integrados y clientes Git gráficos para sus opera
 ### Qué oyen?
 
 Laura escucha constantemente a sus compañeros hablar sobre la importancia de usar la línea de comandos y las mejores prácticas de Git. Escucha que hay herramientas disponibles que pueden mejorar la productividad pero que requieren cambiar a la línea de comandos. También escucha que el equipo quiere implementar mejores estándares pero que es difícil mantener la consistencia. Escucha que algunos desarrolladores prefieren trabajar desde la terminal por ser más eficientes.
+
+## Perfil de usuario 6: Desarrollador que Busca Automatización con IA
+
+> Desarrollador que busca integrar capacidades de IA en su flujo de trabajo de desarrollo, especialmente para automatizar tareas repetitivas como la generación de mensajes de commit.
+
+### Con quíen vamos a empatizar?
+
+David es un desarrollador de 30 años con 6 años de experiencia en desarrollo de software. Trabaja en una empresa de tecnología que está adoptando herramientas de IA para mejorar la productividad del equipo. Está familiarizado con herramientas como GitHub Copilot y Tabnine, y busca formas de integrar capacidades de IA en su flujo de trabajo Git. Quiere automatizar la generación de mensajes de commit para ahorrar tiempo y mejorar la consistencia.
+
+### Qué necesitan hacer?
+
+David necesita herramientas que puedan analizar automáticamente los cambios en el código y sugerir mensajes de commit inteligentes y estructurados. Quiere que estas herramientas se integren bien con su flujo de trabajo de línea de comandos y que puedan generar mensajes que sigan los estándares de Conventional Commits. Su éxito se medirá por la reducción del tiempo dedicado a escribir mensajes de commit, la mejora en la calidad y consistencia de los mensajes, y la capacidad de automatizar más aspectos de su flujo de trabajo Git.
+
+### Qué ven?
+
+David ve que hay herramientas de IA disponibles para IDEs pero que no se integran bien con su preferencia por la línea de comandos. Observa que algunas herramientas pueden generar mensajes de commit pero que no siempre siguen los estándares del equipo. Ve que hay potencial para automatizar más aspectos del flujo de trabajo Git pero que las herramientas actuales están fragmentadas entre diferentes plataformas.
+
+### Qué dicen?
+
+"Me gustaría que la IA me ayude a escribir mejores mensajes de commit", "Quiero automatizar más mi flujo de trabajo Git", "Las herramientas de IA están bien pero no se integran con la terminal", "Me gustaría que la IA entienda el contexto de mis cambios", "Quiero que los mensajes de commit sean más consistentes y descriptivos", "Me gustaría que la IA me ayude a seguir los estándares de Conventional Commits".
+
+### Qué hacen?
+
+David usa herramientas de IA como GitHub Copilot para generar código y documentación, pero encuentra que la integración con Git es limitada. Dedica tiempo a escribir mensajes de commit descriptivos y a mantener la consistencia con los estándares del equipo. Experimenta con diferentes herramientas para automatizar su flujo de trabajo Git y busca formas de integrar capacidades de IA en la línea de comandos.
+
+### Qué oyen?
+
+David escucha constantemente sobre nuevas herramientas de IA para desarrollo y sobre cómo la automatización puede mejorar la productividad. Escucha que otros desarrolladores están adoptando herramientas de IA pero que la integración con Git puede ser complicada. También escucha que hay interés en automatizar más aspectos del flujo de trabajo de desarrollo.
