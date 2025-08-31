@@ -49,7 +49,7 @@
 
 ### Con quíen vamos a empatizar?
 
-María es una desarrolladora junior de 24 años que se graduó hace un año de Ingeniería en Sistemas. Trabaja en una startup de tecnología donde es parte de un equipo de 8 desarrolladores. Aunque aprendió Git en la universidad, nunca lo usó en un proyecto real de equipo. Su conocimiento se limita a comandos básicos como `git add`, `git commit`, y `git push`. Está motivada por aprender y crecer profesionalmente, pero se siente abrumada por la cantidad de información y las expectativas del equipo.
+María es una desarrolladora junior de 24 años que se graduó hace un año de Ingeniería en Sistemas. Trabaja en un equipo de desarrollo donde es parte de un grupo de 8 desarrolladores. Aunque aprendió Git en la universidad, nunca lo usó en un proyecto real de equipo. Su conocimiento se limita a comandos básicos como `git add`, `git commit`, y `git push`. Está motivada por aprender y crecer profesionalmente, pero se siente abrumada por la cantidad de información y las expectativas del equipo.
 
 ### Qué necesitan hacer?
 
@@ -105,7 +105,7 @@ Carlos escucha constantemente a otros desarrolladores quejarse sobre la compleji
 
 ### Con quíen vamos a empatizar?
 
-Ana es una Tech Lead de 35 años con 10 años de experiencia en desarrollo de software. Dirige un equipo de 12 desarrolladores en una empresa de tecnología que está creciendo rápidamente. Su responsabilidad principal es establecer y mantener estándares de calidad en el desarrollo, incluyendo las mejores prácticas de Git. Está preocupada por la escalabilidad de los procesos actuales y por la dificultad de mantener consistencia en un equipo que crece constantemente.
+Ana es una Tech Lead de 35 años con 10 años de experiencia en desarrollo de software. Dirige un equipo de 12 desarrolladores en una organización de tecnología que está creciendo rápidamente. Su responsabilidad principal es establecer y mantener estándares de calidad en el desarrollo, incluyendo las mejores prácticas de Git. Está preocupada por la escalabilidad de los procesos actuales y por la dificultad de mantener consistencia en un equipo que crece constantemente.
 
 ### Qué necesitan hacer?
 

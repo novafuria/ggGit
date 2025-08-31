@@ -54,6 +54,7 @@ La herramienta se integrará perfectamente en el flujo de trabajo existente de l
 - **Instalación automática**: Scripts para Linux/macOS (`install.sh`) y Windows (`install.ps1`)
 - **Soporte cross-platform**: Funcionamiento en Bash (Linux/macOS) y PowerShell (Windows)
 - **Integración con PATH**: Configuración automática de variables de entorno
+- **Distribución automática**: Sistema para compartir configuraciones de equipo
 
 ### 🤔 Podría Tener
 
@@ -91,9 +92,15 @@ La herramienta se integrará perfectamente en el flujo de trabajo existente de l
 - **Conventional Commits seguirán siendo estándar**: Se asume que la especificación de Conventional Commits se mantendrá estable
 - **Compatibilidad de shells**: Se asume que Bash y PowerShell mantendrán compatibilidad hacia atrás
 - **Adopción del equipo**: Se asume que los equipos de desarrollo estarán dispuestos a adoptar nuevas herramientas
-- **Recursos de mantenimiento**: Se asume que habrá recursos disponibles para mantener y actualizar la herramienta
+- **Recursos de mantenimiento**: Se asume que el desarrollador principal podrá mantener el proyecto como actividad personal
+- **Infraestructura de Novafuria**: Se asume que la infraestructura de desarrollo seguirá disponible sin costos adicionales
 
 ## 🔑 Recursos Clave
 
+El proyecto se basa en recursos existentes y gratuitos, aprovechando la infraestructura de desarrollo disponible.
+
 - **Especificación de Conventional Commits**: https://www.conventionalcommits.org/
 - **Documentación oficial de Git**: https://git-scm.com/doc
+- **Infraestructura de Novafuria**: Herramientas de desarrollo y testing existentes
+- **GitHub**: Repositorio público y CI/CD gratuito para proyectos open source
+- **Comunidad de desarrolladores**: Usuarios activos en equipos de trabajo y Novafuria

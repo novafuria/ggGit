@@ -364,6 +364,7 @@ graph TD
 **Shells**: Bash (Linux/macOS), PowerShell (Windows), Zsh (macOS)  
 **IDEs**: VSCode, IntelliJ, Eclipse, Vim, Emacs  
 **Terminales**: Terminal nativo, iTerm2, Windows Terminal, WSL  
+**Contexto Organizacional**: Infraestructura de desarrollo de Novafuria, equipos de trabajo existentes  
 
 ### Infraestructura Git
 **Repositorios**: GitHub, GitLab, Bitbucket, repositorios privados  
