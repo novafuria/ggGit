@@ -74,59 +74,24 @@ ggGit ofrece una suite completa de comandos optimizados que transforma la experi
 ## Canales
 
 ### Canal Principal: Distribución Directa (GitHub)
-**Descripción**: Distribución gratuita a través de GitHub como repositorio de código abierto, permitiendo que los usuarios descarguen, instalen y contribuyan directamente.
-
-**Ventajas**: 
-- Alcance global sin restricciones geográficas
-- Comunidad activa de desarrolladores
-- Feedback directo y contribuciones de la comunidad
-- Credibilidad y confianza en el ecosistema de desarrollo
+La distribución gratuita a través de GitHub como repositorio de código abierto proporciona alcance global sin restricciones geográficas, comunidad activa de desarrolladores, feedback directo y contribuciones de la comunidad, y credibilidad en el ecosistema de desarrollo.
 
 ### Canal Secundario: Gestores de Paquetes
-**Descripción**: Distribución a través de gestores de paquetes populares como npm, Homebrew, y Chocolatey para facilitar la instalación y actualización.
-
-**Ventajas**:
-- Instalación simplificada para usuarios técnicos
-- Actualizaciones automáticas
-- Integración con flujos de trabajo de desarrollo existentes
+La distribución a través de gestores de paquetes como npm, Homebrew y Chocolatey facilita la instalación simplificada para usuarios técnicos, actualizaciones automáticas, e integración con flujos de trabajo de desarrollo existentes.
 
 ### Canal Terciario: Adopción Orgánica
-**Descripción**: Adopción natural a través de equipos de trabajo, Novafuria, y recomendaciones de la comunidad de desarrolladores.
-
-**Ventajas**:
-- Adopción basada en valor real y utilidad práctica
-- Feedback directo de usuarios en entornos reales
-- Crecimiento orgánico sin esfuerzos de marketing
-- Validación en equipos de trabajo reales
+La adopción natural a través de equipos de trabajo, Novafuria, y recomendaciones de la comunidad proporciona adopción basada en valor real, feedback directo de usuarios en entornos reales, crecimiento orgánico sin esfuerzos de marketing, y validación en equipos de trabajo reales.
 
 ## Relaciónes con usuarios
 
 ### Relación de Autoservicio
-**Descripción**: Los usuarios descargan, instalan y configuran ggGit de manera independiente sin intervención directa del desarrollador.
-
-**Interacciones**:
-- Documentación completa y tutoriales paso a paso
-- Scripts de instalación automatizados
-- Sistema de ayuda integrado en los comandos
-- Comunidad de usuarios para soporte y preguntas
+Los usuarios descargan, instalan y configuran ggGit de manera independiente a través de documentación completa, tutoriales paso a paso, scripts de instalación automatizados, sistema de ayuda integrado en los comandos, y soporte de la comunidad de usuarios.
 
 ### Relación de Comunidad
-**Descripción**: Construcción de una comunidad activa de usuarios que comparten experiencias, mejores prácticas, y contribuyen al desarrollo de la herramienta.
-
-**Interacciones**:
-- Repositorio GitHub con issues y pull requests
-- Documentación colaborativa y ejemplos de uso
-- Soporte comunitario a través de GitHub Issues
-- Contribuciones de código y mejoras de la comunidad
+La comunidad se construye a través del repositorio GitHub con issues y pull requests, documentación colaborativa y ejemplos de uso, soporte comunitario a través de GitHub Issues, y contribuciones de código y mejoras de la comunidad.
 
 ### Relación de Soporte Limitado
-**Descripción**: Soporte básico proporcionado por el desarrollador principal, principalmente a través de la comunidad y documentación.
-
-**Interacciones**:
-- Respuesta a issues críticos en GitHub
-- Mantenimiento de documentación y ejemplos
-- Soporte para usuarios de equipos de trabajo y Novafuria
-- No hay soporte comercial o consultoría dedicada
+El soporte básico se proporciona a través de respuesta a issues críticos en GitHub, mantenimiento de documentación y ejemplos, y soporte para usuarios de equipos de trabajo y Novafuria, sin ofrecer soporte comercial o consultoría dedicada.
 
 ## Fuentes de ingresos
 
@@ -149,113 +114,40 @@ ggGit ofrece una suite completa de comandos optimizados que transforma la experi
 ## Actividades clave
 
 ### Desarrollo y Mantenimiento del Producto
-**Descripción**: Desarrollo continuo de nuevas funcionalidades, corrección de bugs, y mantenimiento de compatibilidad con diferentes versiones de Git y sistemas operativos.
-
-**Actividades específicas**:
-- Desarrollo de nuevos comandos y funcionalidades
-- Testing en diferentes entornos y sistemas operativos
-- Mantenimiento de compatibilidad con versiones de Git
-- Optimización de rendimiento y experiencia de usuario
+El desarrollo continuo de ggGit incluye la creación de nuevas funcionalidades, corrección de bugs, y mantenimiento de compatibilidad con diferentes versiones de Git y sistemas operativos. El desarrollador principal se enfoca en optimizar el rendimiento y mejorar la experiencia de usuario, realizando testing en diferentes entornos para asegurar la estabilidad de la herramienta.
 
 ### Gestión de la Comunidad
-**Descripción**: Construcción y mantenimiento de una comunidad activa de usuarios y contribuidores que impulse la adopción y mejora de la herramienta.
-
-**Actividades específicas**:
-- Moderación de issues y pull requests en GitHub
-- Respuesta a consultas técnicas de la comunidad
-- Creación de documentación y tutoriales
-- Mantenimiento de la documentación y ejemplos de uso
+La gestión de la comunidad se centra en moderar issues y pull requests en GitHub, responder consultas técnicas de los usuarios, y mantener documentación actualizada con ejemplos de uso. El objetivo es crear un ecosistema colaborativo donde los usuarios puedan contribuir y mejorar la herramienta de manera orgánica.
 
 ## Recursos
 
 ### Recursos Humanos
-**Desarrollador Principal**:
-- 1 desarrollador full-stack con experiencia en Git y desarrollo de herramientas CLI
-- Desarrollo y mantenimiento del proyecto como actividad personal
-- Gestión de la comunidad y documentación
+El proyecto cuenta con un desarrollador principal full-stack con experiencia en Git y desarrollo de herramientas CLI, que dedica tiempo personal al desarrollo y mantenimiento del proyecto, incluyendo la gestión de la comunidad y documentación.
 
 ### Recursos Tecnológicos
-**Infraestructura de Desarrollo**:
-- Repositorio GitHub con GitHub Actions para CI/CD
-- Infraestructura de desarrollo existente de Novafuria (sin costos adicionales)
-- Herramientas de testing y desarrollo ya disponibles en la organización
+La infraestructura de desarrollo se basa en GitHub con GitHub Actions para CI/CD, aprovechando la infraestructura existente de Novafuria sin costos adicionales y las herramientas de testing ya disponibles en la organización.
 
 ### Recursos de Conocimiento
-**Documentación y Contenido**:
-- Base de conocimiento con ejemplos prácticos
-- Tutoriales y guías de uso
-- Mejores prácticas y casos de uso
-- Documentación colaborativa en GitHub
-
-**Comunidad y Redes**:
-- Usuarios activos en equipos de trabajo y Novafuria
-- Comunidad de desarrolladores en GitHub
-- Presencia en el ecosistema de desarrollo Git
+Los recursos incluyen una base de conocimiento con ejemplos prácticos, tutoriales y guías de uso, mejores prácticas y casos de uso, todo mantenido como documentación colaborativa en GitHub. La comunidad se nutre de usuarios activos en equipos de trabajo y Novafuria, junto con la comunidad de desarrolladores en GitHub y presencia en el ecosistema de desarrollo Git.
 
 ## Relaciónes con socios clave
 
 ### Socios Tecnológicos
-**Git y Ecosistema Git**:
-- Mantenimiento de compatibilidad con versiones actuales y futuras de Git
-- Seguimiento de estándares y mejores prácticas de la comunidad
-- Integración con herramientas oficiales de Git
-
-**Sistemas de CI/CD**:
-- Compatibilidad con GitHub Actions, GitLab CI, Jenkins, y otras herramientas
-- Seguimiento de estándares de automatización de procesos de release
-- No requiere desarrollo de plugins específicos, funciona con herramientas existentes
+La relación con Git y su ecosistema se basa en mantener compatibilidad con versiones actuales y futuras, seguir estándares de la comunidad, e integrar con herramientas oficiales. Los sistemas de CI/CD como GitHub Actions, GitLab CI y Jenkins son compatibles sin requerir desarrollo de plugins específicos, funcionando con herramientas existentes.
 
 ### Socios de Distribución
-**Gestores de Paquetes**:
-- Compatibilidad con Homebrew, Chocolatey, y otros gestores populares
-- No requiere colaboración formal, solo compatibilidad técnica
-- Los usuarios pueden crear paquetes para sus gestores preferidos
+Los gestores de paquetes como Homebrew y Chocolatey son compatibles sin requerir colaboración formal, solo compatibilidad técnica. Los usuarios pueden crear paquetes para sus gestores preferidos de manera independiente.
 
 ### Integración con Novafuria
-**Contexto Organizacional**:
-- ggGit se desarrolla como proyecto personal pero utiliza infraestructura de Novafuria
-- Potencial integración futura como herramienta complementaria en proyectos de consultoría
-- No requiere socios externos, más bien aprovecha recursos existentes de la organización
+ggGit se desarrolla como proyecto personal pero utiliza infraestructura de Novafuria, con potencial integración futura como herramienta complementaria en proyectos de consultoría. No requiere socios externos, más bien aprovecha recursos existentes de la organización.
 
 ## Estructura de costos
 
 ### Costos de Desarrollo: Mínimos
-**Recursos Humanos**:
-- Tiempo personal del desarrollador (sin costo monetario directo)
-- Desarrollo como actividad personal y de pasión
-- Mantenimiento continuo del proyecto
-
-**Infraestructura de Desarrollo**:
-- GitHub (gratuito para proyectos open source)
-- GitHub Actions para CI/CD (gratuito para repositorios públicos)
-- Infraestructura de desarrollo existente de Novafuria (sin costos adicionales)
-- Herramientas de testing y desarrollo ya disponibles
+Los costos de desarrollo se limitan al tiempo personal del desarrollador, sin costo monetario directo, ya que el desarrollo se realiza como actividad personal y de pasión. La infraestructura se basa en GitHub gratuito para proyectos open source, GitHub Actions para CI/CD, y aprovecha la infraestructura existente de Novafuria sin costos adicionales.
 
 ### Costos de Operaciones: Cero
-**Soporte y Comunidad**:
-- No hay equipo de soporte dedicado
-- Soporte comunitario a través de GitHub Issues
-- Documentación y tutoriales mantenidos por el desarrollador
-
-**Infraestructura de Operaciones**:
-- No hay servidores de producción específicos para ggGit
-- No hay herramientas de soporte comerciales
-- El proyecto funciona completamente en infraestructura gratuita
+No hay costos de operaciones ya que no existe equipo de soporte dedicado, el soporte se proporciona a través de la comunidad en GitHub Issues, y el proyecto funciona completamente en infraestructura gratuita sin servidores de producción específicos ni herramientas comerciales.
 
 ### Costos de Marketing y Comunidad: Mínimos
-**Presencia en Comunidad**:
-- Participación en comunidades de desarrollo (sin costo)
-- Documentación y ejemplos en GitHub (gratuito)
-- No hay campañas de marketing pagas
-
-### Resumen de Costos:
-- **Desarrollo**: $0 (tiempo personal)
-- **Operaciones**: $0 (infraestructura gratuita)
-- **Marketing**: $0 (presencia orgánica en comunidad)
-- **Total Anual**: $0
-
-### Ventajas del Modelo Actual:
-- **Sostenibilidad**: El proyecto se mantiene sin costos monetarios
-- **Independencia**: No depende de financiamiento externo
-- **Flexibilidad**: Puede evolucionar según las necesidades del desarrollador
-- **Comunidad**: El modelo open source atrae contribuidores naturales
+La presencia en la comunidad se basa en participación orgánica en comunidades de desarrollo, documentación y ejemplos en GitHub, sin campañas de marketing pagas. El total anual de costos es $0, lo que proporciona sostenibilidad sin dependencia de financiamiento externo, flexibilidad para evolucionar según necesidades, y atractivo natural para contribuidores de la comunidad open source.
