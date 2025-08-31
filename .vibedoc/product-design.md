@@ -7,8 +7,6 @@
 ## 📋 Tabla de Contenidos <!-- omit in toc -->
 
 - [Descripción general](#descripción-general)
-  - [Infografía de la Propuesta de Valor](#infografía-de-la-propuesta-de-valor)
-  - [Texto Descriptivo de la Propuesta de Valor](#texto-descriptivo-de-la-propuesta-de-valor)
   - [Eventos y Actividades Clave](#eventos-y-actividades-clave)
   - [Explosión de Componentes](#explosión-de-componentes)
   - [Flexibilidad de Desarrollo por Comandos Independientes](#flexibilidad-de-desarrollo-por-comandos-independientes)
@@ -51,18 +49,13 @@
 
 ## Descripción general
 
-> Consiste en una infografía de la propuesta de valor que representa la solución de software y una descripción textual de sus elementos y relaciones. La infografía debe ser una representación visual de la propuesta de valor que incluye en su interior diferentes recursos visuales necesarios dispuestos de una forma que permita visualizar la propuesta de valor y ser comprendida por cualquier actor involucrado en el proyecto.
-> La infografía incluirá:
-> - Sketch o wireframes de la propuesta de valor
-> - Texto descriptivo de la propuesta de valor
-> - Eventos y actividades clave
-> - Diagramas de flujo de procesos BPMN asociados a cada evento y actividad clave
-> - Explosión de componentes
-> - Glosario de términos y definiciones
-> - Distribución de vistas y páginas del sistema
-> - Diagramas BPMN para procesos de negocio que son cubiertos por la solución de software
+ggGit es una suite de comandos independientes de línea de comandos que transforma la experiencia de trabajo con Git. La solución se compone de tres pilares principales:
 
-### Infografía de la Propuesta de Valor
+1. **Comandos Principales**: Una colección de comandos independientes (no alias) que simplifican operaciones Git comunes, especialmente enfocados en Conventional Commits. Cada comando puede estar implementado en diferentes tecnologías según sus necesidades específicas.
+
+2. **Sistema de Configuración Jerárquica**: Un mecanismo local que permite configuraciones específicas por contexto, incluyendo módulos por empresa/equipo, configuración de usuario, y configuraciones específicas de repositorio (con prioridad más alta), todo basado en archivos YAML locales.
+
+3. **Sistema de Convenciones Estandarizadas**: Un sistema que genera commits con formato estándar usando comandos optimizados, asegurando consistencia en todos los entornos de desarrollo. La validación final se realiza en la nube (CI/CD, pull requests) donde se aplican los estándares del equipo.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -103,16 +96,6 @@
 
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
-
-### Texto Descriptivo de la Propuesta de Valor
-
-ggGit es una suite de comandos independientes de línea de comandos que transforma la experiencia de trabajo con Git. La solución se compone de tres pilares principales:
-
-1. **Comandos Principales**: Una colección de comandos independientes (no alias) que simplifican operaciones Git comunes, especialmente enfocados en Conventional Commits. Cada comando puede estar implementado en diferentes tecnologías según sus necesidades específicas.
-
-2. **Sistema de Configuración Jerárquica**: Un mecanismo local que permite configuraciones específicas por contexto, incluyendo módulos por empresa/equipo, configuración de usuario, y configuraciones específicas de repositorio (con prioridad más alta), todo basado en archivos YAML locales.
-
-3. **Sistema de Convenciones Estandarizadas**: Un sistema que genera commits con formato estándar usando comandos optimizados, asegurando consistencia en todos los entornos de desarrollo. La validación final se realiza en la nube (CI/CD, pull requests) donde se aplican los estándares del equipo.
 
 ### Eventos y Actividades Clave
 
