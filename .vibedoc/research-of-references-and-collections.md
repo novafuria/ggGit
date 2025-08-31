@@ -34,7 +34,7 @@ Las herramientas modernas de desarrollo Git están siendo diseñadas para integr
 
 ### Distribución y Sincronización de Configuraciones
 
-Un desafío emergente en la industria es la distribución y sincronización de configuraciones de Git entre diferentes entornos de desarrollo. Herramientas como Git Hooks, alias personalizados, y configuraciones específicas del equipo requieren mecanismos de distribución automática para mantener la consistencia en equipos grandes. Esta necesidad ha llevado al desarrollo de herramientas que pueden sincronizar configuraciones de manera transparente.
+Un desafío emergente en la industria es la distribución y sincronización de configuraciones de Git entre diferentes entornos de desarrollo. Herramientas como Git Hooks, alias personalizados, y configuraciones específicas del equipo requieren mecanismos de distribución manual para mantener la consistencia en equipos grandes. Esta necesidad ha llevado al desarrollo de herramientas que pueden gestionar configuraciones de manera local y jerárquica.
 
 ## Soluciones Similares
 
@@ -47,7 +47,7 @@ Los desarrolladores y equipos han implementado soluciones ad-hoc utilizando alia
 La implementación de alias y scripts personalizados presenta varios desafíos significativos. En primer lugar, la configuración es manual y debe repetirse en cada máquina de desarrollo, lo que dificulta la adopción en equipos grandes. En segundo lugar, la falta de estandarización resulta en inconsistencias entre diferentes desarrolladores y equipos. Finalmente, el mantenimiento de estos scripts se vuelve problemático cuando Git evoluciona o cuando se necesitan cambios en los flujos de trabajo.
 
 #### Oportunidades de mejora
-Existe una oportunidad clara para estandarizar y distribuir estas soluciones de manera más eficiente. Una herramienta que pueda proporcionar alias predefinidos y configurables, junto con un sistema de distribución automática, resolvería muchos de los problemas de configuración manual y estandarización. Esta oportunidad se extiende también a la distribución de Git Hooks y otras configuraciones de equipo, creando un sistema unificado de gestión de configuraciones Git. Para un proyecto personal open source como ggGit, esta oportunidad se traduce en crear una herramienta que pueda ser adoptada naturalmente por equipos de trabajo y organizaciones como Novafuria.
+Existe una oportunidad clara para estandarizar y gestionar estas soluciones de manera más eficiente. Una herramienta que pueda proporcionar comandos predefinidos y configurables, junto con un sistema de gestión local jerárquica, resolvería muchos de los problemas de configuración manual y estandarización. Esta oportunidad se extiende también a la gestión de configuraciones específicas por contexto sin depender de sincronización automática, creando un sistema unificado de gestión de configuraciones Git locales. Para un proyecto personal open source como ggGit, esta oportunidad se traduce en crear una herramienta que pueda ser adoptada naturalmente por equipos de trabajo y organizaciones como Novafuria.
 
 ### 📦 Solución: Herramientas de Interfaz Gráfica para Git
 
@@ -80,7 +80,7 @@ Los Git Hooks proporcionan un mecanismo poderoso para ejecutar scripts automáti
 A pesar de su potencia, los Git Hooks presentan limitaciones críticas que limitan su adopción en equipos. La implementación es local por defecto, lo que significa que cada desarrollador debe configurar manualmente los hooks en su máquina. Esta configuración manual dificulta la adopción en equipos grandes y resulta en inconsistencias entre diferentes entornos de desarrollo. Además, los hooks no se sincronizan automáticamente con el repositorio, lo que puede llevar a situaciones donde algunos desarrolladores tienen validaciones activas mientras otros no.
 
 #### Oportunidades de mejora
-Existe una oportunidad clara para crear herramientas que distribuyan y sincronicen Git Hooks de manera automática entre todos los miembros del equipo. Una solución que pueda instalar, configurar y mantener hooks de forma consistente en todos los entornos de desarrollo resolvería el problema fundamental de la distribución local de hooks.
+Existe una oportunidad para crear herramientas alternativas que generen commits con formato estándar desde el inicio, evitando la necesidad de validación local. Una solución que genere commits correctos por defecto, con validación final en la nube (CI/CD), resolvería el problema fundamental de la distribución local de hooks y proporcionaría una experiencia más consistente para equipos.
 
 ### 📦 Solución: Herramientas de Automatización de CI/CD
 
@@ -133,7 +133,7 @@ Colección de herramientas y utilidades de línea de comandos que extienden o me
 ### 📦 Colección: Herramientas de Git Hooks y Validación
 
 #### Descripción
-Colección de herramientas y frameworks que facilitan la implementación, distribución y gestión de Git Hooks en equipos de desarrollo, incluyendo herramientas para validación de commits y automatización de flujos de trabajo.
+Colección de herramientas y frameworks que facilitan la implementación, distribución y gestión de Git Hooks en equipos de desarrollo. Aunque ggGit no utiliza hooks localmente, estas herramientas sirven como referencia para entender las alternativas de validación local y los desafíos que ggGit resuelve de manera diferente.
 
 #### Enlaces
 

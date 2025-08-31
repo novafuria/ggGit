@@ -55,17 +55,17 @@ ggGit ofrece una suite completa de comandos optimizados que transforma la experi
 
 1. **Inconsistencia en Commits**: Automatización y validación de Conventional Commits para mantener estándares de equipo consistentes
 2. **Comandos Git Verbosos**: Abreviación inteligente de comandos Git comunes para mejorar la productividad diaria
-3. **Distribución Manual de Configuraciones**: Sistema automático de distribución de alias, hooks y configuraciones de equipo
+3. **Distribución Manual de Configuraciones**: Sistema local de configuración jerárquica que mantiene estándares de equipo sin sincronización automática
 4. **Resistencia a la Línea de Comandos**: Herramientas que facilitan la transición gradual desde interfaces gráficas
 5. **Falta de Automatización CI/CD**: Commits estructurados que permiten automatización confiable de releases y despliegues
 
 ### Valor Agregado Único:
 
-**"La única herramienta que combina la potencia de la línea de comandos con la facilidad de adopción en equipo, proporcionando un sistema unificado de gestión de configuraciones Git que se distribuye automáticamente y mantiene consistencia entre todos los entornos de desarrollo."**
+**"La única herramienta que combina la potencia de la línea de comandos con la facilidad de adopción en equipo, proporcionando un sistema unificado de gestión de configuraciones Git locales que mantiene consistencia entre todos los entornos de desarrollo sin dependencia de sincronización automática."**
 
 ### Diferenciadores Clave:
 
-- **Distribución Automática**: Configuraciones que se sincronizan automáticamente entre todos los miembros del equipo
+- **Configuración Jerárquica**: Sistema local que detecta automáticamente el contexto y aplica configuraciones específicas
 - **Transición Gradual**: Herramientas que facilitan la adopción sin requerir cambios drásticos en el flujo de trabajo
 - **Integración Completa**: Solución que aborda tanto la productividad individual como la estandarización del equipo
 - **Cross-Platform**: Funcionamiento idéntico en Linux, macOS y Windows

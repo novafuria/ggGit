@@ -54,16 +54,16 @@ La herramienta se integrará perfectamente en el flujo de trabajo existente de l
 - **Instalación automática**: Scripts para Linux/macOS (`install.sh`) y Windows (`install.ps1`)
 - **Soporte cross-platform**: Funcionamiento en Bash (Linux/macOS) y PowerShell (Windows)
 - **Integración con PATH**: Configuración automática de variables de entorno
-- **Distribución automática**: Sistema para compartir configuraciones de equipo
+- **Sistema de configuración jerárquica**: Configuraciones locales por contexto (repositorio > módulo > usuario)
 
 ### 🤔 Podría Tener
 
 - **Sistema de alias personalizables**: Permitir a los usuarios definir sus propios comandos abreviados
 - **Templates de commit personalizables**: Configuración de formatos de commit específicos por proyecto
-- **Integración con hooks de Git**: Automatización de validaciones de Conventional Commits
+- **Sistema de módulos**: Configuraciones específicas por contexto de trabajo (empresa, equipo, proyecto)
 - **Sistema de plugins**: Arquitectura extensible para comandos adicionales
 - **Documentación interactiva**: Comando de ayuda que muestre ejemplos de uso
-- **Validación de mensajes**: Verificación automática del formato de Conventional Commits antes del commit
+- **Validación en la nube**: Verificación del formato de Conventional Commits en CI/CD y pull requests
 - **Integración con IDEs**: Extensiones para VSCode, IntelliJ, etc.
 - **Sistema de autenticación**: No manejará credenciales o tokens de acceso para herramientas de IA
 - **Autocompletado con IA**: Análisis automático de cambios staged para sugerir mensajes de commit inteligentes
