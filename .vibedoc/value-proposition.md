@@ -9,11 +9,11 @@
 - [Segmento de clientes](#segmento-de-clientes)
 - [Propuesta de valor](#propuesta-de-valor)
 - [Canales](#canales)
-- [Relaciónes con usuarios](#relaciónes-con-usuarios)
+- [Relaciones con usuarios](#relaciones-con-usuarios)
 - [Fuentes de ingresos](#fuentes-de-ingresos)
 - [Actividades clave](#actividades-clave)
 - [Recursos](#recursos)
-- [Relaciónes con socios clave](#relaciónes-con-socios-clave)
+- [Relaciones con socios clave](#relaciones-con-socios-clave)
 - [Estructura de costos](#estructura-de-costos)
 
 ## Segmento de clientes
