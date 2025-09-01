@@ -314,44 +314,47 @@ properties:
         default: "{type}({scope}): {description}"
         description: "Template para mensajes de commit"
   
-  conventional_commits:
-    type: object
-    properties:
-      types:
-        type: array
-        items:
-          type: string
-        default: ["feat", "fix", "docs", "style", "refactor", "test", "chore"]
-        description: "Tipos de commit permitidos"
-      scopes:
-        type: array
-        items:
-          type: string
-        description: "Scopes permitidos para commits"
-      require_scope:
-        type: boolean
-        default: false
-        description: "Si se requiere scope en todos los commits"
+           conventional_commits:
+           type: object
+           properties:
+             scopes:
+               type: array
+               items:
+                 type: string
+               description: "Scopes permitidos para commits (opcional)"
+             require_scope:
+               type: boolean
+               default: false
+               description: "Si se requiere scope en todos los commits"
+             custom_types:
+               type: array
+               items:
+                 type: string
+               description: "Tipos de commit personalizados adicionales (opcional)"
   
-  ai:
-    type: object
-    properties:
-      enabled:
-        type: boolean
-        default: false
-        description: "Habilitar funcionalidades de IA"
-      provider:
-        type: string
-        enum: ["openai", "anthropic", "local"]
-        default: "openai"
-        description: "Proveedor de servicios de IA"
-      api_key_env:
-        type: string
-        description: "Variable de entorno para API key"
-      model:
-        type: string
-        default: "gpt-3.5-turbo"
-        description: "Modelo de IA a utilizar"
+           ai:
+           type: object
+           properties:
+             enabled:
+               type: boolean
+               default: false
+               description: "Habilitar funcionalidades de IA"
+             provider:
+               type: string
+               enum: ["openai", "anthropic", "azure", "local"]
+               default: "openai"
+               description: "Proveedor de servicios de IA (API compatible con OpenAI)"
+             api_key_env:
+               type: string
+               default: "OPENAI_API_KEY"
+               description: "Variable de entorno para API key"
+             model:
+               type: string
+               default: "gpt-3.5-turbo"
+               description: "Modelo de IA a utilizar"
+             base_url:
+               type: string
+               description: "URL base para proveedores alternativos (opcional)"
   
   ui:
     type: object
@@ -558,7 +561,15 @@ Sistema que facilita la instalación, actualización y distribución de ggGit en
 ## Sistema de validación y esquemas
 
 ### Descripción
-Sistema que valida configuraciones, argumentos de comandos y mensajes de commit usando esquemas predefinidos.
+Sistema que valida configuraciones, argumentos de comandos y mensajes de commit usando esquemas predefinidos. La validación distingue claramente entre tipos de commit fijos (ligados a comandos) y scopes configurables.
+
+### Principios de Validación
+
+**Tipos de Commit Fijos**: Los tipos están ligados a comandos específicos y no son configurables. Cada comando genera un tipo específico de commit.
+
+**Scopes Configurables**: Los scopes son opcionales y configurables, permitiendo personalización por proyecto o equipo.
+
+**Configuración Jerárquica**: La validación respeta la jerarquía de configuración (repositorio > módulo > usuario > default).
 
 ### Componentes
 
@@ -586,8 +597,25 @@ Sistema que valida configuraciones, argumentos de comandos y mensajes de commit 
 [optional footer(s)]
 ```
 
+**Tipos de Commit Fijos:**
+Los tipos de commit están ligados a comandos específicos y no son configurables:
+- **feat**: Comando `ggfeat` - Nuevas funcionalidades
+- **fix**: Comando `ggfix` - Correcciones de bugs
+- **docs**: Comando `ggdocs` - Documentación
+- **style**: Comando `ggstyle` - Cambios de estilo
+- **refactor**: Comando `ggrefactor` - Refactorización
+- **test**: Comando `ggtest` - Tests
+- **chore**: Comando `ggchore` - Tareas de mantenimiento
+- **break**: Comando `ggbreak` - Cambios breaking
+
+**Scopes Configurables:**
+Los scopes son configurables y opcionales:
+- Configuración en `conventional_commits.scopes`
+- Validación de formato: letras minúsculas, números, guiones
+- Opción `require_scope` para hacer scopes obligatorios
+
 **Validaciones Requeridas:**
-- Tipo de commit debe estar en lista permitida
+- Tipo de commit debe corresponder al comando ejecutado
 - Scope debe seguir formato: letras minúsculas, números, guiones
 - Descripción no puede estar vacía y máximo 72 caracteres
 - Cuerpo opcional con máximo 1000 caracteres por línea
@@ -600,12 +628,12 @@ type: object
 properties:
   type:
     type: string
-    enum: [feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert]
-    description: "Tipo de commit según Conventional Commits"
+    enum: [feat, fix, docs, style, refactor, test, chore, break]
+    description: "Tipo de commit según comando ejecutado"
   scope:
     type: string
     pattern: "^[a-z0-9-]+$"
-    description: "Scope del commit (opcional)"
+    description: "Scope del commit (opcional, configurable)"
   description:
     type: string
     minLength: 1
@@ -696,7 +724,15 @@ Sistema que proporciona una interfaz unificada para interactuar con Git, manejan
 ## Sistema de IA para generación de commits
 
 ### Descripción
-Sistema que utiliza inteligencia artificial para analizar cambios y generar mensajes de commit automáticamente.
+Sistema que utiliza inteligencia artificial para analizar cambios y generar mensajes de commit automáticamente. La integración de IA está simplificada para usar solo proveedores con API compatible con OpenAI.
+
+### Principios de Diseño de IA
+
+**API Estándar**: Solo se soportan proveedores con API compatible con OpenAI para simplificar la integración y mantenimiento.
+
+**Configuración Única**: La configuración de IA se maneja en un solo lugar (archivo de configuración) sin necesidad de múltiples archivos o esquemas.
+
+**Integración Natural**: La IA se integra naturalmente en comandos existentes sin requerir configuración adicional.
 
 ### Componentes
 
@@ -725,9 +761,10 @@ Sistema que utiliza inteligencia artificial para analizar cambios y generar mens
 #### 2. Especificación del Generador de Mensajes con IA
 
 **Proveedores de IA Soportados:**
-- **OpenAI**: GPT-3.5-turbo, GPT-4
-- **Anthropic**: Claude
-- **Local**: Modelos locales (opcional)
+- **OpenAI**: GPT-3.5-turbo, GPT-4 (API estándar)
+- **Anthropic**: Claude (API compatible con OpenAI)
+- **Azure OpenAI**: Servicios de Azure (API compatible)
+- **Local**: Modelos locales con API compatible (opcional)
 
 **Configuración de IA:**
 ```yaml
@@ -736,9 +773,7 @@ ai:
   provider: "openai"
   api_key_env: "OPENAI_API_KEY"
   model: "gpt-3.5-turbo"
-  max_tokens: 100
-  temperature: 0.7
-  prompt_template: "custom_prompt.txt"  # Opcional
+  base_url: "https://api.openai.com/v1"  # Opcional para proveedores alternativos
 ```
 
 **Prompt Estándar:**
@@ -878,25 +913,14 @@ Sistema que maneja integraciones con servicios externos como APIs de IA, gestore
 - **Anthropic**: Claude
 - **Local**: Modelos locales (opcional)
 
-**Configuración de Proveedores:**
+**Configuración Simplificada:**
 ```yaml
-ai_providers:
-  openai:
-    api_key_env: "OPENAI_API_KEY"
-    models: ["gpt-3.5-turbo", "gpt-4"]
-    rate_limit: 60  # requests per minute
-    timeout: 30     # seconds
-  
-  anthropic:
-    api_key_env: "ANTHROPIC_API_KEY"
-    models: ["claude-3-sonnet", "claude-3-haiku"]
-    rate_limit: 50
-    timeout: 30
-  
-  local:
-    endpoint: "http://localhost:8000"
-    models: ["local-model"]
-    timeout: 10
+ai:
+  enabled: true
+  provider: "openai"  # openai, anthropic, azure, local
+  api_key_env: "OPENAI_API_KEY"
+  model: "gpt-3.5-turbo"
+  base_url: "https://api.openai.com/v1"  # Solo para proveedores alternativos
 ```
 
 **Manejo de Errores de IA:**
