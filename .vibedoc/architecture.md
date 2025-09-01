@@ -846,7 +846,7 @@ ggai --help "error al hacer push"
 ## Sistema de observabilidad y logging
 
 ### Descripción
-Sistema que proporciona logging, métricas y debugging para facilitar el mantenimiento y troubleshooting de ggGit.
+Sistema que proporciona logging y debugging para facilitar el mantenimiento y troubleshooting de ggGit.
 
 ### Componentes
 

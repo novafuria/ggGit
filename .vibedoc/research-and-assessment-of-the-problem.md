@@ -386,7 +386,7 @@ graph TD
 
 ### Entornos de Desarrollo
 **Sistemas Operativos**: Linux (Ubuntu, CentOS, RHEL), macOS, Windows  
-**Shells**: Bash (Linux/macOS), PowerShell (Windows), Zsh (macOS)  
+**Shells**: Python en Linux, macOS y Windows  
 **IDEs**: VSCode, IntelliJ, Eclipse, Vim, Emacs  
 **Terminales**: Terminal nativo, iTerm2, Windows Terminal, WSL  
 **Contexto Organizacional**: Infraestructura de desarrollo de Novafuria, equipos de trabajo existentes  

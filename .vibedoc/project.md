@@ -40,7 +40,7 @@ Se propone crear una suite de comandos cortos, mnemotécnicos y cross-platform q
 - **Instalación automática**: Scripts de instalación que configuren automáticamente el PATH y permisos en diferentes sistemas operativos
 - **Consistencia cross-platform**: Funcionamiento idéntico en Linux, macOS y Windows
 
-La herramienta se integrará perfectamente en el flujo de trabajo existente de los desarrolladores, proporcionando una capa de abstracción que simplifica Git sin ocultar su funcionalidad. En el futuro, ggGit evolucionará para incorporar capacidades de IA que analicen automáticamente los cambios y sugieran mensajes de commit inteligentes, similar a las funcionalidades de autocompletado de los IDEs modernos.
+La herramienta se integrará perfectamente en el flujo de trabajo existente de los desarrolladores, proporcionando una capa de abstracción que simplifica Git sin ocultar su funcionalidad. ggGit incluye capacidades de IA integradas que analizan automáticamente los cambios y sugieren mensajes de commit inteligentes, similar a las funcionalidades de autocompletado de los IDEs modernos.
 
 ## 📐 Alcance
 
@@ -52,9 +52,9 @@ La herramienta se integrará perfectamente en el flujo de trabajo existente de l
 - **Conventional Commits**: `ggfeat`, `ggfix`, `ggbreak` con soporte para scope
 - **Información del sistema**: `ggv` (version), `ggconfig`
 - **Instalación automática**: Scripts para Linux/macOS (`install.sh`) y Windows (`install.ps1`)
-- **Soporte cross-platform**: Funcionamiento en Bash (Linux/macOS) y PowerShell (Windows)
+- **Soporte cross-platform**: Funcionamiento en Python en Linux, macOS y Windows
 - **Integración con PATH**: Configuración automática de variables de entorno
-- **Sistema de configuración jerárquica**: Configuraciones locales por contexto (repositorio > módulo > usuario)
+- **Sistema de configuración jerárquica**: Configuraciones locales por contexto (repositorio > módulo > usuario > default)
 
 ### 🤔 Podría Tener
 
@@ -66,8 +66,8 @@ La herramienta se integrará perfectamente en el flujo de trabajo existente de l
 - **Validación en la nube**: Verificación del formato de Conventional Commits en CI/CD y pull requests
 - **Integración con IDEs**: Extensiones para VSCode, IntelliJ, etc.
 - **Sistema de autenticación**: No manejará credenciales o tokens de acceso para herramientas de IA
-- **Autocompletado con IA**: Análisis automático de cambios staged para sugerir mensajes de commit inteligentes
-- **Generación de Conventional Commits con IA**: Sugerencias automáticas de tipo, scope y descripción basadas en el código
+- **IA Integrada**: Funcionalidades de IA integradas en comandos existentes y comandos conversacionales especializados
+- **Generación automática con IA**: Análisis automático de cambios para sugerir mensajes de commit inteligentes
 
 ### ❌ Fuera de Alcance
 
