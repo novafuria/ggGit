@@ -18,15 +18,15 @@
 
 ## Descripción general
 
-ggGit es una suite de comandos independientes de línea de comandos que simplifica y acelera el trabajo con Git, especialmente enfocada en Conventional Commits. La arquitectura está diseñada para ser modular, extensible y mantener consistencia entre diferentes implementaciones de comandos.
+ggGit es una suite de comandos independientes de línea de comandos que simplifica y acelera el trabajo con Git, especialmente enfocada en Conventional Commits. La arquitectura está diseñada para ser modular, extensible y mantener consistencia entre todos los comandos.
 
 ### Principios Arquitectónicos
 
-1. **Comandos Independientes**: Cada comando es un ejecutable independiente que puede estar implementado en diferentes tecnologías
+1. **Comandos Independientes**: Cada comando es un script Python ejecutable independiente que reutiliza abstracciones comunes
 2. **Configuración Jerárquica**: Sistema de configuración local con prioridad repositorio > módulo > usuario > default
 3. **Interfaz Consistente**: Todos los comandos comparten el mismo sistema de colores, mensajes y estructura de ayuda
-4. **Flexibilidad Tecnológica**: Los comandos pueden estar implementados en bash, Python, Go, o cualquier lenguaje apropiado
-5. **Validación en la Nube**: Los commits se generan correctamente por defecto, con validación final en CI/CD
+4. **Lenguaje Unificado**: Todos los comandos implementados en Python para consistencia y facilidad de mantenimiento
+5. **IA Integrada**: Funcionalidades de IA integradas en comandos existentes y comandos conversacionales especializados
 
 ### Arquitectura General
 
@@ -38,10 +38,10 @@ ggGit es una suite de comandos independientes de línea de comandos que simplifi
 │  │   Comandos      │    │  Configuración  │    │   Interfaz      │        │
 │  │   Independientes│    │   Jerárquica    │    │   CLI Unificada │        │
 │  │                 │    │                 │    │                 │        │
-│  │ • ggfeat (bash)│    │ • Repositorio   │    │ • Colores       │        │
-│  │ • ggfix (bash) │    │ • Módulos       │    │ • Mensajes      │        │
+│  │ • ggfeat (py)  │    │ • Repositorio   │    │ • Click/Typer   │        │
+│  │ • ggfix (py)   │    │ • Módulos       │    │ • Colores       │        │
 │  │ • ggconfig (py)│    │ • Usuario       │    │ • Ayuda         │        │
-│  │ • ggai (go)    │    │ • Default       │    │ • Validación    │        │
+│  │ • ggai (py)    │    │ • Default       │    │ • IA Integrada  │        │
 │  └─────────────────┘    └─────────────────┘    └─────────────────┘        │
 │           │                       │                       │                │
 │           ▼                       ▼                       ▼                │
@@ -54,11 +54,11 @@ ggGit es una suite de comandos independientes de línea de comandos que simplifi
 │  └─────────────────────────────────────────────────────────────────────┘   │
 │                                                                             │
 │  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │                    Sistema de IA (Futuro)                          │   │
+│  │                    Sistema de IA Integrado                         │   │
 │  │                                                                     │   │
-│  │  • Análisis de cambios staged                                      │   │
-│  │  • Generación de mensajes de commit                                │   │
-│  │  • Integración con servicios de IA                                 │   │
+│  │  • IA automática en comandos existentes                            │   │
+│  │  • Comando conversacional ggai                                     │   │
+│  │  • Análisis y generación automática                                │   │
 │  └─────────────────────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -458,14 +458,46 @@ OPTIONS
 - `3`: Error de configuración
 - `4`: Error de Git (no es repositorio, conflictos, etc.)
 
-### Consistencia entre Lenguajes
+### Consistencia entre Comandos
 
-Para mantener consistencia entre diferentes implementaciones:
+Para mantener consistencia entre todos los comandos:
 
 1. **Esquema de Colores**: Todos los comandos usan los mismos códigos de color
 2. **Formato de Mensajes**: Estructura consistente para errores, warnings, y éxito
 3. **Sistema de Ayuda**: Formato unificado para todos los comandos
 4. **Códigos de Salida**: Estandarización de códigos de error
+
+### Bibliotecas CLI Recomendadas
+
+**Opción Principal: Click**
+- **Ventajas**: Sintaxis decorativa, manejo automático de ayuda, validación de tipos
+- **Colores**: Integración con `colorama` para colores multiplataforma
+- **Formato**: Ayuda automática con formato estándar
+- **Validación**: Validación automática de argumentos y tipos
+
+**Alternativa: Typer**
+- **Ventajas**: Basado en type hints, generación automática de CLI
+- **Colores**: Soporte nativo para colores con `rich`
+- **Formato**: Ayuda automática con formato moderno
+- **Validación**: Validación automática basada en tipos
+
+**Configuración Recomendada:**
+```python
+# Ejemplo con Click
+import click
+from colorama import init, Fore, Style
+
+init()  # Inicializar colorama
+
+@click.command()
+@click.option('--scope', '-s', help='Scope del commit')
+@click.option('--ai', is_flag=True, help='Usar IA para generar mensaje')
+@click.argument('message', required=False)
+def ggfeat(scope, ai, message):
+    """Commit changes adding the feat prefix to the message"""
+    # Implementación del comando
+    pass
+```
 
 ## Sistema de instalación y distribución
 
@@ -501,27 +533,27 @@ Sistema que facilita la instalación, actualización y distribución de ggGit en
 5. **Configuración Inicial**: Crear archivos de configuración por defecto
 6. **Verificación**: Comprobar que la instalación fue exitosa
 
-#### 2. Especificación de Gestores de Paquetes
+#### 2. Especificación de Instalación desde Repositorio
 
-**Distribución Multiplataforma:**
-- **Linux**: Paquetes .deb, .rpm, AppImage
-- **macOS**: Homebrew, MacPorts
-- **Windows**: Chocolatey, winget, instalador MSI
-
-**Requisitos de Empaquetado:**
-- Script de instalación multiplataforma
-- Dependencias declaradas en archivo de manifiesto
+**Instalación Directa:**
+- Clonar repositorio desde GitHub
+- Ejecutar script de instalación local
 - Configuración automática de PATH
-- Verificación post-instalación
+- Creación de directorios de configuración
+
+**Ventajas de Instalación Local:**
+- Consistencia entre usuarios y CI/CD
+- Sin dependencia de gestores de paquetes
+- Actualizaciones mediante `git pull`
+- Fácil desarrollo y testing
 
 #### 3. Especificación de Actualización
 
 **Proceso de Actualización:**
-- Descarga de nueva versión
-- Backup de configuraciones existentes
-- Actualización de comandos
-- Restauración de configuraciones personalizadas
-- Verificación de integridad
+- `git pull` para obtener última versión
+- Re-ejecutar script de instalación si es necesario
+- Mantener configuraciones existentes
+- Verificación automática de integridad
 
 ## Sistema de validación y esquemas
 
@@ -723,28 +755,58 @@ El sistema debe generar prompts que incluyan:
 - Confirmar que el tipo sugerido sea válido
 - Proponer correcciones si es necesario
 
-#### 3. Especificación del Comando ggai
+#### 3. Especificación de Integración de IA en Comandos Existentes
+
+**IA Automática en Comandos:**
+- **ggfeat sin argumentos**: Analizar cambios y generar mensaje automáticamente
+- **ggfix sin argumentos**: Analizar cambios y generar mensaje automáticamente
+- **ggbreak sin argumentos**: Analizar cambios y generar mensaje automáticamente
+
+**Flags de IA:**
+- `--ai`: Habilitar generación automática con IA
+- `--no-ai`: Deshabilitar IA (comportamiento manual)
+- `--ai-provider <provider>`: Especificar proveedor de IA
+- `--ai-model <model>`: Especificar modelo de IA
+
+**Flujo de IA Automática:**
+1. Usuario ejecuta comando sin argumentos
+2. Sistema detecta que se requiere mensaje
+3. Analiza cambios staged automáticamente
+4. Genera mensaje con IA
+5. Muestra sugerencia al usuario
+6. Permite aceptar, rechazar o modificar
+
+#### 4. Especificación del Comando ggai Conversacional
 
 **Funcionalidad:**
-- Analizar automáticamente cambios staged
-- Generar mensaje de commit con IA
-- Mostrar sugerencia al usuario
-- Permitir aceptar, rechazar o modificar el mensaje
-- Realizar commit si se acepta
+- Iniciar conversación interactiva con IA
+- Ejecutar acciones complejas relacionadas con Git
+- Generar scripts y comandos automáticamente
+- Resolver problemas de Git con asistencia de IA
+
+**Modos de Operación:**
+- **Conversacional**: Chat interactivo con IA
+- **Ejecutivo**: Ejecutar comandos sugeridos por IA
+- **Asistente**: Ayuda para resolver problemas de Git
 
 **Opciones del Comando:**
-- `--auto`: Aceptar automáticamente la sugerencia
+- `--conversation`: Modo conversacional interactivo
+- `--execute`: Ejecutar comandos sugeridos por IA
+- `--help`: Modo asistente para problemas
 - `--provider <provider>`: Especificar proveedor de IA
 - `--model <model>`: Especificar modelo de IA
-- `--verbose`: Mostrar análisis detallado
-- `--dry-run`: Solo mostrar sugerencia sin hacer commit
 
-**Flujo de Interacción:**
-1. Analizar cambios staged
-2. Generar mensaje con IA
-3. Mostrar sugerencia
-4. Preguntar confirmación
-5. Realizar commit o cancelar
+**Ejemplos de Uso:**
+```bash
+# Conversación interactiva
+ggai --conversation
+
+# Ejecutar comandos sugeridos por IA
+ggai --execute "resuelve conflictos de merge"
+
+# Asistente para problemas
+ggai --help "error al hacer push"
+```
 
 ## Sistema de observabilidad y logging
 
@@ -777,65 +839,30 @@ logging:
   format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 ```
 
-#### 2. Especificación de Métricas de Uso
 
-**Métricas a Recolectar:**
-- **Uso de Comandos**: Frecuencia de uso de cada comando
-- **Errores**: Tipos y frecuencia de errores por comando
-- **Uso Diario**: Actividad diaria del usuario
-- **Configuraciones**: Módulos y configuraciones más usadas
-- **IA**: Uso de funcionalidades de IA
 
-**Almacenamiento de Métricas:**
-- **Archivo**: `~/.gggit/metrics.json`
-- **Formato**: JSON estructurado
-- **Privacidad**: Solo datos de uso, sin información personal
-- **Retención**: Historial de 12 meses
+#### 2. Especificación de Niveles de Log y Verbose
 
-**Estructura de Métricas:**
-```json
-{
-  "commands_used": {
-    "ggfeat": 150,
-    "ggfix": 89,
-    "ggai": 45
-  },
-  "errors": {
-    "ggfeat": {
-      "invalid_message": 5,
-      "no_changes": 12
-    }
-  },
-  "daily_usage": {
-    "2024-01-15": 25,
-    "2024-01-16": 18
-  },
-  "total_executions": 284,
-  "ai_usage": {
-    "requests": 45,
-    "success_rate": 0.93
-  }
-}
+**Niveles de Log:**
+- **ERROR**: Solo errores críticos
+- **WARNING**: Advertencias y errores no críticos
+- **INFO**: Información general de operaciones
+- **DEBUG**: Información detallada para troubleshooting
+
+**Modo Verbose:**
+- **Activación**: `--verbose` flag en comandos
+- **Configuración**: `ui.verbose: true` en configuración
+- **Salida**: Información detallada de operaciones
+- **Destino**: stdout para información del usuario
+
+**Configuración de Logging:**
+```yaml
+logging:
+  level: "INFO"  # ERROR, WARNING, INFO, DEBUG
+  max_size: "10MB"
+  backup_count: 5
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 ```
-
-#### 3. Especificación del Modo Debug
-
-**Activación del Debug:**
-- **Variable de Entorno**: `GGGIT_DEBUG=true`
-- **Configuración**: `debug: true` en configuración
-- **Comando**: `--debug` flag en comandos
-
-**Información de Debug:**
-- Configuración cargada y valores utilizados
-- Argumentos de comandos procesados
-- Operaciones Git ejecutadas
-- Llamadas a APIs de IA
-- Validaciones realizadas
-
-**Salida de Debug:**
-- **Destino**: stderr para no interferir con salida normal
-- **Formato**: `[DEBUG] <context>: <message>`
-- **Nivel**: Detallado para troubleshooting
 
 ## Integraciones con terceros
 
@@ -878,49 +905,9 @@ ai_providers:
 - **Fallbacks**: Cambio automático de proveedor en caso de error
 - **Cache**: Cache de respuestas para evitar llamadas repetidas
 
-#### 2. Especificación de Integración con CI/CD
 
-**Entornos de CI/CD Soportados:**
-- **GitHub Actions**: Detección automática y validación
-- **GitLab CI**: Integración con pipelines
-- **Jenkins**: Soporte para builds automatizados
-- **Azure DevOps**: Integración con pipelines de Azure
 
-**Validaciones en CI/CD:**
-- Verificación de formato de Conventional Commits
-- Validación de tipos de commit permitidos
-- Verificación de scopes requeridos
-- Validación de longitud de mensajes
 
-**Configuración de CI/CD:**
-```yaml
-cicd:
-  enabled: true
-  strict_mode: false  # Validación estricta en CI
-  allowed_types: ["feat", "fix", "docs", "style", "refactor", "test", "chore"]
-  require_scope: false
-  max_description_length: 72
-```
-
-#### 3. Especificación de Gestores de Paquetes
-
-**Distribución Multiplataforma:**
-- **Linux**: Paquetes .deb, .rpm, AppImage
-- **macOS**: Homebrew, MacPorts
-- **Windows**: Chocolatey, winget, instalador MSI
-
-**Requisitos de Empaquetado:**
-- Script de instalación multiplataforma
-- Dependencias declaradas en archivo de manifiesto
-- Configuración automática de PATH
-- Verificación post-instalación
-- Actualizaciones automáticas
-
-**Integración con Gestores:**
-- **Homebrew**: Formula para macOS
-- **Chocolatey**: Package para Windows
-- **Snap**: Package para Linux
-- **Flatpak**: Package universal
 
 ### Consideraciones de Seguridad
 
