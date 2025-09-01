@@ -101,6 +101,14 @@ commands/
 ├── ggfeat.py              # Comando de feature commits
 ├── ggfix.py               # Comando de fix commits
 ├── ggbreak.py             # Comando de breaking changes
+├── ggdocs.py              # Comando de documentación
+├── ggstyle.py             # Comando de cambios de estilo
+├── ggrefactor.py          # Comando de refactorización
+├── ggtest.py              # Comando de tests
+├── ggchore.py             # Comando de tareas de mantenimiento
+├── ggperf.py              # Comando de mejoras de rendimiento
+├── ggci.py                # Comando de cambios en CI/CD
+├── ggbuild.py             # Comando de cambios en build system
 ├── ggconfig.py            # Gestión de configuración
 ├── ggai.py                # Generación de commits con IA
 ├── gga.py                 # Git add simplificado
@@ -598,6 +606,7 @@ Los tipos de commit están ligados a comandos específicos y no son configurable
 - **perf**: Comando `ggperf` - Mejoras de rendimiento
 - **ci**: Comando `ggci` - Cambios en CI/CD
 - **build**: Comando `ggbuild` - Cambios en build system
+- **break**: Comando `ggbreak` - Cambios breaking (incompatibles)
 
 **Scopes Configurables:**
 Los scopes son configurables y opcionales:
@@ -619,7 +628,7 @@ type: object
 properties:
   type:
     type: string
-    enum: [feat, fix, docs, style, refactor, test, chore, perf, ci, build]
+    enum: [feat, fix, docs, style, refactor, test, chore, perf, ci, build, break]
     description: "Tipo de commit según comando ejecutado"
   scope:
     type: string
