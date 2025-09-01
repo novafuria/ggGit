@@ -65,7 +65,7 @@ ggGit ofrece una suite completa de comandos optimizados que transforma la experi
 
 ### Diferenciadores Clave:
 
-- **Configuración Jerárquica**: Sistema local que detecta automáticamente el contexto y aplica configuraciones específicas
+- **Configuración Jerárquica**: Sistema local que detecta automáticamente el contexto y aplica configuraciones específicas (repositorio > módulo > usuario > default)
 - **Transición Gradual**: Herramientas que facilitan la adopción sin requerir cambios drásticos en el flujo de trabajo
 - **Integración Completa**: Solución que aborda tanto la productividad individual como la estandarización del equipo
 - **Cross-Platform**: Funcionamiento idéntico en Linux, macOS y Windows
@@ -76,8 +76,8 @@ ggGit ofrece una suite completa de comandos optimizados que transforma la experi
 ### Canal Principal: Distribución Directa (GitHub)
 La distribución gratuita a través de GitHub como repositorio de código abierto proporciona alcance global sin restricciones geográficas, comunidad activa de desarrolladores, feedback directo y contribuciones de la comunidad, y credibilidad en el ecosistema de desarrollo.
 
-### Canal Secundario: Gestores de Paquetes
-La distribución a través de gestores de paquetes como npm, Homebrew y Chocolatey facilita la instalación simplificada para usuarios técnicos, actualizaciones automáticas, e integración con flujos de trabajo de desarrollo existentes.
+### Canal Secundario: Instalación desde Repositorio
+La instalación directa desde el repositorio GitHub facilita la adopción para usuarios técnicos, actualizaciones mediante `git pull`, e integración con flujos de trabajo de desarrollo existentes.
 
 ### Canal Terciario: Adopción Orgánica
 La adopción natural a través de equipos de trabajo, Novafuria, y recomendaciones de la comunidad proporciona adopción basada en valor real, feedback directo de usuarios en entornos reales, crecimiento orgánico sin esfuerzos de marketing, y validación en equipos de trabajo reales.
@@ -136,7 +136,7 @@ Los recursos incluyen una base de conocimiento con ejemplos prácticos, tutorial
 La relación con Git y su ecosistema se basa en mantener compatibilidad con versiones actuales y futuras, seguir estándares de la comunidad, e integrar con herramientas oficiales. Los sistemas de CI/CD como GitHub Actions, GitLab CI y Jenkins son compatibles sin requerir desarrollo de plugins específicos, funcionando con herramientas existentes.
 
 ### Socios de Distribución
-Los gestores de paquetes como Homebrew y Chocolatey son compatibles sin requerir colaboración formal, solo compatibilidad técnica. Los usuarios pueden crear paquetes para sus gestores preferidos de manera independiente.
+La instalación desde repositorio es compatible con diferentes entornos sin requerir colaboración formal, solo compatibilidad técnica. Los usuarios pueden crear scripts de instalación personalizados para sus entornos preferidos de manera independiente.
 
 ### Integración con Novafuria
 ggGit se desarrolla como proyecto personal pero utiliza infraestructura de Novafuria, con potencial integración futura como herramienta complementaria en proyectos de consultoría. No requiere socios externos, más bien aprovecha recursos existentes de la organización.

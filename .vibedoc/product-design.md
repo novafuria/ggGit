@@ -51,7 +51,7 @@
 
 ggGit es una suite de comandos independientes de línea de comandos que transforma la experiencia de trabajo con Git. La solución se compone de tres pilares principales:
 
-1. **Comandos Principales**: Una colección de comandos independientes (no alias) que simplifican operaciones Git comunes, especialmente enfocados en Conventional Commits. Cada comando puede estar implementado en diferentes tecnologías según sus necesidades específicas.
+1. **Comandos Principales**: Una colección de comandos independientes (no alias) que simplifican operaciones Git comunes, especialmente enfocados en Conventional Commits. Todos los comandos están implementados en Python para mantener consistencia y facilitar el mantenimiento.
 
 2. **Sistema de Configuración Jerárquica**: Un mecanismo local que permite configuraciones específicas por contexto, incluyendo módulos por empresa/equipo, configuración de usuario, y configuraciones específicas de repositorio (con prioridad más alta), todo basado en archivos YAML locales.
 
@@ -65,12 +65,12 @@ ggGit es una suite de comandos independientes de línea de comandos que transfor
 │  │   Comandos      │    │  Configuración  │    │   Sistema de    │        │
 │  │   Principales   │    │   Jerárquica    │    │   Validación    │        │
 │  │                 │    │                 │    │                 │        │
-│  │ • ggfeat (bash)│    │ • ~/.gggit/     │    │ • Convenciones  │        │
-│  │ • ggfix (bash) │    │ • Módulos por   │    │   estándar      │        │
-│  │ • ggbreak (bash)│   │   contexto      │    │ • Validación    │        │
-│  │ • ggmerge (bash)│   │ • Config local  │    │   en la nube    │        │
-│  │ • ggconfig (py)│    │ • Módulos       │    │ • Diferentes    │        │
-│  │                 │    │ • Repositorio   │    │   tecnologías   │        │
+│  │ • ggfeat (py)  │    │ • ~/.gggit/     │    │ • Convenciones  │        │
+│  │ • ggfix (py)   │    │ • Módulos por   │    │   estándar      │        │
+│  │ • ggbreak (py) │    │   contexto      │    │ • Validación    │        │
+│  │ • ggmerge (py) │    │ • Config local  │    │   en la nube    │        │
+│  │ • ggconfig (py)│    │ • Módulos       │    │ • Python        │        │
+│  │ • ggai (py)    │    │ • Repositorio   │    │   unificado     │        │
 │  └─────────────────┘    └─────────────────┘    └─────────────────┘        │
 │           │                       │                       │                │
 │           ▼                       ▼                       ▼                │
@@ -119,7 +119,7 @@ ggGit es una suite de comandos independientes de línea de comandos que transfor
 
 ggGit está diseñado como una suite de comandos independientes, no como un conjunto de alias Git. Esta arquitectura proporciona varias ventajas clave:
 
-- **Tecnologías Específicas**: Cada comando puede estar implementado en la tecnología más apropiada (bash para comandos simples, Python para validación y configuración, etc.)
+- **Lenguaje Unificado**: Todos los comandos implementados en Python para mantener consistencia y facilitar el mantenimiento
 - **Desarrollo Independiente**: Los comandos pueden ser desarrollados, probados y mantenidos de forma independiente
 - **Instalación Flexible**: El script de instalación maneja las dependencias específicas de cada comando
 - **Mantenimiento Simplificado**: Cada comando tiene su propia lógica y responsabilidades claras
