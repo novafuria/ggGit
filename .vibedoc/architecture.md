@@ -5,7 +5,7 @@
 ## 📋 Tabla de Contenidos <!-- omit in toc -->
 
 - [Descripción general](#descripción-general)
-- [Arquitectura Legacy vs Nueva Propuesta](#arquitectura-legacy-vs-nueva-propuesta)
+
 - [Sistema de comandos independientes](#sistema-de-comandos-independientes)
 - [Sistema de configuración jerárquica](#sistema-de-configuración-jerárquica)
 - [Sistema de interfaz de usuario CLI](#sistema-de-interfaz-de-usuario-cli)
@@ -122,53 +122,42 @@ ggfeat - Commit changes adding the feat prefix to the message
 Usage: ggfeat [options] <message>
 """
 
-import sys
-from _cli_interface import CLIInterface
+import click
 from _config_manager import ConfigManager
 from _git_interface import GitInterface
 from _validators import ArgumentValidator
 
-def print_usage():
-    """Imprime la ayuda del comando"""
-    CLIInterface.print_help(
-        command_name="ggfeat",
-        description="Commit changes adding the feat prefix to the message",
-        usage="ggfeat [options] <message>",
-        examples=[
-            ("ggfeat Add new feature", "Commit simple sin scope"),
-            ("ggfeat -s auth Add authentication", "Commit con scope específico")
-        ],
-        options=[
-            ("-s, --scope", "Add scope to commit type"),
-            ("-a, --amend", "Amend the last commit"),
-            ("-h, --help", "Show this help message")
-        ]
-    )
-
-def main():
-    """Función principal del comando"""
+@click.command()
+@click.option('--scope', '-s', help='Scope del commit')
+@click.option('--ai', is_flag=True, help='Usar IA para generar mensaje')
+@click.option('--amend', '-a', is_flag=True, help='Amend the last commit')
+@click.argument('message', required=False)
+def main(scope, ai, amend, message):
+    """Commit changes adding the feat prefix to the message"""
     try:
         # Inicializar componentes
         config = ConfigManager()
         git = GitInterface()
         validator = ArgumentValidator()
         
-        # Procesar argumentos
-        args = sys.argv[1:]
-        # ... lógica de procesamiento de argumentos
+        # Si no hay mensaje y IA está habilitada, generar automáticamente
+        if not message and ai:
+            message = generate_ai_message(git, config)
         
         # Validar entrada
-        validator.validate_commit_message(message)
+        if message:
+            validator.validate_commit_message(message)
         
         # Ejecutar operación
         git.stage_all_changes()
-        git.commit(f"feat{scope}: {message}")
+        commit_message = f"feat({scope}): {message}" if scope else f"feat: {message}"
+        git.commit(commit_message)
         
         # Mostrar resultado
-        CLIInterface.print_success("Commit realizado exitosamente")
+        click.echo(click.style("✅ Commit realizado exitosamente", fg="green"))
         
     except Exception as e:
-        CLIInterface.print_error(str(e))
+        click.echo(click.style(f"❌ Error: {str(e)}", fg="red"))
         sys.exit(1)
 
 if __name__ == "__main__":
@@ -177,12 +166,11 @@ if __name__ == "__main__":
 
 #### Abstracciones Reutilizables
 
-**CLIInterface**: Proporciona métodos unificados para:
-- `print_success(message)`: Mensajes de éxito
-- `print_error(message)`: Mensajes de error
-- `print_warning(message)`: Mensajes de advertencia
-- `print_info(section, message)`: Mensajes informativos
-- `print_help(...)`: Sistema de ayuda unificado
+**Click Integration**: Todos los comandos usan Click para interfaz unificada:
+- Decoradores `@click.command()` y `@click.option()` para definición de comandos
+- `click.echo()` y `click.style()` para salida con colores
+- Ayuda automática generada por Click
+- Validación automática de argumentos y tipos
 
 **ConfigManager**: Gestiona configuración jerárquica:
 - `get_config(key, default=None)`: Obtener valor de configuración
@@ -314,47 +302,47 @@ properties:
         default: "{type}({scope}): {description}"
         description: "Template para mensajes de commit"
   
-           conventional_commits:
-           type: object
-           properties:
-             scopes:
-               type: array
-               items:
-                 type: string
-               description: "Scopes permitidos para commits (opcional)"
-             require_scope:
-               type: boolean
-               default: false
-               description: "Si se requiere scope en todos los commits"
-             custom_types:
-               type: array
-               items:
-                 type: string
-               description: "Tipos de commit personalizados adicionales (opcional)"
+  conventional_commits:
+    type: object
+    properties:
+      scopes:
+        type: array
+        items:
+          type: string
+        description: "Scopes permitidos para commits (opcional)"
+      require_scope:
+        type: boolean
+        default: false
+        description: "Si se requiere scope en todos los commits"
+      custom_types:
+        type: array
+        items:
+          type: string
+        description: "Tipos de commit personalizados adicionales (opcional)"
   
-           ai:
-           type: object
-           properties:
-             enabled:
-               type: boolean
-               default: false
-               description: "Habilitar funcionalidades de IA"
-             provider:
-               type: string
-               enum: ["openai", "anthropic", "azure", "local"]
-               default: "openai"
-               description: "Proveedor de servicios de IA (API compatible con OpenAI)"
-             api_key_env:
-               type: string
-               default: "OPENAI_API_KEY"
-               description: "Variable de entorno para API key"
-             model:
-               type: string
-               default: "gpt-3.5-turbo"
-               description: "Modelo de IA a utilizar"
-             base_url:
-               type: string
-               description: "URL base para proveedores alternativos (opcional)"
+  ai:
+    type: object
+    properties:
+      enabled:
+        type: boolean
+        default: false
+        description: "Habilitar funcionalidades de IA"
+      provider:
+        type: string
+        enum: ["openai", "anthropic", "azure", "local"]
+        default: "openai"
+        description: "Proveedor de servicios de IA (API compatible con OpenAI)"
+      api_key_env:
+        type: string
+        default: "OPENAI_API_KEY"
+        description: "Variable de entorno para API key"
+      model:
+        type: string
+        default: "gpt-3.5-turbo"
+        description: "Modelo de IA a utilizar"
+      base_url:
+        type: string
+        description: "URL base para proveedores alternativos (opcional)"
   
   ui:
     type: object
@@ -405,50 +393,51 @@ Sistema unificado para proporcionar una experiencia de usuario consistente en to
 
 #### 1. Especificación del Sistema de Colores
 
-**Paleta de Colores Estándar:**
-- **Success**: Verde (`\033[32m`) - Operaciones exitosas
-- **Error**: Rojo (`\033[31m`) - Errores y fallos
-- **Warning**: Amarillo (`\033[33m`) - Advertencias
-- **Info**: Azul (`\033[34m`) - Información general
-- **Reset**: (`\033[0m`) - Reset de colores
+**Paleta de Colores Estándar (Click):**
+- **Success**: Verde (`green`) - Operaciones exitosas
+- **Error**: Rojo (`red`) - Errores y fallos
+- **Warning**: Amarillo (`yellow`) - Advertencias
+- **Info**: Azul (`blue`) - Información general
+- **Reset**: (`reset`) - Reset de colores
 
-**Métodos de Salida Requeridos:**
-- `print_success(message)`: Mensajes de éxito con formato `[SUCCESS] mensaje`
-- `print_error(message)`: Mensajes de error con formato `[ERROR] mensaje`
-- `print_warning(message)`: Mensajes de advertencia con formato `[WARNING] mensaje`
-- `print_info(section, message)`: Mensajes informativos con formato `section: mensaje`
-- `print_text(message)`: Texto normal sin formato especial
+**Métodos de Salida con Click:**
+- `click.echo(click.style(message, fg="green"))`: Mensajes de éxito
+- `click.echo(click.style(message, fg="red"))`: Mensajes de error
+- `click.echo(click.style(message, fg="yellow"))`: Mensajes de advertencia
+- `click.echo(click.style(message, fg="blue"))`: Mensajes informativos
+- `click.echo(message)`: Texto normal sin formato especial
 
 #### 2. Especificación del Sistema de Ayuda
 
-**Formato de Ayuda Estándar:**
+**Formato de Ayuda Automático (Click):**
+Click genera automáticamente ayuda con formato estándar basado en:
+- Docstring del comando
+- Decoradores `@click.option()` con parámetro `help`
+- Decoradores `@click.argument()` con descripción
+
+**Ejemplo de Ayuda Generada:**
 ```
-NAME
-    <comando> - <descripción>
+Usage: ggfeat [OPTIONS] [MESSAGE]
 
-SYNOPSIS
-    <comando> [opciones] <argumentos>
+  Commit changes adding the feat prefix to the message
 
-DESCRIPTION
-    <descripción detallada>
-
-EXAMPLES
-    <comando> <ejemplo1>    <descripción1>
-    <comando> <ejemplo2>    <descripción2>
-
-OPTIONS
-    -s, --scope <scope>     <descripción de la opción>
-    -a, --amend             <descripción de la opción>
-    -h, --help              Show this help message
+Options:
+  -s, --scope TEXT    Scope del commit
+  --ai               Usar IA para generar mensaje
+  -a, --amend        Amend the last commit
+  --help             Show this message and exit.
 ```
 
-**Método de Ayuda:**
-- `print_help(command_name, description, usage, examples, options)`: Genera ayuda con formato estándar
+**Configuración de Ayuda:**
+- Docstring del comando como descripción principal
+- Parámetro `help` en `@click.option()` para descripción de opciones
+- Parámetro `help` en `@click.argument()` para descripción de argumentos
 
 #### 3. Especificación de Validación de Argumentos
 
-**Validaciones Estándar:**
-- `validate_required_args(args, count)`: Verifica número mínimo de argumentos
+**Validaciones con Click:**
+- **Validación Automática**: Click valida automáticamente tipos y argumentos requeridos
+- **Validación Personalizada**: Funciones de validación en `_validators.py`
 - `validate_commit_message(message)`: Valida formato y contenido de mensaje de commit
 - `validate_scope(scope)`: Valida formato de scope (letras minúsculas, números, guiones)
 - `validate_branch_name(branch)`: Valida nombre de rama Git
@@ -606,7 +595,9 @@ Los tipos de commit están ligados a comandos específicos y no son configurable
 - **refactor**: Comando `ggrefactor` - Refactorización
 - **test**: Comando `ggtest` - Tests
 - **chore**: Comando `ggchore` - Tareas de mantenimiento
-- **break**: Comando `ggbreak` - Cambios breaking
+- **perf**: Comando `ggperf` - Mejoras de rendimiento
+- **ci**: Comando `ggci` - Cambios en CI/CD
+- **build**: Comando `ggbuild` - Cambios en build system
 
 **Scopes Configurables:**
 Los scopes son configurables y opcionales:
@@ -628,7 +619,7 @@ type: object
 properties:
   type:
     type: string
-    enum: [feat, fix, docs, style, refactor, test, chore, break]
+    enum: [feat, fix, docs, style, refactor, test, chore, perf, ci, build]
     description: "Tipo de commit según comando ejecutado"
   scope:
     type: string
@@ -868,13 +859,11 @@ Sistema que proporciona logging, métricas y debugging para facilitar el manteni
 **Configuración de Logging:**
 ```yaml
 logging:
-  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  level: "INFO"  # ERROR, WARNING, INFO, DEBUG
   max_size: "10MB"
   backup_count: 5
   format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 ```
-
-
 
 #### 2. Especificación de Niveles de Log y Verbose
 
@@ -890,19 +879,10 @@ logging:
 - **Salida**: Información detallada de operaciones
 - **Destino**: stdout para información del usuario
 
-**Configuración de Logging:**
-```yaml
-logging:
-  level: "INFO"  # ERROR, WARNING, INFO, DEBUG
-  max_size: "10MB"
-  backup_count: 5
-  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-```
-
 ## Integraciones con terceros
 
 ### Descripción
-Sistema que maneja integraciones con servicios externos como APIs de IA, gestores de paquetes, y herramientas de CI/CD.
+Sistema que maneja integraciones con servicios externos como APIs de IA, manteniendo la simplicidad y consistencia del proyecto.
 
 ### Componentes
 
@@ -953,9 +933,9 @@ ai:
 ### Consideraciones de Rendimiento
 
 #### 1. Optimización de Comandos
-- Comandos bash para operaciones simples
-- Python para lógica compleja
-- Go para operaciones de alto rendimiento
+- Todos los comandos implementados en Python
+- Uso de bibliotecas optimizadas para operaciones específicas
+- Lazy loading de módulos pesados
 
 #### 2. Caching
 - Cache de configuraciones para evitar re-lectura
