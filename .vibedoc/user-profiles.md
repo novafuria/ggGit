@@ -1,7 +1,7 @@
 # [user-profiles] - ggGit
 
 > Este documento debe ser una continuación del documento [02-research-of-references-and-collections](02-research-of-references-and-collections.md). Consiste en la creación de perfiles de usuarios que resuelvan el problema planteado en el documento [01-research-and-assessment-of-the-problem](01-research-and-assessment-of-the-problem.md).
-> Se basa en la métodología lienzo canvas y su diagrama de empatía con los usuarios.
+> Se basa en la metodología lienzo canvas y su diagrama de empatía con los usuarios.
 > Permite generar ideas de solución y validar las propuestas de valor con los interesados.
 
 ## 📋 Tabla de Contenidos <!-- omit in toc -->
