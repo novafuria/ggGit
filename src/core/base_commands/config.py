@@ -185,12 +185,8 @@ class ConfigCommand(BaseCommand):
     
     def _reset_config_key(self, key: str, level: str) -> None:
         """Reset specific configuration key."""
-        # This is a simplified implementation
-        # In a full implementation, we would need to remove the key from the config file
-        raise NotImplementedError("Reset specific key not yet implemented")
+        self.config.reset_config(level, key)
     
     def _reset_config_level(self, level: str) -> None:
         """Reset entire configuration level."""
-        # This is a simplified implementation
-        # In a full implementation, we would need to delete or reset the config file
-        raise NotImplementedError("Reset level not yet implemented")
+        self.config.reset_config(level)

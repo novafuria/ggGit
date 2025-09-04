@@ -258,13 +258,29 @@ class ConfigManager:
         Returns:
             Optional[str]: Level where key is defined ('repo', 'module', 'user', 'default')
                           or None if key doesn't exist
-            
-        Note:
-            This method will be implemented in STORY-1.2.4 - comando de configuracion
         """
-        # TODO: Implement configuration level detection
-        # 1. Check each configuration level in priority order
-        # 2. Return the first level where key exists
+        # Check each configuration level in priority order
+        # 1. Repository config (highest priority)
+        repo_config = self._load_config_file(self.config_paths[0])
+        if repo_config and self._key_exists_in_config(repo_config, key):
+            return 'repo'
+        
+        # 2. Module configs
+        module_configs = self._load_module_configs()
+        for module_config in module_configs:
+            if self._key_exists_in_config(module_config, key):
+                return 'module'
+        
+        # 3. User config
+        user_config = self._load_config_file(self.config_paths[2])
+        if user_config and self._key_exists_in_config(user_config, key):
+            return 'user'
+        
+        # 4. Default config (lowest priority)
+        default_config = self._load_config_file(self.config_paths[3])
+        if default_config and self._key_exists_in_config(default_config, key):
+            return 'default'
+        
         return None
     
     def list_config_keys(self, level: Optional[str] = None) -> List[str]:
@@ -276,15 +292,22 @@ class ConfigManager:
             
         Returns:
             List[str]: List of configuration keys in dot notation
-            
-        Note:
-            This method will be implemented in STORY-1.2.4 - comando de configuracion
         """
-        # TODO: Implement configuration key listing
-        # 1. If level specified, list keys for that level only
-        # 2. If no level, list all keys from all levels
-        # 3. Return flattened list of dot-notation keys
-        return []
+        if level:
+            # List keys for specific level
+            config = self._get_config_for_level(level)
+            return self._extract_keys_from_config(config)
+        else:
+            # List all keys from all levels
+            all_keys = set()
+            
+            # Get keys from each level
+            for level_name in ['repo', 'module', 'user', 'default']:
+                config = self._get_config_for_level(level_name)
+                keys = self._extract_keys_from_config(config)
+                all_keys.update(keys)
+            
+            return sorted(list(all_keys))
     
     def reset_config(self, level: str, key: Optional[str] = None) -> None:
         """
@@ -297,16 +320,24 @@ class ConfigManager:
         Raises:
             ValueError: If level is not valid
             FileNotFoundError: If configuration file doesn't exist
-            
-        Note:
-            This method will be implemented in STORY-1.2.4 - comando de configuracion
         """
-        # TODO: Implement configuration reset
-        # 1. Validate level parameter
-        # 2. Load configuration file for the level
-        # 3. Remove specific key or reset entire configuration
-        # 4. Save updated configuration
-        pass
+        # Validate level parameter
+        valid_levels = ['repo', 'module', 'user', 'default']
+        if level not in valid_levels:
+            raise ValueError(f"Invalid level '{level}'. Must be one of {valid_levels}")
+        
+        # Get configuration file path for the level
+        config_path = self._get_config_path_for_level(level)
+        
+        if key:
+            # Reset specific key
+            self._reset_config_key(key, level, config_path)
+        else:
+            # Reset entire level
+            self._reset_config_level(level, config_path)
+        
+        # Reload hierarchical configuration
+        self.load_hierarchical_config()
     
     def _load_config_file(self, file_path: str) -> Optional[Dict[str, Any]]:
         """
@@ -455,3 +486,134 @@ class ConfigManager:
         except (yaml.YAMLError, IOError) as e:
             print(f"Error loading schema {schema_type}: {e}")
             return None
+    
+    def _key_exists_in_config(self, config: Dict[str, Any], key: str) -> bool:
+        """
+        Check if a key exists in configuration using dot notation.
+        
+        Args:
+            config (Dict[str, Any]): Configuration dictionary
+            key (str): Key to check in dot notation
+            
+        Returns:
+            bool: True if key exists, False otherwise
+        """
+        try:
+            keys = key.split('.')
+            current = config
+            
+            for k in keys:
+                if not isinstance(current, dict) or k not in current:
+                    return False
+                current = current[k]
+            
+            return True
+        except (KeyError, TypeError):
+            return False
+    
+    def _extract_keys_from_config(self, config: Dict[str, Any], prefix: str = "") -> List[str]:
+        """
+        Extract all keys from configuration in dot notation.
+        
+        Args:
+            config (Dict[str, Any]): Configuration dictionary
+            prefix (str): Prefix for nested keys
+            
+        Returns:
+            List[str]: List of keys in dot notation
+        """
+        keys = []
+        
+        for key, value in config.items():
+            full_key = f"{prefix}.{key}" if prefix else key
+            
+            if isinstance(value, dict):
+                # Recursively extract keys from nested dictionaries
+                keys.extend(self._extract_keys_from_config(value, full_key))
+            else:
+                # Add leaf key
+                keys.append(full_key)
+        
+        return keys
+    
+    def _get_config_for_level(self, level: str) -> Dict[str, Any]:
+        """
+        Get configuration for specific level.
+        
+        Args:
+            level (str): Configuration level
+            
+        Returns:
+            Dict[str, Any]: Configuration dictionary for the level
+        """
+        if level == 'repo':
+            return self._load_config_file(self.config_paths[0]) or {}
+        elif level == 'user':
+            return self._load_config_file(self.config_paths[2]) or {}
+        elif level == 'default':
+            return self._load_config_file(self.config_paths[3]) or {}
+        elif level == 'module':
+            # For module level, return merged module configs
+            module_configs = self._load_module_configs()
+            merged = {}
+            for module_config in module_configs:
+                merged = self._deep_merge(merged, module_config)
+            return merged
+        else:
+            return {}
+    
+    def _reset_config_key(self, key: str, level: str, config_path: str) -> None:
+        """
+        Reset specific configuration key.
+        
+        Args:
+            key (str): Key to reset
+            level (str): Configuration level
+            config_path (str): Path to configuration file
+        """
+        # Load existing configuration
+        config = self._load_config_file(config_path) or {}
+        
+        if not config:
+            return  # Nothing to reset
+        
+        # Remove the key
+        self._remove_key_from_config(config, key)
+        
+        # Save updated configuration
+        if config:  # Only save if there's still content
+            self._save_config_file(config_path, config)
+        else:  # Delete file if empty
+            Path(config_path).unlink(missing_ok=True)
+    
+    def _reset_config_level(self, level: str, config_path: str) -> None:
+        """
+        Reset entire configuration level.
+        
+        Args:
+            level (str): Configuration level
+            config_path (str): Path to configuration file
+        """
+        # Delete the configuration file
+        Path(config_path).unlink(missing_ok=True)
+    
+    def _remove_key_from_config(self, config: Dict[str, Any], key: str) -> None:
+        """
+        Remove key from configuration using dot notation.
+        
+        Args:
+            config (Dict[str, Any]): Configuration dictionary
+            key (str): Key to remove in dot notation
+        """
+        keys = key.split('.')
+        current = config
+        
+        # Navigate to the parent of the key to remove
+        for k in keys[:-1]:
+            if not isinstance(current, dict) or k not in current:
+                return  # Key doesn't exist
+            current = current[k]
+        
+        # Remove the final key
+        if isinstance(current, dict) and keys[-1] in current:
+            del current[keys[-1]]

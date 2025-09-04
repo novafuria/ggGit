@@ -106,11 +106,22 @@ class TestExecuteMethod:
         """Test execute with reset action."""
         with tempfile.TemporaryDirectory() as tmpdir:
             with patch('pathlib.Path.home', return_value=Path(tmpdir)):
+                # Create user config
+                user_config = {
+                    'ai': {
+                        'enabled': True
+                    }
+                }
+                user_path = Path(tmpdir) / '.gggit' / 'user-config.yaml'
+                user_path.parent.mkdir(parents=True, exist_ok=True)
+                with open(user_path, 'w') as f:
+                    yaml.dump(user_config, f)
+                
                 config_cmd = ConfigCommand()
                 
-                # Test reset action (will fail because not implemented)
+                # Test reset action (now implemented)
                 result = config_cmd.execute('reset', level='user')
-                assert result == 1  # Should fail because reset is not implemented
+                assert result == 0  # Should succeed now that reset is implemented
     
     def test_execute_invalid_action(self):
         """Test execute with invalid action."""
