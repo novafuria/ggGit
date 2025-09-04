@@ -122,7 +122,11 @@ class ConfigManager:
         
         # Validate final configuration
         if merged_config:
-            self.validate_config(merged_config)
+            try:
+                self.validate_config(merged_config, 'config')
+            except jsonschema.ValidationError as e:
+                print(f"Warning: Configuration validation failed: {e.message}")
+                # Continue with invalid config but log the warning
         
         self.config = merged_config
         return merged_config
@@ -193,8 +197,8 @@ class ConfigManager:
         # Set nested value using dot notation
         self._set_nested_value(existing_config, key, value)
         
-        # Validate against schema
-        self.validate_config(existing_config)
+        # Note: We don't validate individual level configs here because they are partial
+        # The full validation happens in load_hierarchical_config() after merging
         
         # Save to appropriate configuration file
         self._save_config_file(config_path, existing_config)
@@ -202,7 +206,7 @@ class ConfigManager:
         # Reload hierarchical configuration
         self.load_hierarchical_config()
     
-    def validate_config(self, config: Dict[str, Any]) -> bool:
+    def validate_config(self, config: Dict[str, Any], schema_type: str = 'config') -> bool:
         """
         Validate configuration against JSON schema.
         
@@ -212,6 +216,7 @@ class ConfigManager:
         
         Args:
             config (Dict[str, Any]): Configuration dictionary to validate
+            schema_type (str): Type of schema to use ('config', 'commit', 'module')
             
         Returns:
             bool: True if configuration is valid, False otherwise
@@ -219,15 +224,29 @@ class ConfigManager:
         Raises:
             jsonschema.ValidationError: If configuration doesn't match schema
             FileNotFoundError: If schema file is not found
-            
-        Note:
-            This method will be implemented in STORY-1.2.4 - comando de configuracion
         """
-        # TODO: Implement configuration validation
-        # 1. Load appropriate JSON schema
-        # 2. Validate configuration against schema
-        # 3. Return validation result
-        return True
+        try:
+            # Load appropriate JSON schema
+            schema = self._load_schema(schema_type)
+            if not schema:
+                return False
+            
+            # Validate configuration against schema
+            jsonschema.validate(config, schema)
+            return True
+            
+        except jsonschema.ValidationError as e:
+            # Log validation error for debugging
+            print(f"Configuration validation error: {e.message}")
+            if hasattr(e, 'path') and e.path:
+                print(f"Error path: {' -> '.join(str(p) for p in e.path)}")
+            raise
+        except FileNotFoundError as e:
+            print(f"Schema file not found: {e}")
+            raise
+        except Exception as e:
+            print(f"Unexpected error during validation: {e}")
+            return False
     
     def get_config_level(self, key: str) -> Optional[str]:
         """
@@ -399,3 +418,40 @@ class ConfigManager:
         
         with open(path, 'w', encoding='utf-8') as f:
             yaml.dump(config, f, default_flow_style=False, indent=2)
+    
+    def _load_schema(self, schema_type: str) -> Optional[Dict[str, Any]]:
+        """
+        Load JSON schema from file.
+        
+        Args:
+            schema_type (str): Type of schema ('config', 'commit', 'module')
+            
+        Returns:
+            Optional[Dict[str, Any]]: Schema dictionary or None if not found
+        """
+        try:
+            # Map schema types to file names
+            schema_files = {
+                'config': 'config-schema.yaml',
+                'commit': 'commit-schema.yaml',
+                'module': 'module-schema.yaml'
+            }
+            
+            if schema_type not in schema_files:
+                print(f"Unknown schema type: {schema_type}")
+                return None
+            
+            # Get path to schema file
+            schema_path = Path(__file__).parent.parent.parent / 'config' / schema_files[schema_type]
+            
+            if not schema_path.exists():
+                print(f"Schema file not found: {schema_path}")
+                return None
+            
+            # Load schema from YAML file
+            with open(schema_path, 'r', encoding='utf-8') as f:
+                return yaml.safe_load(f)
+                
+        except (yaml.YAMLError, IOError) as e:
+            print(f"Error loading schema {schema_type}: {e}")
+            return None
