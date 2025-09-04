@@ -15,7 +15,8 @@ directory to ensure consistency and prevent configuration errors.
 """
 
 import os
-# import yaml  # TODO: Add yaml dependency
+import yaml
+import jsonschema
 from typing import Dict, Any, Optional, List, Union
 from pathlib import Path
 
@@ -61,8 +62,8 @@ class ConfigManager:
         """
         self.config = {}
         self.config_paths = self._get_config_paths()
-        # TODO: Load configuration during initialization
-        # self.config = self.load_hierarchical_config()
+        # Load configuration during initialization
+        self.config = self.load_hierarchical_config()
     
     def _get_config_paths(self) -> List[str]:
         """
@@ -95,17 +96,36 @@ class ConfigManager:
             FileNotFoundError: If required default configuration is missing
             yaml.YAMLError: If configuration files contain invalid YAML
             jsonschema.ValidationError: If configuration doesn't match schema
-            
-        Note:
-            This method will be implemented in STORY-1.2.4 - comando de configuracion
         """
-        # TODO: Implement hierarchical configuration loading
-        # 1. Load default configuration first
-        # 2. Override with user configuration
-        # 3. Override with module configurations
-        # 4. Override with repository configuration
-        # 5. Validate final configuration against schema
-        return {}
+        merged_config = {}
+        
+        # Load configurations in priority order (lowest to highest)
+        # 1. Default configuration (lowest priority)
+        default_config = self._load_config_file(self.config_paths[3])  # default-config.yaml
+        if default_config:
+            merged_config = self._deep_merge(merged_config, default_config)
+        
+        # 2. User configuration
+        user_config = self._load_config_file(self.config_paths[2])  # user-config.yaml
+        if user_config:
+            merged_config = self._deep_merge(merged_config, user_config)
+        
+        # 3. Module configurations
+        module_configs = self._load_module_configs()
+        for module_config in module_configs:
+            merged_config = self._deep_merge(merged_config, module_config)
+        
+        # 4. Repository configuration (highest priority)
+        repo_config = self._load_config_file(self.config_paths[0])  # repo-config.yaml
+        if repo_config:
+            merged_config = self._deep_merge(merged_config, repo_config)
+        
+        # Validate final configuration
+        if merged_config:
+            self.validate_config(merged_config)
+        
+        self.config = merged_config
+        return merged_config
     
     def get_config(self, key: str, default: Any = None) -> Any:
         """
@@ -125,15 +145,21 @@ class ConfigManager:
             config.get_config('commit.format', 'conventional')
             config.get_config('git.auto_stage', False)
             config.get_config('ui.colors.enabled', True)
-            
-        Note:
-            This method will be implemented in STORY-1.2.4 - comando de configuracion
         """
-        # TODO: Implement configuration value retrieval
-        # 1. Split key by dots for nested access
-        # 2. Navigate through config dictionary
-        # 3. Return value or default
-        return default
+        # Load configuration if not already loaded
+        if not self.config:
+            self.load_hierarchical_config()
+        
+        # Split key by dots for nested access
+        keys = key.split('.')
+        current = self.config
+        
+        try:
+            for k in keys:
+                current = current[k]
+            return current
+        except (KeyError, TypeError):
+            return default
     
     def set_config(self, key: str, value: Any, level: str = 'user') -> None:
         """
@@ -152,17 +178,29 @@ class ConfigManager:
         Example:
             config.set_config('commit.format', 'conventional', level='user')
             config.set_config('git.auto_stage', True, level='repo')
-            
-        Note:
-            This method will be implemented in STORY-1.2.4 - comando de configuracion
         """
-        # TODO: Implement configuration value setting
-        # 1. Validate level parameter
-        # 2. Load existing configuration for the level
-        # 3. Set nested value using dot notation
-        # 4. Validate against schema
-        # 5. Save to appropriate configuration file
-        pass
+        # Validate level parameter
+        valid_levels = ['repo', 'module', 'user', 'default']
+        if level not in valid_levels:
+            raise ValueError(f"Invalid level '{level}'. Must be one of {valid_levels}")
+        
+        # Get configuration file path for the level
+        config_path = self._get_config_path_for_level(level)
+        
+        # Load existing configuration for the level
+        existing_config = self._load_config_file(config_path) or {}
+        
+        # Set nested value using dot notation
+        self._set_nested_value(existing_config, key, value)
+        
+        # Validate against schema
+        self.validate_config(existing_config)
+        
+        # Save to appropriate configuration file
+        self._save_config_file(config_path, existing_config)
+        
+        # Reload hierarchical configuration
+        self.load_hierarchical_config()
     
     def validate_config(self, config: Dict[str, Any]) -> bool:
         """
@@ -250,3 +288,114 @@ class ConfigManager:
         # 3. Remove specific key or reset entire configuration
         # 4. Save updated configuration
         pass
+    
+    def _load_config_file(self, file_path: str) -> Optional[Dict[str, Any]]:
+        """
+        Load configuration from a YAML file.
+        
+        Args:
+            file_path (str): Path to the configuration file
+            
+        Returns:
+            Optional[Dict[str, Any]]: Configuration dictionary or None if file doesn't exist
+        """
+        try:
+            path = Path(file_path)
+            if not path.exists():
+                return None
+            
+            with open(path, 'r', encoding='utf-8') as f:
+                return yaml.safe_load(f) or {}
+        except (yaml.YAMLError, IOError):
+            return None
+    
+    def _load_module_configs(self) -> List[Dict[str, Any]]:
+        """
+        Load all module configuration files.
+        
+        Returns:
+            List[Dict[str, Any]]: List of module configurations
+        """
+        module_configs = []
+        modules_dir = Path(self.config_paths[1])  # modules directory
+        
+        if modules_dir.exists() and modules_dir.is_dir():
+            for yaml_file in modules_dir.glob("*.yaml"):
+                config = self._load_config_file(str(yaml_file))
+                if config:
+                    module_configs.append(config)
+        
+        return module_configs
+    
+    def _deep_merge(self, base: Dict[str, Any], override: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Deep merge two dictionaries.
+        
+        Args:
+            base (Dict[str, Any]): Base dictionary
+            override (Dict[str, Any]): Override dictionary
+            
+        Returns:
+            Dict[str, Any]: Merged dictionary
+        """
+        result = base.copy()
+        
+        for key, value in override.items():
+            if key in result and isinstance(result[key], dict) and isinstance(value, dict):
+                result[key] = self._deep_merge(result[key], value)
+            else:
+                result[key] = value
+        
+        return result
+    
+    def _get_config_path_for_level(self, level: str) -> str:
+        """
+        Get configuration file path for a specific level.
+        
+        Args:
+            level (str): Configuration level
+            
+        Returns:
+            str: Path to configuration file
+        """
+        if level == 'repo':
+            return self.config_paths[0]  # .gggit/repo-config.yaml
+        elif level == 'user':
+            return self.config_paths[2]  # ~/.gggit/user-config.yaml
+        elif level == 'default':
+            return self.config_paths[3]  # ~/.gggit/default-config.yaml
+        else:
+            raise ValueError(f"Invalid level: {level}")
+    
+    def _set_nested_value(self, config: Dict[str, Any], key: str, value: Any) -> None:
+        """
+        Set a nested value in configuration using dot notation.
+        
+        Args:
+            config (Dict[str, Any]): Configuration dictionary
+            key (str): Dot notation key
+            value (Any): Value to set
+        """
+        keys = key.split('.')
+        current = config
+        
+        for k in keys[:-1]:
+            if k not in current:
+                current[k] = {}
+            current = current[k]
+        
+        current[keys[-1]] = value
+    
+    def _save_config_file(self, file_path: str, config: Dict[str, Any]) -> None:
+        """
+        Save configuration to a YAML file.
+        
+        Args:
+            file_path (str): Path to the configuration file
+            config (Dict[str, Any]): Configuration dictionary
+        """
+        path = Path(file_path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        
+        with open(path, 'w', encoding='utf-8') as f:
+            yaml.dump(config, f, default_flow_style=False, indent=2)

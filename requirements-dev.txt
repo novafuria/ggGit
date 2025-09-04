@@ -26,3 +26,7 @@ jupyter>=1.0.0
 # Coverage
 coverage>=7.0.0
 codecov>=2.1.0
+
+# Configuration Management
+PyYAML>=6.0.0
+jsonschema>=4.0.0
