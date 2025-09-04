@@ -3,56 +3,338 @@ Git interface module for ggGit.
 
 This module provides a unified interface for Git operations
 with error handling and consistent feedback.
+
+The GitInterface class abstracts Git operations using subprocess calls
+to maintain compatibility with the original Git behavior and error messages.
+It provides a clean API for common Git operations while preserving
+the native Git experience for users.
+
+All methods return consistent types and handle errors gracefully,
+providing meaningful feedback for debugging and user interaction.
 """
 
 import subprocess
 import os
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Tuple
+from pathlib import Path
 
 
 class GitInterface:
-    """Unified interface for Git operations."""
+    """
+    Unified interface for Git operations with error handling.
+    
+    This class provides a clean abstraction over Git operations using
+    subprocess calls. It maintains compatibility with original Git
+    behavior while providing consistent error handling and return types.
+    
+    All Git operations are executed in the current working directory
+    and return structured data for easy consumption by command classes.
+    
+    Attributes:
+        None: This class is stateless and doesn't maintain state
+        
+    Example:
+        git = GitInterface()
+        
+        # Check if we're in a git repository
+        if not git.is_git_repository():
+            print("Not a git repository")
+            return
+        
+        # Stage all changes
+        if git.stage_all_changes():
+            # Commit with message
+            git.commit("feat: add new feature")
+        
+        # Get repository status
+        status = git.get_repository_status()
+        print(f"Current branch: {status['current_branch']}")
+    """
     
     def __init__(self):
-        """Initialize Git interface."""
+        """
+        Initialize Git interface.
+        
+        This method sets up the Git interface. No state is maintained
+        as all operations are stateless and work with the current
+        working directory.
+        """
         pass
     
     def is_git_repository(self) -> bool:
-        """Check if current directory is a Git repository."""
+        """
+        Check if current directory is a Git repository.
+        
+        Verifies that the current directory is within a Git repository
+        by checking for the .git directory or file.
+        
+        Returns:
+            bool: True if current directory is a Git repository, False otherwise
+            
+        Note:
+            This method will be implemented in STORY-1.2.3 - comandos base
+        """
         # TODO: Implement Git repository validation
+        # 1. Check for .git directory or file
+        # 2. Verify it's a valid Git repository
+        # 3. Return boolean result
         return True
     
     def stage_all_changes(self) -> bool:
-        """Stage all changes in the repository."""
+        """
+        Stage all changes in the repository.
+        
+        Equivalent to running 'git add .' - stages all modified and
+        untracked files in the current directory and subdirectories.
+        
+        Returns:
+            bool: True if staging was successful, False otherwise
+            
+        Raises:
+            RuntimeError: If not in a Git repository
+            subprocess.CalledProcessError: If git add command fails
+            
+        Note:
+            This method will be implemented in STORY-1.2.3 - comandos base
+        """
         # TODO: Implement git add . functionality
+        # 1. Verify we're in a git repository
+        # 2. Execute 'git add .' command
+        # 3. Handle errors and return result
         return True
     
     def stage_files(self, files: List[str]) -> bool:
-        """Stage specific files."""
+        """
+        Stage specific files.
+        
+        Stages only the specified files, equivalent to running
+        'git add <file1> <file2> ...'.
+        
+        Args:
+            files (List[str]): List of file paths to stage
+            
+        Returns:
+            bool: True if all files were staged successfully, False otherwise
+            
+        Raises:
+            RuntimeError: If not in a Git repository
+            FileNotFoundError: If any file doesn't exist
+            subprocess.CalledProcessError: If git add command fails
+            
+        Example:
+            git.stage_files(['src/main.py', 'tests/test_main.py'])
+            
+        Note:
+            This method will be implemented in STORY-1.2.3 - comandos base
+        """
         # TODO: Implement git add for specific files
+        # 1. Verify we're in a git repository
+        # 2. Validate file paths exist
+        # 3. Execute 'git add <files>' command
+        # 4. Handle errors and return result
         return True
     
     def commit(self, message: str) -> bool:
-        """Commit changes with the given message."""
+        """
+        Commit changes with the given message.
+        
+        Creates a new commit with the staged changes and the provided
+        message. Equivalent to running 'git commit -m "<message>"'.
+        
+        Args:
+            message (str): Commit message
+            
+        Returns:
+            bool: True if commit was successful, False otherwise
+            
+        Raises:
+            RuntimeError: If not in a Git repository
+            ValueError: If message is empty or invalid
+            subprocess.CalledProcessError: If git commit command fails
+            
+        Example:
+            git.commit("feat: add user authentication")
+            
+        Note:
+            This method will be implemented in STORY-1.2.3 - comandos base
+        """
         # TODO: Implement git commit functionality
+        # 1. Verify we're in a git repository
+        # 2. Validate commit message
+        # 3. Check if there are staged changes
+        # 4. Execute 'git commit -m "<message>"' command
+        # 5. Handle errors and return result
         return True
     
     def get_current_branch(self) -> Optional[str]:
-        """Get current branch name."""
+        """
+        Get current branch name.
+        
+        Returns the name of the currently checked out branch.
+        Equivalent to running 'git branch --show-current'.
+        
+        Returns:
+            Optional[str]: Current branch name, or None if not in a repository
+                          or in detached HEAD state
+            
+        Note:
+            This method will be implemented in STORY-1.2.3 - comandos base
+        """
         # TODO: Implement git branch --show-current
+        # 1. Verify we're in a git repository
+        # 2. Execute 'git branch --show-current' command
+        # 3. Parse output and return branch name
         return "main"
     
     def get_staged_files(self) -> List[str]:
-        """Get list of staged files."""
+        """
+        Get list of staged files.
+        
+        Returns a list of files that are currently staged for commit.
+        Equivalent to running 'git diff --cached --name-only'.
+        
+        Returns:
+            List[str]: List of staged file paths
+            
+        Note:
+            This method will be implemented in STORY-1.2.3 - comandos base
+        """
         # TODO: Implement git diff --cached --name-only
+        # 1. Verify we're in a git repository
+        # 2. Execute 'git diff --cached --name-only' command
+        # 3. Parse output and return list of files
         return []
     
     def get_unstaged_files(self) -> List[str]:
-        """Get list of unstaged files."""
+        """
+        Get list of unstaged files.
+        
+        Returns a list of files that have been modified but not staged.
+        Equivalent to running 'git diff --name-only'.
+        
+        Returns:
+            List[str]: List of unstaged file paths
+            
+        Note:
+            This method will be implemented in STORY-1.2.3 - comandos base
+        """
         # TODO: Implement git diff --name-only
+        # 1. Verify we're in a git repository
+        # 2. Execute 'git diff --name-only' command
+        # 3. Parse output and return list of files
         return []
     
     def get_repository_status(self) -> Dict[str, Any]:
-        """Get complete repository status."""
+        """
+        Get complete repository status.
+        
+        Returns a comprehensive status of the repository including
+        current branch, staged files, unstaged files, and untracked files.
+        Equivalent to parsing 'git status --porcelain'.
+        
+        Returns:
+            Dict[str, Any]: Repository status with keys:
+                - current_branch: Current branch name
+                - staged_files: List of staged files
+                - unstaged_files: List of unstaged files
+                - untracked_files: List of untracked files
+                - is_clean: Boolean indicating if working tree is clean
+                
+        Example:
+            status = git.get_repository_status()
+            print(f"Branch: {status['current_branch']}")
+            print(f"Staged: {len(status['staged_files'])} files")
+            
+        Note:
+            This method will be implemented in STORY-1.2.3 - comandos base
+        """
         # TODO: Implement git status --porcelain parsing
+        # 1. Verify we're in a git repository
+        # 2. Execute 'git status --porcelain' command
+        # 3. Parse output to extract file statuses
+        # 4. Return structured status dictionary
         return {}
+    
+    def get_commit_history(self, limit: int = 10) -> List[Dict[str, str]]:
+        """
+        Get recent commit history.
+        
+        Returns a list of recent commits with their metadata.
+        Equivalent to running 'git log --oneline -n <limit>'.
+        
+        Args:
+            limit (int): Maximum number of commits to return
+            
+        Returns:
+            List[Dict[str, str]]: List of commit dictionaries with keys:
+                - hash: Short commit hash
+                - message: Commit message
+                - author: Author name
+                - date: Commit date
+                
+        Note:
+            This method will be implemented in STORY-1.2.3 - comandos base
+        """
+        # TODO: Implement git log functionality
+        # 1. Verify we're in a git repository
+        # 2. Execute 'git log --oneline -n <limit>' command
+        # 3. Parse output to extract commit information
+        # 4. Return list of commit dictionaries
+        return []
+    
+    def create_branch(self, branch_name: str, start_point: Optional[str] = None) -> bool:
+        """
+        Create a new branch.
+        
+        Creates a new branch from the specified start point or current HEAD.
+        Equivalent to running 'git branch <branch_name> [<start_point>]'.
+        
+        Args:
+            branch_name (str): Name of the new branch
+            start_point (Optional[str]): Starting point for the branch
+            
+        Returns:
+            bool: True if branch was created successfully, False otherwise
+            
+        Raises:
+            RuntimeError: If not in a Git repository
+            ValueError: If branch name is invalid
+            subprocess.CalledProcessError: If git branch command fails
+            
+        Note:
+            This method will be implemented in STORY-1.2.3 - comandos base
+        """
+        # TODO: Implement git branch creation
+        # 1. Verify we're in a git repository
+        # 2. Validate branch name
+        # 3. Execute 'git branch <name> [<start>]' command
+        # 4. Handle errors and return result
+        return True
+    
+    def switch_branch(self, branch_name: str) -> bool:
+        """
+        Switch to a different branch.
+        
+        Switches to the specified branch. Equivalent to running
+        'git checkout <branch_name>' or 'git switch <branch_name>'.
+        
+        Args:
+            branch_name (str): Name of the branch to switch to
+            
+        Returns:
+            bool: True if switch was successful, False otherwise
+            
+        Raises:
+            RuntimeError: If not in a Git repository
+            ValueError: If branch doesn't exist
+            subprocess.CalledProcessError: If git checkout/switch command fails
+            
+        Note:
+            This method will be implemented in STORY-1.2.3 - comandos base
+        """
+        # TODO: Implement git branch switching
+        # 1. Verify we're in a git repository
+        # 2. Check if branch exists
+        # 3. Execute 'git switch <branch>' command
+        # 4. Handle errors and return result
+        return True

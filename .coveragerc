@@ -6,6 +6,9 @@ omit =
     */__pycache__/*
     */venv/*
     */env/*
+    */.*
+    setup.py
+    conftest.py
 
 [report]
 exclude_lines =
@@ -19,3 +22,10 @@ exclude_lines =
     if __name__ == .__main__.:
     class .*\bProtocol\):
     @(abc\.)?abstractmethod
+
+[html]
+directory = htmlcov
+title = ggGit Test Coverage Report
+
+[xml]
+output = coverage.xml
