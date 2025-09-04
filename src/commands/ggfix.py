@@ -7,10 +7,39 @@ Usage: ggfix [options] <message>
 
 import click
 import sys
-from core.config import ConfigManager
-from core.git import GitInterface
-from core.validation import ArgumentValidator
+from core.base_commands.base import BaseCommand
 from core.base_commands.commit import CommitCommand
+from core.utils.colors import ColorManager
+
+
+class FixCommand(BaseCommand):
+    """Command for creating fix commits."""
+    
+    def execute(self, message, scope=None, ai=False, amend=False):
+        """Execute the fix command."""
+        # If no message and AI is enabled, generate automatically
+        if not message and ai:
+            # TODO: Implement AI message generation
+            click.echo(ColorManager.warning("AI functionality not yet implemented"))
+            return 1
+        
+        # Validate input
+        if message:
+            self.validator.validate_commit_message(message)
+        
+        # Create commit command
+        commit_cmd = CommitCommand("fix")
+        
+        # Execute commit
+        result = commit_cmd.execute(message, scope, amend)
+        
+        if result == 0:
+            click.echo(ColorManager.success("Commit realizado exitosamente"))
+        else:
+            click.echo(ColorManager.error("Error al realizar commit"))
+            return result
+        
+        return result
 
 
 @click.command()
@@ -21,35 +50,12 @@ from core.base_commands.commit import CommitCommand
 def main(scope, ai, amend, message):
     """Commit changes adding the fix prefix to the message"""
     try:
-        # Initialize components
-        config = ConfigManager()
-        git = GitInterface()
-        validator = ArgumentValidator()
-        
-        # If no message and AI is enabled, generate automatically
-        if not message and ai:
-            # TODO: Implement AI message generation
-            click.echo(click.style("AI functionality not yet implemented", fg="yellow"))
-            return 1
-        
-        # Validate input
-        if message:
-            validator.validate_commit_message(message)
-        
-        # Create commit command
-        commit_cmd = CommitCommand("fix")
-        
-        # Execute commit
-        result = commit_cmd.execute(message, scope, amend)
-        
-        if result == 0:
-            click.echo(click.style("✅ Commit realizado exitosamente", fg="green"))
-        else:
-            click.echo(click.style("❌ Error al realizar commit", fg="red"))
-            return result
+        # Create and run command
+        cmd = FixCommand()
+        return cmd.run(message=message, scope=scope, ai=ai, amend=amend)
         
     except Exception as e:
-        click.echo(click.style(f"❌ Error: {str(e)}", fg="red"))
+        click.echo(ColorManager.error(f"Error: {str(e)}"))
         return 1
 
 

@@ -1,256 +1,244 @@
-name: Continuous Integration
+name: CI/CD Pipeline
 
 on:
+  push:
+    branches: [ main, develop ]
   pull_request:
-    branches: [main]
-    types: [opened, reopened, synchronize, labeled, unlabeled]
-  workflow_dispatch:
+    branches: [ main, develop ]
 
 jobs:
-  # Quick validation job that runs first
-  quick-validate:
-    name: Quick Validation
+  test:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v5
-      
-    - name: Quick syntax check
-      run: |
-        echo "Quick validation of critical files..."
-        
-        # Check if critical files exist
-        required_files=("README.md" "commands/_utils.sh" "install.sh")
-        for file in "${required_files[@]}"; do
-          if [ ! -f "$file" ]; then
-            echo "❌ Critical file missing: $file"
-            exit 1
-          fi
-        done
-        
-        # Quick syntax check
-        bash -n commands/_utils.sh
-        bash -n install.sh
-        
-        echo "✅ Quick validation passed"
-        
-  # Main testing job
-  test-commands:
-    name: Test Commands
-    needs: quick-validate
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v5
-      
-    - name: Setup environment
-      run: |
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "actions@github.com"
-        chmod +x commands/*
-        
-    - name: Run comprehensive tests
-      run: |
-        echo "Running comprehensive test suite..."
-        
-        # Run health check
-        ./health-check.sh
-        
-        # Test all commands
-        for cmd in commands/gg*; do
-          if [ -f "$cmd" ]; then
-            echo "Testing $(basename "$cmd")"
-            "$cmd" --help > /dev/null 2>&1 || {
-              echo "❌ $(basename "$cmd") failed"
-              exit 1
-            }
-          fi
-        done
-        
-        echo "✅ All commands working correctly"
-        
-  # Cross-platform testing
-  cross-platform:
-    name: Cross-Platform Test
-    needs: quick-validate
-    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-    timeout-minutes: 10
-    
+        python-version: ['3.11', '3.12']
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v5
-      
-    - name: Setup environment
-      run: |
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "actions@github.com"
-        chmod +x commands/*
-        
-    - name: Test on ${{ matrix.os }}
-      shell: bash
-      run: |
-        echo "Testing on ${{ matrix.os }}..."
-        
-        # Basic functionality test
-        ./commands/ggv --help > /dev/null 2>&1
-        ./commands/ggs --help > /dev/null 2>&1
-        
-        # Test utility functions
-        source commands/_utils.sh
-        print_success "Test" > /dev/null
-        
-        echo "✅ Tests passed on ${{ matrix.os }}"
-        
-  # Security and quality checks
-  security-quality:
-    name: Security & Quality
-    needs: quick-validate
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+    - uses: actions/checkout@v4
     
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v5
-      
-    - name: Security checks
-      run: |
-        echo "Running security checks..."
-        
-        # Check for dangerous patterns
-        if grep -r "rm -rf\|dd if=\|mkfs\|fdisk" commands/; then
-          echo "❌ Found potentially dangerous commands"
-          exit 1
-        fi
-        
-        # Check for hardcoded paths
-        if grep -r "/home/\|/root/\|C:\\\|D:\\" commands/; then
-          echo "❌ Found hardcoded paths"
-          exit 1
-        fi
-        
-        echo "✅ Security checks passed"
-        
-    - name: Quality checks
-      run: |
-        echo "Running quality checks..."
-        
-        # Check file permissions
-        for script in commands/*; do
-          if [ -f "$script" ] && [ ! -x "$script" ]; then
-            echo "❌ Script not executable: $script"
-            exit 1
-          fi
-        done
-        
-        # Check script headers
-        for script in commands/*; do
-          if [ -f "$script" ]; then
-            if ! head -1 "$script" | grep -q "#!/bin/bash"; then
-              echo "❌ Missing shebang in: $script"
-              exit 1
-            fi
-          fi
-        done
-        
-        echo "✅ Quality checks passed"
-        
-  # Integration testing
-  integration:
-    name: Integration Test
-    needs: [quick-validate, test-commands]
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
     
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v5
-      
-    - name: Setup test environment
+    - name: Set up Conda
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        auto-update-conda: true
+        python-version: ${{ matrix.python-version }}
+        channels: conda-forge,defaults
+        channel-priority: strict
+    
+    - name: Cache conda dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.conda/pkgs
+        key: ${{ runner.os }}-conda-${{ hashFiles('environment.yml') }}
+        restore-keys: |
+          ${{ runner.os }}-conda-
+    
+    - name: Install dependencies
       run: |
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "actions@github.com"
-        chmod +x commands/*
-        
+        conda env create -f environment.yml
+        conda activate gggit
+        pip install -e .
+        pip install -r requirements-dev.txt
+    
+    - name: Lint with flake8
+      run: |
+        conda activate gggit
+        flake8 src tests --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 src tests --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    
+    - name: Check code formatting with black
+      run: |
+        conda activate gggit
+        black --check src tests
+    
+    - name: Check import sorting with isort
+      run: |
+        conda activate gggit
+        isort --check-only src tests
+    
+    - name: Type check with mypy
+      run: |
+        conda activate gggit
+        mypy src --ignore-missing-imports
+    
+    - name: Run unit tests
+      run: |
+        conda activate gggit
+        pytest tests/ -m unit --cov=src --cov-report=xml --cov-report=html --junitxml=test-results.xml
+    
     - name: Run integration tests
       run: |
-        echo "Setting up test repository..."
-        
-        # Store the original workspace path before changing directories
-        WORKSPACE_PATH=$(pwd)
-        
-        # Create test repo
-        mkdir -p /tmp/gggit-test
-        cd /tmp/gggit-test
-        git init
-        echo "Test" > test.txt
-        git add test.txt
-        git commit -m "Test commit"
-        
-        # Add ggGit to PATH using the stored workspace path
-        export PATH=$PATH:$WORKSPACE_PATH/commands
-        
-        # Test basic workflow
-        ggs
-        echo "More content" >> test.txt
-        gga test.txt
-        ggfeat -s test "Add more content"
-        ggl
-        
-        echo "✅ Integration tests passed"
-        
-        # Cleanup
-        cd /
-        rm -rf /tmp/gggit-test
-        
-  # Final validation
-  final-validation:
-    name: Final Validation
-    needs: [quick-validate, test-commands, cross-platform, security-quality, integration]
+        conda activate gggit
+        pytest tests/ -m integration --cov=src --cov-report=xml --cov-report=html --junitxml=test-results-integration.xml
+    
+    - name: Run all tests with coverage
+      run: |
+        conda activate gggit
+        pytest tests/ --cov=src --cov-report=xml --cov-report=html --cov-report=term-missing --junitxml=test-results-all.xml --cov-fail-under=80
+    
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+    
+    - name: Upload test results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: test-results-${{ matrix.python-version }}
+        path: |
+          test-results*.xml
+          htmlcov/
+          coverage.xml
+
+  quality-gates:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    needs: test
+    if: always()
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v5
-      
-    - name: Final checks
+    - uses: actions/checkout@v4
+    
+    - name: Set up Conda
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        auto-update-conda: true
+        python-version: '3.12'
+        channels: conda-forge,defaults
+        channel-priority: strict
+    
+    - name: Install dependencies
       run: |
-        echo "Running final validation..."
-        
-        # Count commands
-        command_count=$(ls commands/gg* 2>/dev/null | wc -l)
-        echo "Found $command_count ggGit commands"
-        
-        if [ "$command_count" -lt 10 ]; then
-          echo "⚠️  Warning: Expected at least 10 commands"
-        fi
-        
-        # Check documentation
-        if [ ! -f "README.md" ] || [ ! -s "README.md" ]; then
-          echo "❌ README.md is missing or empty"
-          exit 1
-        fi
-        
-        echo "✅ Final validation passed"
-        
-    - name: Success message
+        conda env create -f environment.yml
+        conda activate gggit
+        pip install -e .
+        pip install -r requirements-dev.txt
+    
+    - name: Download test results
+      uses: actions/download-artifact@v3
+      with:
+        name: test-results-3.12
+        path: test-results/
+    
+    - name: Parse test results
       run: |
-        echo ""
-        echo "🎉 All CI checks passed successfully!"
-        echo ""
-        echo "📊 CI Summary:"
-        echo "  ✅ Quick validation"
-        echo "  ✅ Command testing"
-        echo "  ✅ Cross-platform compatibility"
-        echo "  ✅ Security & quality"
-        echo "  ✅ Integration testing"
-        echo "  ✅ Final validation"
-        echo ""
-        echo "🚀 ggGit is ready for production!"
+        python -c "
+        import xml.etree.ElementTree as ET
+        import sys
+        
+        # Parse test results
+        try:
+            tree = ET.parse('test-results/test-results-all.xml')
+            root = tree.getroot()
+            
+            tests = int(root.get('tests', 0))
+            failures = int(root.get('failures', 0))
+            errors = int(root.get('errors', 0))
+            
+            print(f'Tests: {tests}')
+            print(f'Failures: {failures}')
+            print(f'Errors: {errors}')
+            
+            if failures > 0 or errors > 0:
+                print('❌ Quality gate failed: Tests have failures or errors')
+                sys.exit(1)
+            else:
+                print('✅ Quality gate passed: All tests passed')
+        except Exception as e:
+            print(f'❌ Quality gate failed: Could not parse test results: {e}')
+            sys.exit(1)
+        "
+    
+    - name: Check coverage threshold
+      run: |
+        python -c "
+        import xml.etree.ElementTree as ET
+        import sys
+        
+        try:
+            tree = ET.parse('test-results/coverage.xml')
+            root = tree.getroot()
+            
+            line_rate = float(root.get('line-rate', 0))
+            branch_rate = float(root.get('branch-rate', 0))
+            
+            print(f'Line coverage: {line_rate:.2%}')
+            print(f'Branch coverage: {branch_rate:.2%}')
+            
+            if line_rate < 0.80:
+                print('❌ Quality gate failed: Line coverage below 80%')
+                sys.exit(1)
+            elif branch_rate < 0.60:
+                print('❌ Quality gate failed: Branch coverage below 60%')
+                sys.exit(1)
+            else:
+                print('✅ Quality gate passed: Coverage thresholds met')
+        except Exception as e:
+            print(f'❌ Quality gate failed: Could not parse coverage: {e}')
+            sys.exit(1)
+        "
+
+  security:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Conda
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        auto-update-conda: true
+        python-version: '3.12'
+        channels: conda-forge,defaults
+        channel-priority: strict
+    
+    - name: Install dependencies
+      run: |
+        conda env create -f environment.yml
+        conda activate gggit
+        pip install -e .
+        pip install safety bandit
+    
+    - name: Security check with safety
+      run: |
+        conda activate gggit
+        safety check --json --output safety-report.json || true
+    
+    - name: Security check with bandit
+      run: |
+        conda activate gggit
+        bandit -r src -f json -o bandit-report.json || true
+    
+    - name: Upload security reports
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: security-reports
+        path: |
+          safety-report.json
+          bandit-report.json
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: [test, quality-gates, security]
+    if: always()
+    
+    steps:
+    - name: Notify on success
+      if: needs.test.result == 'success' && needs.quality-gates.result == 'success'
+      run: |
+        echo "✅ All checks passed successfully!"
+    
+    - name: Notify on failure
+      if: needs.test.result == 'failure' || needs.quality-gates.result == 'failure'
+      run: |
+        echo "❌ Some checks failed. Please review the logs."
+        exit 1

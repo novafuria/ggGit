@@ -80,7 +80,7 @@ ggGit es una suite de comandos independientes de línea de comandos que simplifi
 - **Consistencia**: Todos los comandos comparten el mismo entorno y patrones
 - **Mantenibilidad**: Un solo lenguaje reduce la complejidad de mantenimiento
 - **Capacidades de IA**: Python es ideal para integración con APIs de IA
-- **Testing**: Framework de testing unificado para todos los comandos
+- **Testing**: Framework de testing unificado con pytest y coverage progresivo (60% → 70% → 80%+)
 - **Dependencias**: Gestión simplificada de dependencias
 
 ## Sistema de comandos independientes
@@ -94,7 +94,6 @@ Cada comando ggGit es un script Python ejecutable independiente que reutiliza ab
 src/
 ├── core/                  # Lógica central y abstracciones
 │   ├── __init__.py
-│   ├── cli.py             # Abstracción CLI base
 │   ├── config.py          # ConfigManager
 │   ├── git.py             # GitWrapper
 │   ├── validation.py      # Validadores
@@ -429,12 +428,13 @@ Sistema unificado para proporcionar una experiencia de usuario consistente en to
 - **Info**: Azul (`blue`) - Información general
 - **Reset**: (`reset`) - Reset de colores
 
-**Métodos de Salida con Click:**
-- `click.echo(click.style(message, fg="green"))`: Mensajes de éxito
-- `click.echo(click.style(message, fg="red"))`: Mensajes de error
-- `click.echo(click.style(message, fg="yellow"))`: Mensajes de advertencia
-- `click.echo(click.style(message, fg="blue"))`: Mensajes informativos
-- `click.echo(message)`: Texto normal sin formato especial
+**Métodos de Salida con ColorManager:**
+- `ColorManager.success(message)`: Mensajes de éxito en verde
+- `ColorManager.error(message)`: Mensajes de error en rojo
+- `ColorManager.warning(message)`: Mensajes de advertencia en amarillo
+- `ColorManager.info(message)`: Mensajes informativos en azul
+- `ColorManager.operation(message)`: Mensajes de operación en cyan
+- `ColorManager.highlight(message)`: Mensajes destacados en negrita
 
 #### 2. Especificación del Sistema de Ayuda
 
@@ -504,11 +504,10 @@ Para mantener consistencia entre todos los comandos:
 
 **Configuración Recomendada:**
 ```python
-# Ejemplo con Click
+# Ejemplo con Click y ColorManager
 import click
-from colorama import init, Fore, Style
-
-init()  # Inicializar colorama
+from core.utils.colors import ColorManager
+from core.base_commands.base import BaseCommand
 
 @click.command()
 @click.option('--scope', '-s', help='Scope del commit')
@@ -516,6 +515,9 @@ init()  # Inicializar colorama
 @click.argument('message', required=False)
 def ggfeat(scope, ai, message):
     """Commit changes adding the feat prefix to the message"""
+    # Usar ColorManager para mensajes
+    click.echo(ColorManager.success("Commit realizado exitosamente"))
+    click.echo(ColorManager.error("Error al realizar commit"))
     # Implementación del comando
     pass
 ```
@@ -949,6 +951,69 @@ logging:
 - **Configuración**: `ui.verbose: true` en configuración
 - **Salida**: Información detallada de operaciones
 - **Destino**: stdout para información del usuario
+
+## Sistema de testing y calidad
+
+### Descripción
+Sistema de testing unificado que garantiza la calidad del código mediante pruebas unitarias, de integración y métricas de cobertura progresivas.
+
+### Framework de Testing
+
+**pytest como framework principal:**
+- Sintaxis simple y legible
+- Fixtures y parametrización avanzadas
+- Integración nativa con GitHub Actions
+- Soporte para TDD (Desarrollo Guiado por Pruebas)
+
+### Estrategia de Coverage Progresivo
+
+**Fase 1 - Abstracciones Base (60%):**
+- Coverage mínimo del 60% para abstracciones básicas
+- Tests para `ColorManager` y `BaseCommand`
+- Configuración básica de pytest
+
+**Fase 2 - Estructura Base (70%):**
+- Coverage mínimo del 70% para estructura base optimizada
+- Tests de integración para patrones de uso
+- Quality gates en CI/CD
+
+**Fase 3 - Implementaciones Completas (80%+):**
+- Coverage mínimo del 80% para implementaciones funcionales
+- Tests completos para `ConfigManager`, `GitInterface`, `LoggingManager`
+- Coverage reporting y quality gates avanzados
+
+### Estructura de Testing
+
+```
+tests/
+├── __init__.py
+├── conftest.py              # Fixtures globales
+├── test_core/               # Tests para abstracciones core
+│   ├── test_colors.py       # Tests para ColorManager
+│   ├── test_validation.py   # Tests para ArgumentValidator
+│   └── test_base_command.py # Tests para BaseCommand
+├── test_commands/           # Tests para comandos específicos
+│   ├── test_ggfeat.py
+│   ├── test_ggfix.py
+│   └── test_ggbreak.py
+└── test_integration/        # Tests de integración
+    ├── test_command_flow.py
+    └── test_error_handling.py
+```
+
+### CI/CD y Quality Gates
+
+**GitHub Actions:**
+- Ejecución automática de tests en cada push/PR
+- Coverage reporting con badges
+- Quality gates que bloquean merge si no se cumple coverage mínimo
+- Testing cross-platform (Linux, macOS, Windows)
+
+**Métricas de Calidad:**
+- Coverage de código progresivo
+- Detección de código duplicado
+- Análisis estático con herramientas como flake8
+- Validación de tipos con mypy (opcional)
 
 ## Integraciones con terceros
 
