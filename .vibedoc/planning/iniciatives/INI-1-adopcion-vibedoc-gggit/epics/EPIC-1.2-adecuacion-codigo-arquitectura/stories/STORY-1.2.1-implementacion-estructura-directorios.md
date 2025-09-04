@@ -45,7 +45,7 @@ gggit/
     └── test_*.py
 ```
 
-Cada archivo Python incluirá docstrings básicos y estructura mínima para permitir importaciones correctas.
+Cada archivo Python incluirá docstrings básicos y estructura mínima para permitir importaciones correctas. No se busca implementar funcionalidad en este momento.
 
 ## 📦 Artefactos
 
