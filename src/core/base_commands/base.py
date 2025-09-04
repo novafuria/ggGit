@@ -7,7 +7,8 @@ should extend for consistent behavior and shared functionality.
 
 from abc import ABC, abstractmethod
 from typing import List, Optional, Any
-from ..cli import CLIBase
+import click
+from ..utils.colors import ColorManager
 from ..config import ConfigManager
 from ..git import GitInterface
 from ..validation import ArgumentValidator
@@ -18,7 +19,6 @@ class BaseCommand(ABC):
     
     def __init__(self):
         """Initialize base command."""
-        self.cli = CLIBase()
         self.config = ConfigManager()
         self.git = GitInterface()
         self.validator = ArgumentValidator()
@@ -44,5 +44,5 @@ class BaseCommand(ABC):
             self.setup_logging()
             return self.execute(*args, **kwargs)
         except Exception as e:
-            self.cli.print_error(f"Error: {str(e)}")
+            click.echo(ColorManager.error(f"Error: {str(e)}"))
             return 1

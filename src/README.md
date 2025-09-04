@@ -1,125 +1,210 @@
-# Estructura de Directorios Python - ggGit
+# ggGit - Patrones de Uso de Abstracciones
 
-Esta documentación describe la organización de directorios implementada para la migración de ggGit de Bash a Python, siguiendo las decisiones tomadas en el zettel 1.2.1.1.
+Este documento describe los patrones de uso de las abstracciones implementadas en ggGit.
 
-## 📁 Estructura General
+## ColorManager
 
+`ColorManager` proporciona un sistema unificado de colores para todos los comandos.
+
+### Uso Básico
+
+```python
+from core.utils.colors import ColorManager
+import click
+
+# Mensajes de éxito
+click.echo(ColorManager.success("Operación completada"))
+
+# Mensajes de error
+click.echo(ColorManager.error("Error en la operación"))
+
+# Mensajes de advertencia
+click.echo(ColorManager.warning("Advertencia importante"))
+
+# Mensajes informativos
+click.echo(ColorManager.info("Información adicional"))
+
+# Mensajes de operación
+click.echo(ColorManager.operation("Procesando..."))
+
+# Texto destacado
+click.echo(ColorManager.highlight("Texto importante"))
+
+# Texto atenuado
+click.echo(ColorManager.dim("Texto secundario"))
 ```
-src/
-├── core/                  # Lógica central y abstracciones
-│   ├── __init__.py
-│   ├── cli.py             # Abstracción CLI base
-│   ├── config.py          # ConfigManager
-│   ├── git.py             # GitWrapper
-│   ├── validation.py      # Validadores
-│   ├── base_commands/     # Comandos base reutilizables
-│   │   ├── __init__.py
-│   │   ├── base.py        # BaseCommand
-│   │   ├── commit.py      # CommitCommand
-│   │   └── config.py      # ConfigCommand
-│   └── utils/             # Utilidades
-│       ├── __init__.py
-│       ├── colors.py      # Sistema de colores
-│       └── logging.py     # Sistema de logging
-└── commands/              # Comandos específicos ejecutables
-    ├── ggfeat.py
-    ├── ggfix.py
-    ├── ggbreak.py
-    └── ... (todos los comandos)
+
+### Métodos Disponibles
+
+- `success(message)`: Mensajes de éxito en verde
+- `error(message)`: Mensajes de error en rojo
+- `warning(message)`: Mensajes de advertencia en amarillo
+- `info(message)`: Mensajes informativos en azul
+- `operation(message)`: Mensajes de operación en cyan
+- `highlight(message)`: Texto destacado en negrita
+- `dim(message)`: Texto atenuado
+
+## BaseCommand
+
+`BaseCommand` es la clase base para todos los comandos de ggGit.
+
+### Estructura de un Comando
+
+```python
+from core.base_commands.base import BaseCommand
+from core.utils.colors import ColorManager
+import click
+
+class MiComando(BaseCommand):
+    """Descripción del comando."""
+    
+    def execute(self, *args, **kwargs):
+        """Implementar la lógica del comando."""
+        # Acceso a componentes base
+        config = self.config
+        git = self.git
+        validator = self.validator
+        
+        # Validar argumentos
+        if not self.validate_args(args):
+            return 1
+        
+        # Lógica del comando
+        try:
+            # Hacer algo
+            click.echo(ColorManager.success("Comando ejecutado"))
+            return 0
+        except Exception as e:
+            click.echo(ColorManager.error(f"Error: {e}"))
+            return 1
+
+@click.command()
+@click.option('--opcion', help='Descripción de la opción')
+@click.argument('argumento', required=False)
+def main(opcion, argumento):
+    """Descripción del comando para Click."""
+    try:
+        cmd = MiComando()
+        return cmd.run(argumento=argumento, opcion=opcion)
+    except Exception as e:
+        click.echo(ColorManager.error(f"Error: {e}"))
+        return 1
+
+if __name__ == "__main__":
+    import sys
+    sys.exit(main())
 ```
 
-## 🎯 Principios de Organización
+### Componentes Disponibles
 
-### Separación de Responsabilidades
+- `self.config`: Instancia de `ConfigManager`
+- `self.git`: Instancia de `GitInterface`
+- `self.validator`: Instancia de `ArgumentValidator`
 
-- **`core/`**: Contiene abstracciones reutilizables y lógica central
-- **`commands/`**: Contiene scripts Python ejecutables independientes
-- **`config/`**: Contiene esquemas de configuración
-- **`tests/`**: Contiene pruebas unitarias e integración
+### Métodos Base
 
-### Convenciones Python
+- `execute(*args, **kwargs)`: Método abstracto que debe implementarse
+- `validate_args(args)`: Validación de argumentos (implementación por defecto)
+- `setup_logging()`: Configuración de logging (implementación por defecto)
+- `run(*args, **kwargs)`: Ejecuta el comando con manejo de errores
 
-- Todos los directorios contienen `__init__.py` para ser paquetes Python válidos
-- Los archivos siguen convenciones de nomenclatura snake_case
-- Cada módulo tiene docstrings descriptivos
-- Las importaciones siguen el patrón `from core.module import Class`
+## Patrones de Implementación
 
-## 📦 Módulos Core
+### 1. Comando Simple
 
-### `core/cli.py`
-Abstracción base para operaciones CLI con Click, proporcionando métodos comunes para:
-- Impresión de mensajes con colores
-- Manejo de errores
-- Interfaz unificada
+```python
+class ComandoSimple(BaseCommand):
+    def execute(self, mensaje):
+        click.echo(ColorManager.info(f"Procesando: {mensaje}"))
+        return 0
+```
 
-### `core/config.py`
-Gestión de configuración jerárquica con prioridad:
-1. Repositorio (`.gggit/repo-config.yaml`)
-2. Módulo (`~/.gggit/modules/`)
-3. Usuario (`~/.gggit/user-config.yaml`)
-4. Default (`~/.gggit/default-config.yaml`)
+### 2. Comando con Validación
 
-### `core/git.py`
-Interfaz unificada para operaciones Git:
-- Validación de repositorio
-- Operaciones de staging y commit
-- Manejo de errores Git
+```python
+class ComandoConValidacion(BaseCommand):
+    def execute(self, mensaje):
+        if not mensaje:
+            click.echo(ColorManager.error("Mensaje requerido"))
+            return 1
+        
+        self.validator.validate_commit_message(mensaje)
+        click.echo(ColorManager.success("Validación exitosa"))
+        return 0
+```
 
-### `core/validation.py`
-Validación de argumentos y entradas:
-- Mensajes de commit (Conventional Commits)
-- Scopes y nombres de rama
-- Rutas de archivos
+### 3. Comando con Configuración
 
-### `core/base_commands/`
-Comandos base reutilizables:
-- **`base.py`**: Clase base para todos los comandos
-- **`commit.py`**: Funcionalidad común para comandos de commit
-- **`config.py`**: Gestión de configuración
+```python
+class ComandoConConfig(BaseCommand):
+    def execute(self, opcion):
+        config_value = self.config.get_config('mi_config', 'default')
+        click.echo(ColorManager.info(f"Configuración: {config_value}"))
+        return 0
+```
 
-### `core/utils/`
-Utilidades comunes:
-- **`colors.py`**: Sistema de colores unificado
-- **`logging.py`**: Configuración de logging centralizada
+## Testing
 
-## 🚀 Comandos Específicos
+### Ejecutar Tests
 
-Los comandos en `commands/` son scripts Python ejecutables independientes que:
-- Usan Click para interfaz CLI
-- Importan abstracciones desde `core/`
-- Siguen el patrón estándar definido en la arquitectura
-- Son ejecutables directamente (`chmod +x`)
-
-## 🔧 Configuración
-
-Los esquemas de configuración están en `config/`:
-- **`config-schema.yaml`**: Esquema principal de configuración
-- **`commit-schema.yaml`**: Esquema para validación de commits
-
-## 🧪 Testing
-
-La estructura de tests está en `tests/`:
-- **`test_core.py`**: Tests para módulos core
-- **`test_commands.py`**: Tests para comandos
-- Todos los tests siguen el patrón unittest de Python
-
-## 📋 Próximos Pasos
-
-Esta estructura establece la base para:
-1. Implementación de abstracciones (Historia 1.2.2)
-2. Comandos base (Historia 1.2.3)
-3. Comando de configuración (Historia 1.2.4)
-4. Comandos específicos (Historia 1.2.5)
-
-## ✅ Validación
-
-Para verificar que la estructura es correcta, ejecuta:
 ```bash
-python validate_structure.py
+# Todos los tests
+pytest
+
+# Tests específicos
+pytest tests/test_colors.py
+pytest tests/test_base_command.py
+
+# Con coverage
+pytest --cov=src --cov-report=term-missing
 ```
 
-Este script valida:
-- Presencia de todos los directorios y archivos
-- Archivos `__init__.py` en todos los paquetes
-- Importaciones básicas funcionando
-- Comandos Python ejecutables
+### Estructura de Tests
+
+```
+tests/
+├── conftest.py              # Configuración global
+├── test_colors.py           # Tests para ColorManager
+├── test_base_command.py     # Tests para BaseCommand
+└── test_commands.py         # Tests para comandos específicos
+```
+
+## Configuración
+
+### Dependencias
+
+Las dependencias están definidas en `environment.yml`:
+
+```yaml
+dependencies:
+  - python=3.12
+  - click>=8.0.0
+  - pyyaml>=6.0
+  - pytest>=7.0.0
+  - pytest-cov>=4.0.0
+  - colorama
+```
+
+### Instalación
+
+```bash
+# Crear ambiente
+conda env create -f environment.yml
+
+# Activar ambiente
+conda activate gggit
+
+# Instalar en modo desarrollo
+pip install -e .
+```
+
+## CI/CD
+
+Los tests se ejecutan automáticamente en GitHub Actions en cada push y pull request.
+
+### Configuración
+
+- Archivo: `.github/workflows/test.yml`
+- Python: 3.12
+- Coverage: Mínimo 60%
+- Reportes: HTML y XML
