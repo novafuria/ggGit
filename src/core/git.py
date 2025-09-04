@@ -15,8 +15,29 @@ providing meaningful feedback for debugging and user interaction.
 
 import subprocess
 import os
+import shutil
 from typing import List, Optional, Dict, Any, Tuple
 from pathlib import Path
+
+
+class GitInterfaceError(Exception):
+    """Excepción base para errores de GitInterface"""
+    pass
+
+
+class GitNotAvailableError(GitInterfaceError):
+    """Git no está disponible en el sistema"""
+    pass
+
+
+class NotGitRepositoryError(GitInterfaceError):
+    """No es un repositorio Git válido"""
+    pass
+
+
+class GitCommandError(GitInterfaceError):
+    """Error al ejecutar comando Git"""
+    pass
 
 
 class GitInterface:
@@ -58,8 +79,16 @@ class GitInterface:
         This method sets up the Git interface. No state is maintained
         as all operations are stateless and work with the current
         working directory.
+        
+        Raises:
+            GitNotAvailableError: If Git is not available in the system
         """
-        pass
+        # Verify Git is available
+        if not shutil.which('git'):
+            raise GitNotAvailableError(
+                "Git no está disponible en el sistema. "
+                "Por favor instala Git y asegúrate de que esté en el PATH."
+            )
     
     def is_git_repository(self) -> bool:
         """
@@ -70,15 +99,24 @@ class GitInterface:
         
         Returns:
             bool: True if current directory is a Git repository, False otherwise
-            
-        Note:
-            This method will be implemented in STORY-1.2.3 - comandos base
         """
-        # TODO: Implement Git repository validation
-        # 1. Check for .git directory or file
-        # 2. Verify it's a valid Git repository
-        # 3. Return boolean result
-        return True
+        try:
+            # Check if .git directory or file exists
+            git_path = Path('.git')
+            if not git_path.exists():
+                return False
+            
+            # Verify it's a valid Git repository by running git status
+            result = subprocess.run(
+                ['git', 'status', '--porcelain'],
+                capture_output=True,
+                text=True,
+                timeout=10
+            )
+            return result.returncode == 0
+            
+        except (subprocess.TimeoutExpired, subprocess.CalledProcessError, OSError):
+            return False
     
     def stage_all_changes(self) -> bool:
         """
@@ -91,17 +129,39 @@ class GitInterface:
             bool: True if staging was successful, False otherwise
             
         Raises:
-            RuntimeError: If not in a Git repository
-            subprocess.CalledProcessError: If git add command fails
-            
-        Note:
-            This method will be implemented in STORY-1.2.3 - comandos base
+            NotGitRepositoryError: If not in a Git repository
+            GitCommandError: If git add command fails
         """
-        # TODO: Implement git add . functionality
-        # 1. Verify we're in a git repository
-        # 2. Execute 'git add .' command
-        # 3. Handle errors and return result
-        return True
+        if not self.is_git_repository():
+            raise NotGitRepositoryError(
+                "No es un repositorio Git válido. "
+                "Ejecuta este comando desde un directorio con un repositorio Git inicializado."
+            )
+        
+        try:
+            result = subprocess.run(
+                ['git', 'add', '.'],
+                capture_output=True,
+                text=True,
+                timeout=30
+            )
+            
+            if result.returncode != 0:
+                raise GitCommandError(
+                    f"Error al ejecutar 'git add .': {result.stderr.strip()}"
+                )
+            
+            return True
+            
+        except subprocess.TimeoutExpired:
+            raise GitCommandError(
+                "Timeout al ejecutar 'git add .'. "
+                "El repositorio puede tener muchos archivos o estar en un estado inconsistente."
+            )
+        except subprocess.CalledProcessError as e:
+            raise GitCommandError(
+                f"Error al ejecutar 'git add .' (código {e.returncode}): {e.stderr.strip()}"
+            )
     
     def stage_files(self, files: List[str]) -> bool:
         """
@@ -117,22 +177,51 @@ class GitInterface:
             bool: True if all files were staged successfully, False otherwise
             
         Raises:
-            RuntimeError: If not in a Git repository
+            NotGitRepositoryError: If not in a Git repository
             FileNotFoundError: If any file doesn't exist
-            subprocess.CalledProcessError: If git add command fails
+            GitCommandError: If git add command fails
             
         Example:
             git.stage_files(['src/main.py', 'tests/test_main.py'])
-            
-        Note:
-            This method will be implemented in STORY-1.2.3 - comandos base
         """
-        # TODO: Implement git add for specific files
-        # 1. Verify we're in a git repository
-        # 2. Validate file paths exist
-        # 3. Execute 'git add <files>' command
-        # 4. Handle errors and return result
-        return True
+        if not self.is_git_repository():
+            raise NotGitRepositoryError(
+                "No es un repositorio Git válido. "
+                "Ejecuta este comando desde un directorio con un repositorio Git inicializado."
+            )
+        
+        if not files:
+            raise ValueError("La lista de archivos no puede estar vacía")
+        
+        # Validate that all files exist
+        for file_path in files:
+            if not Path(file_path).exists():
+                raise FileNotFoundError(f"El archivo '{file_path}' no existe")
+        
+        try:
+            result = subprocess.run(
+                ['git', 'add'] + files,
+                capture_output=True,
+                text=True,
+                timeout=30
+            )
+            
+            if result.returncode != 0:
+                raise GitCommandError(
+                    f"Error al ejecutar 'git add': {result.stderr.strip()}"
+                )
+            
+            return True
+            
+        except subprocess.TimeoutExpired:
+            raise GitCommandError(
+                "Timeout al ejecutar 'git add'. "
+                "Los archivos pueden ser muy grandes o el repositorio estar en un estado inconsistente."
+            )
+        except subprocess.CalledProcessError as e:
+            raise GitCommandError(
+                f"Error al ejecutar 'git add' (código {e.returncode}): {e.stderr.strip()}"
+            )
     
     def commit(self, message: str) -> bool:
         """
@@ -148,23 +237,54 @@ class GitInterface:
             bool: True if commit was successful, False otherwise
             
         Raises:
-            RuntimeError: If not in a Git repository
+            NotGitRepositoryError: If not in a Git repository
             ValueError: If message is empty or invalid
-            subprocess.CalledProcessError: If git commit command fails
+            GitCommandError: If git commit command fails
             
         Example:
             git.commit("feat: add user authentication")
-            
-        Note:
-            This method will be implemented in STORY-1.2.3 - comandos base
         """
-        # TODO: Implement git commit functionality
-        # 1. Verify we're in a git repository
-        # 2. Validate commit message
-        # 3. Check if there are staged changes
-        # 4. Execute 'git commit -m "<message>"' command
-        # 5. Handle errors and return result
-        return True
+        if not self.is_git_repository():
+            raise NotGitRepositoryError(
+                "No es un repositorio Git válido. "
+                "Ejecuta este comando desde un directorio con un repositorio Git inicializado."
+            )
+        
+        if not message or not message.strip():
+            raise ValueError("El mensaje de commit no puede estar vacío")
+        
+        # Check if there are staged changes
+        staged_files = self.get_staged_files()
+        if not staged_files:
+            raise GitCommandError(
+                "No hay cambios staged para hacer commit. "
+                "Usa 'git add' para stagear archivos antes de hacer commit."
+            )
+        
+        try:
+            result = subprocess.run(
+                ['git', 'commit', '-m', message.strip()],
+                capture_output=True,
+                text=True,
+                timeout=30
+            )
+            
+            if result.returncode != 0:
+                raise GitCommandError(
+                    f"Error al ejecutar 'git commit': {result.stderr.strip()}"
+                )
+            
+            return True
+            
+        except subprocess.TimeoutExpired:
+            raise GitCommandError(
+                "Timeout al ejecutar 'git commit'. "
+                "El repositorio puede estar en un estado inconsistente."
+            )
+        except subprocess.CalledProcessError as e:
+            raise GitCommandError(
+                f"Error al ejecutar 'git commit' (código {e.returncode}): {e.stderr.strip()}"
+            )
     
     def get_current_branch(self) -> Optional[str]:
         """
@@ -176,15 +296,26 @@ class GitInterface:
         Returns:
             Optional[str]: Current branch name, or None if not in a repository
                           or in detached HEAD state
-            
-        Note:
-            This method will be implemented in STORY-1.2.3 - comandos base
         """
-        # TODO: Implement git branch --show-current
-        # 1. Verify we're in a git repository
-        # 2. Execute 'git branch --show-current' command
-        # 3. Parse output and return branch name
-        return "main"
+        if not self.is_git_repository():
+            return None
+        
+        try:
+            result = subprocess.run(
+                ['git', 'branch', '--show-current'],
+                capture_output=True,
+                text=True,
+                timeout=10
+            )
+            
+            if result.returncode != 0:
+                return None
+            
+            branch_name = result.stdout.strip()
+            return branch_name if branch_name else None
+            
+        except (subprocess.TimeoutExpired, subprocess.CalledProcessError, OSError):
+            return None
     
     def get_staged_files(self) -> List[str]:
         """
@@ -195,15 +326,27 @@ class GitInterface:
         
         Returns:
             List[str]: List of staged file paths
-            
-        Note:
-            This method will be implemented in STORY-1.2.3 - comandos base
         """
-        # TODO: Implement git diff --cached --name-only
-        # 1. Verify we're in a git repository
-        # 2. Execute 'git diff --cached --name-only' command
-        # 3. Parse output and return list of files
-        return []
+        if not self.is_git_repository():
+            return []
+        
+        try:
+            result = subprocess.run(
+                ['git', 'diff', '--cached', '--name-only'],
+                capture_output=True,
+                text=True,
+                timeout=10
+            )
+            
+            if result.returncode != 0:
+                return []
+            
+            # Parse output and return list of files
+            files = [line.strip() for line in result.stdout.splitlines() if line.strip()]
+            return files
+            
+        except (subprocess.TimeoutExpired, subprocess.CalledProcessError, OSError):
+            return []
     
     def get_unstaged_files(self) -> List[str]:
         """
@@ -214,15 +357,27 @@ class GitInterface:
         
         Returns:
             List[str]: List of unstaged file paths
-            
-        Note:
-            This method will be implemented in STORY-1.2.3 - comandos base
         """
-        # TODO: Implement git diff --name-only
-        # 1. Verify we're in a git repository
-        # 2. Execute 'git diff --name-only' command
-        # 3. Parse output and return list of files
-        return []
+        if not self.is_git_repository():
+            return []
+        
+        try:
+            result = subprocess.run(
+                ['git', 'diff', '--name-only'],
+                capture_output=True,
+                text=True,
+                timeout=10
+            )
+            
+            if result.returncode != 0:
+                return []
+            
+            # Parse output and return list of files
+            files = [line.strip() for line in result.stdout.splitlines() if line.strip()]
+            return files
+            
+        except (subprocess.TimeoutExpired, subprocess.CalledProcessError, OSError):
+            return []
     
     def get_repository_status(self) -> Dict[str, Any]:
         """
