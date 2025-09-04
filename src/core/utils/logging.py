@@ -77,16 +77,45 @@ class LoggingManager:
         Creates the log directory and configures the logging system
         with both file and console handlers. The configuration includes
         timestamps, log levels, and structured formatting.
-        
-        Note:
-            This method will be implemented in STORY-1.2.3 - comandos base
         """
-        # TODO: Implement logging setup
-        # 1. Create log directory if it doesn't exist
-        # 2. Configure logging with file and console handlers
-        # 3. Set up log rotation if needed
-        # 4. Configure log formatting
-        pass
+        # Create log directory if it doesn't exist
+        self.log_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Configure root logger
+        root_logger = logging.getLogger('gggit')
+        root_logger.setLevel(getattr(logging, self.log_level.upper()))
+        
+        # Clear any existing handlers
+        root_logger.handlers.clear()
+        
+        # Create formatter
+        formatter = logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S'
+        )
+        
+        # File handler for main logs
+        main_log_file = self.log_dir / 'main.log'
+        file_handler = logging.FileHandler(main_log_file, encoding='utf-8')
+        file_handler.setLevel(logging.DEBUG)
+        file_handler.setFormatter(formatter)
+        root_logger.addHandler(file_handler)
+        
+        # File handler for errors
+        error_log_file = self.log_dir / 'error.log'
+        error_handler = logging.FileHandler(error_log_file, encoding='utf-8')
+        error_handler.setLevel(logging.ERROR)
+        error_handler.setFormatter(formatter)
+        root_logger.addHandler(error_handler)
+        
+        # Console handler
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(getattr(logging, self.log_level.upper()))
+        console_handler.setFormatter(formatter)
+        root_logger.addHandler(console_handler)
+        
+        # Prevent propagation to root logger
+        root_logger.propagate = False
     
     def get_logger(self, name: str) -> logging.Logger:
         """
@@ -105,15 +134,25 @@ class LoggingManager:
         Example:
             logger = logging_manager.get_logger("command")
             logger.info("This will appear as gggit.command")
-            
-        Note:
-            This method will be implemented in STORY-1.2.3 - comandos base
         """
-        # TODO: Implement logger creation
-        # 1. Create logger with gggit.{name} namespace
-        # 2. Configure logger with appropriate handlers
-        # 3. Return configured logger instance
-        return logging.getLogger(f"gggit.{name}")
+        # Create logger with gggit.{name} namespace
+        logger_name = f"gggit.{name}"
+        logger = logging.getLogger(logger_name)
+        
+        # Set level to match the logging manager
+        logger.setLevel(getattr(logging, self.log_level.upper()))
+        
+        # Don't add handlers if they already exist (prevent duplicates)
+        if not logger.handlers:
+            # Get the root gggit logger to inherit its handlers
+            root_logger = logging.getLogger('gggit')
+            for handler in root_logger.handlers:
+                logger.addHandler(handler)
+        
+        # Prevent propagation to avoid duplicate logs
+        logger.propagate = False
+        
+        return logger
     
     def set_level(self, level: str) -> None:
         """
@@ -127,16 +166,29 @@ class LoggingManager:
             
         Raises:
             ValueError: If level is not a valid logging level
-            
-        Note:
-            This method will be implemented in STORY-1.2.3 - comandos base
         """
-        # TODO: Implement level setting
-        # 1. Validate logging level
-        # 2. Update root logger level
-        # 3. Update all gggit.* loggers
-        # 4. Update internal log_level attribute
-        pass
+        # Validate logging level
+        valid_levels = ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
+        if level.upper() not in valid_levels:
+            raise ValueError(f"Invalid logging level: {level}. Must be one of {valid_levels}")
+        
+        # Update internal log_level attribute
+        self.log_level = level.upper()
+        
+        # Update root logger level
+        root_logger = logging.getLogger('gggit')
+        root_logger.setLevel(getattr(logging, self.log_level))
+        
+        # Update console handler level
+        for handler in root_logger.handlers:
+            if isinstance(handler, logging.StreamHandler) and not isinstance(handler, logging.FileHandler):
+                handler.setLevel(getattr(logging, self.log_level))
+        
+        # Update all existing gggit.* loggers
+        for logger_name in logging.Logger.manager.loggerDict:
+            if logger_name.startswith('gggit.'):
+                logger = logging.getLogger(logger_name)
+                logger.setLevel(getattr(logging, self.log_level))
     
     def log_command_execution(self, command: str, args: list) -> None:
         """
@@ -152,15 +204,18 @@ class LoggingManager:
             
         Example:
             logger.log_command_execution("ggfeat", ["add user auth", "--scope", "auth"])
-            
-        Note:
-            This method will be implemented in STORY-1.2.3 - comandos base
         """
-        # TODO: Implement command execution logging
-        # 1. Get command logger
-        # 2. Format command and args for logging
-        # 3. Log with INFO level
-        pass
+        # Get command logger
+        logger = self.get_logger("command")
+        
+        # Format command and args for logging
+        args_str = " ".join(str(arg) for arg in args) if args else ""
+        message = f"Executing command: {command}"
+        if args_str:
+            message += f" with args: {args_str}"
+        
+        # Log with INFO level
+        logger.info(message)
     
     def log_error(self, error: Exception, context: str = "") -> None:
         """
@@ -178,15 +233,18 @@ class LoggingManager:
                 risky_operation()
             except ValueError as e:
                 logger.log_error(e, "risky_operation")
-                
-        Note:
-            This method will be implemented in STORY-1.2.3 - comandos base
         """
-        # TODO: Implement error logging
-        # 1. Get error logger
-        # 2. Format error message with context
-        # 3. Log with ERROR level and exc_info=True
-        pass
+        # Get error logger
+        logger = self.get_logger("error")
+        
+        # Format error message with context
+        message = f"Error occurred"
+        if context:
+            message += f" in {context}"
+        message += f": {str(error)}"
+        
+        # Log with ERROR level and exc_info=True for stack trace
+        logger.error(message, exc_info=True)
     
     def log_performance(self, operation: str, duration: float, details: Optional[Dict[str, Any]] = None) -> None:
         """
