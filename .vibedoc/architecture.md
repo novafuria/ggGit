@@ -530,9 +530,15 @@ Sistema que facilita la instalación, actualización y distribución de ggGit en
 #### 1. Especificación del Proceso de Instalación
 
 **Dependencias Requeridas:**
-- Python 3.8 o superior
+- Python 3.12 (versión recomendada)
 - Git instalado y configurado
+- Conda o Mamba (para gestión de dependencias)
 - Permisos de escritura en directorio home del usuario
+
+**Dependencias de Python:**
+- click>=8.0.0 (framework CLI)
+- pyyaml>=6.0 (manejo de configuración)
+- colorama (colores multiplataforma)
 
 **Estructura de Instalación:**
 ```
@@ -548,13 +554,14 @@ Sistema que facilita la instalación, actualización y distribución de ggGit en
 ```
 
 **Proceso de Instalación:**
-1. **Verificación de Dependencias**: Comprobar Python y Git
-2. **Creación de Directorios**: Estructura de directorios estándar
-3. **Copia de Módulos Core**: Instalar módulos de `src/core/` a `~/.gggit/core/`
-4. **Copia de Comandos**: Instalar scripts Python ejecutables de `src/commands/` a `~/.gggit/commands/`
-5. **Configuración de PATH**: Agregar `~/.gggit/commands` al PATH
-6. **Configuración Inicial**: Crear archivos de configuración por defecto
-7. **Verificación**: Comprobar que la instalación fue exitosa
+1. **Verificación de Dependencias**: Comprobar Python, Git y Conda/Mamba
+2. **Configuración del Ambiente**: Crear ambiente virtual con `environment.yml`
+3. **Creación de Directorios**: Estructura de directorios estándar
+4. **Copia de Módulos Core**: Instalar módulos de `src/core/` a `~/.gggit/core/`
+5. **Copia de Comandos**: Instalar scripts Python ejecutables de `src/commands/` a `~/.gggit/commands/`
+6. **Configuración de PATH**: Agregar `~/.gggit/commands` al PATH
+7. **Configuración Inicial**: Crear archivos de configuración por defecto
+8. **Verificación**: Comprobar que la instalación fue exitosa
 
 #### 2. Especificación de Instalación desde Repositorio
 
@@ -571,10 +578,39 @@ Sistema que facilita la instalación, actualización y distribución de ggGit en
 - Actualizaciones mediante `git pull`
 - Fácil desarrollo y testing
 
-#### 3. Especificación de Actualización
+#### 3. Gestión de Dependencias y Ambientes
+
+**Estrategia de Dependencias:**
+ggGit utiliza conda/mamba para la gestión de dependencias, alineándose con las prácticas de Novafuria y proporcionando un ambiente reproducible y aislado.
+
+**Archivo de Configuración:**
+- `environment.yml`: Especifica el ambiente de desarrollo con Python 3.12 y dependencias mínimas
+- Compatible tanto con conda como con mamba
+- Incluye canales conda-forge para paquetes actualizados
+
+**Dependencias Principales:**
+- **click>=8.0.0**: Framework CLI para comandos
+- **pyyaml>=6.0**: Manejo de archivos de configuración YAML
+- **colorama**: Colores multiplataforma para terminal
+
+**Comandos de Desarrollo:**
+- `conda env create -f environment.yml`: Crear ambiente de desarrollo
+- `conda activate gggit`: Activar ambiente de desarrollo
+- `mamba env create -f environment.yml`: Alternativa con mamba (si está disponible)
+- `mamba activate gggit`: Activar ambiente con mamba
+
+**Ventajas de la Estrategia:**
+- **Reproducibilidad**: Ambiente idéntico en todos los entornos
+- **Aislamiento**: No interfiere con otros proyectos Python
+- **Rendimiento**: mamba es significativamente más rápido que conda
+- **Compatibilidad**: Funciona en Windows, macOS y Linux
+- **Escalabilidad**: Fácil adición de dependencias científicas futuras
+
+#### 4. Especificación de Actualización
 
 **Proceso de Actualización:**
 - `git pull` para obtener última versión
+- Actualizar ambiente con `conda env update -f environment.yml` o `mamba env update -f environment.yml`
 - Re-ejecutar script de instalación si es necesario
 - Actualizar módulos core y comandos desde `src/`
 - Mantener configuraciones existentes

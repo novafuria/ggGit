@@ -56,6 +56,12 @@ The installation process is simple and fast. You can use our automatic installat
 ```bash
 git clone https://github.com/novafuria/ggGit
 cd ggGit
+# Set up development environment
+conda env create -f environment.yml
+conda activate gggit
+# Or with mamba (if available):
+# mamba env create -f environment.yml
+# mamba activate gggit
 ./install.sh
 ```
 
@@ -63,8 +69,25 @@ cd ggGit
 ```powershell
 git clone https://github.com/novafuria/ggGit
 cd ggGit
+# Set up development environment
+conda env create -f environment.yml
+conda activate gggit
+# Or with mamba (if available):
+# mamba env create -f environment.yml
+# mamba activate gggit
 .\install.ps1
 ```
+
+### 🐍 Development Environment
+
+ggGit uses conda/mamba for dependency management, ensuring a reproducible development environment:
+
+- **Python 3.12** (recommended version)
+- **Click** for CLI framework
+- **PyYAML** for configuration management
+- **Colorama** for cross-platform colors
+
+The `environment.yml` file defines all dependencies and can be used with both conda and mamba.
 
 ### 📋 Manual Installation
 
