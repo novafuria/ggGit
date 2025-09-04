@@ -362,18 +362,32 @@ class GitInterface:
             return []
         
         try:
-            result = subprocess.run(
+            # Get modified files
+            diff_result = subprocess.run(
                 ['git', 'diff', '--name-only'],
                 capture_output=True,
                 text=True,
                 timeout=10
             )
             
-            if result.returncode != 0:
-                return []
+            # Get untracked files
+            untracked_result = subprocess.run(
+                ['git', 'ls-files', '--others', '--exclude-standard'],
+                capture_output=True,
+                text=True,
+                timeout=10
+            )
             
-            # Parse output and return list of files
-            files = [line.strip() for line in result.stdout.splitlines() if line.strip()]
+            files = []
+            
+            # Add modified files
+            if diff_result.returncode == 0:
+                files.extend([line.strip() for line in diff_result.stdout.splitlines() if line.strip()])
+            
+            # Add untracked files
+            if untracked_result.returncode == 0:
+                files.extend([line.strip() for line in untracked_result.stdout.splitlines() if line.strip()])
+            
             return files
             
         except (subprocess.TimeoutExpired, subprocess.CalledProcessError, OSError):
