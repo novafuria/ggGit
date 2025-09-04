@@ -78,7 +78,7 @@ jobs:
     - name: Run all tests with coverage
       run: |
         conda activate gggit
-        pytest tests/ --cov=src --cov-report=xml --cov-report=html --cov-report=term-missing --junitxml=test-results-all.xml --cov-fail-under=70
+        pytest tests/ --cov=src --cov-report=xml --cov-report=html --cov-report=term-missing --junitxml=test-results-all.xml --cov-fail-under=80
     
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
@@ -172,8 +172,8 @@ jobs:
             print(f'Line coverage: {line_rate:.2%}')
             print(f'Branch coverage: {branch_rate:.2%}')
             
-            if line_rate < 0.70:
-                print('❌ Quality gate failed: Line coverage below 70%')
+            if line_rate < 0.80:
+                print('❌ Quality gate failed: Line coverage below 80%')
                 sys.exit(1)
             elif branch_rate < 0.60:
                 print('❌ Quality gate failed: Branch coverage below 60%')
