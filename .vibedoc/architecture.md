@@ -91,30 +91,40 @@ Cada comando ggGit es un script Python ejecutable independiente que reutiliza ab
 ### Estructura de Comandos
 
 ```
-commands/
-├── _cli_interface.py      # Interfaz CLI unificada
-├── _config_manager.py     # Gestor de configuración jerárquica
-├── _git_interface.py      # Interfaz con Git
-├── _ai_interface.py       # Interfaz con servicios de IA
-├── _validators.py         # Validadores de esquemas y argumentos
-├── _logger.py             # Sistema de logging unificado
-├── ggfeat.py              # Comando de feature commits
-├── ggfix.py               # Comando de fix commits
-├── ggbreak.py             # Comando de breaking changes
-├── ggdocs.py              # Comando de documentación
-├── ggstyle.py             # Comando de cambios de estilo
-├── ggrefactor.py          # Comando de refactorización
-├── ggtest.py              # Comando de tests
-├── ggchore.py             # Comando de tareas de mantenimiento
-├── ggperf.py              # Comando de mejoras de rendimiento
-├── ggci.py                # Comando de cambios en CI/CD
-├── ggbuild.py             # Comando de cambios en build system
-├── ggconfig.py            # Gestión de configuración
-├── ggai.py                # Generación de commits con IA
-├── gga.py                 # Git add simplificado
-├── ggs.py                 # Git status simplificado
-├── ggl.py                 # Git log simplificado
-└── ...
+src/
+├── core/                  # Lógica central y abstracciones
+│   ├── __init__.py
+│   ├── cli.py             # Abstracción CLI base
+│   ├── config.py          # ConfigManager
+│   ├── git.py             # GitWrapper
+│   ├── validation.py      # Validadores
+│   ├── base_commands/     # Comandos base reutilizables
+│   │   ├── __init__.py
+│   │   ├── base.py        # BaseCommand
+│   │   ├── commit.py      # CommitCommand
+│   │   └── config.py      # ConfigCommand
+│   └── utils/             # Utilidades
+│       ├── __init__.py
+│       ├── colors.py      # Sistema de colores
+│       └── logging.py     # Sistema de logging
+└── commands/              # Comandos específicos ejecutables
+    ├── ggfeat.py          # Comando de feature commits
+    ├── ggfix.py           # Comando de fix commits
+    ├── ggbreak.py         # Comando de breaking changes
+    ├── ggdocs.py          # Comando de documentación
+    ├── ggstyle.py         # Comando de cambios de estilo
+    ├── ggrefactor.py      # Comando de refactorización
+    ├── ggtest.py          # Comando de tests
+    ├── ggchore.py         # Comando de tareas de mantenimiento
+    ├── ggperf.py          # Comando de mejoras de rendimiento
+    ├── ggci.py            # Comando de cambios en CI/CD
+    ├── ggbuild.py         # Comando de cambios en build system
+    ├── ggconfig.py        # Gestión de configuración
+    ├── ggai.py            # Generación de commits con IA
+    ├── gga.py             # Git add simplificado
+    ├── ggs.py             # Git status simplificado
+    ├── ggl.py             # Git log simplificado
+    └── ...
 ```
 
 ### Especificación de Implementación de Comandos
@@ -131,9 +141,9 @@ Usage: ggfeat [options] <message>
 """
 
 import click
-from _config_manager import ConfigManager
-from _git_interface import GitInterface
-from _validators import ArgumentValidator
+from core.config import ConfigManager
+from core.git import GitInterface
+from core.validation import ArgumentValidator
 
 @click.command()
 @click.option('--scope', '-s', help='Scope del commit')
@@ -180,21 +190,32 @@ if __name__ == "__main__":
 - Ayuda automática generada por Click
 - Validación automática de argumentos y tipos
 
-**ConfigManager**: Gestiona configuración jerárquica:
+**ConfigManager** (`core/config.py`): Gestiona configuración jerárquica:
 - `get_config(key, default=None)`: Obtener valor de configuración
 - `load_hierarchical_config()`: Cargar configuración siguiendo jerarquía
 - `validate_config(config)`: Validar configuración con esquemas
 
-**GitInterface**: Interfaz unificada con Git:
+**GitInterface** (`core/git.py`): Interfaz unificada con Git:
 - `stage_all_changes()`: Stage todos los cambios
 - `commit(message)`: Realizar commit
 - `get_current_branch()`: Obtener rama actual
 - `is_git_repository()`: Verificar si es repositorio Git
 
-**ArgumentValidator**: Validación de argumentos:
+**ArgumentValidator** (`core/validation.py`): Validación de argumentos:
 - `validate_commit_message(message)`: Validar mensaje de commit
 - `validate_scope(scope)`: Validar scope
 - `validate_required_args(args, count)`: Validar argumentos requeridos
+
+**BaseCommand** (`core/base_commands/base.py`): Clase base para comandos:
+- `execute()`: Método abstracto para ejecutar comando
+- `validate_args()`: Validación común de argumentos
+- `setup_logging()`: Configuración de logging
+
+**ColorManager** (`core/utils/colors.py`): Sistema de colores unificado:
+- `success(message)`: Mensajes de éxito en verde
+- `error(message)`: Mensajes de error en rojo
+- `warning(message)`: Mensajes de advertencia en amarillo
+- `info(message)`: Mensajes informativos en azul
 
 ### Interfaz Unificada
 
@@ -516,7 +537,8 @@ Sistema que facilita la instalación, actualización y distribución de ggGit en
 **Estructura de Instalación:**
 ```
 ~/.gggit/
-├── commands/              # Scripts Python ejecutables
+├── commands/              # Scripts Python ejecutables (desde src/commands/)
+├── core/                  # Módulos core (desde src/core/)
 ├── config/               # Archivos de configuración
 │   ├── default-config.yaml
 │   ├── user-config.yaml
@@ -528,16 +550,18 @@ Sistema que facilita la instalación, actualización y distribución de ggGit en
 **Proceso de Instalación:**
 1. **Verificación de Dependencias**: Comprobar Python y Git
 2. **Creación de Directorios**: Estructura de directorios estándar
-3. **Copia de Comandos**: Instalar scripts Python ejecutables
-4. **Configuración de PATH**: Agregar `~/.gggit/commands` al PATH
-5. **Configuración Inicial**: Crear archivos de configuración por defecto
-6. **Verificación**: Comprobar que la instalación fue exitosa
+3. **Copia de Módulos Core**: Instalar módulos de `src/core/` a `~/.gggit/core/`
+4. **Copia de Comandos**: Instalar scripts Python ejecutables de `src/commands/` a `~/.gggit/commands/`
+5. **Configuración de PATH**: Agregar `~/.gggit/commands` al PATH
+6. **Configuración Inicial**: Crear archivos de configuración por defecto
+7. **Verificación**: Comprobar que la instalación fue exitosa
 
 #### 2. Especificación de Instalación desde Repositorio
 
 **Instalación Directa:**
 - Clonar repositorio desde GitHub
 - Ejecutar script de instalación local
+- Copia automática de `src/core/` y `src/commands/` a `~/.gggit/`
 - Configuración automática de PATH
 - Creación de directorios de configuración
 
@@ -552,6 +576,7 @@ Sistema que facilita la instalación, actualización y distribución de ggGit en
 **Proceso de Actualización:**
 - `git pull` para obtener última versión
 - Re-ejecutar script de instalación si es necesario
+- Actualizar módulos core y comandos desde `src/`
 - Mantener configuraciones existentes
 - Verificación automática de integridad
 
@@ -857,6 +882,7 @@ Sistema que proporciona logging y debugging para facilitar el mantenimiento y tr
 - **Formato**: `gggit_YYYYMM.log` (rotación mensual)
 - **Nivel**: INFO por defecto, DEBUG si está habilitado
 - **Formato de Entrada**: `YYYY-MM-DD HH:MM:SS - gggit.<command> - LEVEL - message`
+- **Módulo de Logging**: `core/utils/logging.py` para configuración centralizada
 
 **Eventos a Registrar:**
 - Ejecución de comandos con argumentos
@@ -944,7 +970,8 @@ ai:
 #### 1. Optimización de Comandos
 - Todos los comandos implementados en Python
 - Uso de bibliotecas optimizadas para operaciones específicas
-- Lazy loading de módulos pesados
+- Lazy loading de módulos pesados desde `core/`
+- Importaciones optimizadas entre módulos core y commands
 
 #### 2. Caching
 - Cache de configuraciones para evitar re-lectura
@@ -953,7 +980,8 @@ ai:
 
 #### 3. Lazy Loading
 - Carga de módulos solo cuando son necesarios
-- Inicialización diferida de componentes pesados
+- Inicialización diferida de componentes pesados desde `core/`
 - Carga condicional de proveedores de IA
+- Importaciones dinámicas entre `commands/` y `core/`
 
 Esta arquitectura proporciona una base sólida para el desarrollo futuro de ggGit, manteniendo la flexibilidad para evolucionar según las necesidades del proyecto y la comunidad.
