@@ -1,0 +1,23 @@
+type: object
+properties:
+  type:
+    type: string
+    enum: [feat, fix, docs, style, refactor, test, chore, perf, ci, build, break]
+    description: "Tipo de commit según comando ejecutado"
+  scope:
+    type: string
+    pattern: "^[a-z0-9-]+$"
+    description: "Scope del commit (opcional, configurable)"
+  description:
+    type: string
+    minLength: 1
+    maxLength: 72
+    description: "Descripción del commit"
+  body:
+    type: string
+    maxLength: 1000
+    description: "Cuerpo del commit (opcional)"
+  footer:
+    type: string
+    description: "Footer del commit (opcional)"
+required: [type, description]

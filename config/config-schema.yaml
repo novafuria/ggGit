@@ -1,0 +1,89 @@
+type: object
+properties:
+  version:
+    type: string
+    pattern: "^[0-9]+\\.[0-9]+$"
+    description: "Versión del esquema de configuración"
+  
+  git:
+    type: object
+    properties:
+      default_branch:
+        type: string
+        default: "main"
+        description: "Rama por defecto del repositorio"
+      commit_template:
+        type: string
+        default: "{type}({scope}): {description}"
+        description: "Template para mensajes de commit"
+  
+  conventional_commits:
+    type: object
+    properties:
+      scopes:
+        type: array
+        items:
+          type: string
+        description: "Scopes permitidos para commits (opcional)"
+      require_scope:
+        type: boolean
+        default: false
+        description: "Si se requiere scope en todos los commits"
+      custom_types:
+        type: array
+        items:
+          type: string
+        description: "Tipos de commit personalizados adicionales (opcional)"
+  
+  ai:
+    type: object
+    properties:
+      enabled:
+        type: boolean
+        default: false
+        description: "Habilitar funcionalidades de IA"
+      provider:
+        type: string
+        enum: ["openai", "anthropic", "azure", "local"]
+        default: "openai"
+        description: "Proveedor de servicios de IA (API compatible con OpenAI)"
+      api_key_env:
+        type: string
+        default: "OPENAI_API_KEY"
+        description: "Variable de entorno para API key"
+      model:
+        type: string
+        default: "gpt-3.5-turbo"
+        description: "Modelo de IA a utilizar"
+      base_url:
+        type: string
+        description: "URL base para proveedores alternativos (opcional)"
+  
+  ui:
+    type: object
+    properties:
+      colors:
+        type: object
+        properties:
+          success:
+            type: string
+            default: "green"
+          error:
+            type: string
+            default: "red"
+          warning:
+            type: string
+            default: "yellow"
+          info:
+            type: string
+            default: "blue"
+      verbose:
+        type: boolean
+        default: false
+        description: "Modo verboso para salida detallada"
+      quiet:
+        type: boolean
+        default: false
+        description: "Modo silencioso para salida mínima"
+
+required: ["version"]
