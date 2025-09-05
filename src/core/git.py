@@ -705,3 +705,112 @@ class GitInterface:
             raise
         except Exception as e:
             raise GitInterfaceError(f"Unexpected error in get_version: {e}")
+    
+    def get_branches(self) -> List[str]:
+        """
+        Get list of local branches.
+        
+        Returns a list of local branch names.
+        Equivalent to running 'git branch --format="%(refname:short)"'.
+        
+        Returns:
+            List[str]: List of local branch names
+            
+        Raises:
+            RuntimeError: If not in a Git repository
+            subprocess.CalledProcessError: If git branch command fails
+        """
+        try:
+            if not self.is_git_repository():
+                raise NotGitRepositoryError("Not a git repository")
+            
+            cmd = ['git', 'branch', '--format=%(refname:short)']
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            
+            if result.returncode != 0:
+                raise GitCommandError(f"Git branch command failed: {result.stderr}")
+            
+            branches = [line.strip() for line in result.stdout.strip().split('\n') if line.strip()]
+            return branches
+            
+        except subprocess.CalledProcessError as e:
+            raise GitCommandError(f"Git branch failed: {e}")
+        except NotGitRepositoryError:
+            # Re-raise NotGitRepositoryError without wrapping
+            raise
+        except GitCommandError:
+            # Re-raise GitCommandError without wrapping
+            raise
+        except Exception as e:
+            raise GitInterfaceError(f"Unexpected error in get_branches: {e}")
+    
+    def get_remote_branches(self) -> List[str]:
+        """
+        Get list of remote branches.
+        
+        Returns a list of remote branch names.
+        Equivalent to running 'git branch -r --format="%(refname:short)"'.
+        
+        Returns:
+            List[str]: List of remote branch names
+            
+        Raises:
+            RuntimeError: If not in a Git repository
+            subprocess.CalledProcessError: If git branch command fails
+        """
+        try:
+            if not self.is_git_repository():
+                raise NotGitRepositoryError("Not a git repository")
+            
+            cmd = ['git', 'branch', '-r', '--format=%(refname:short)']
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            
+            if result.returncode != 0:
+                raise GitCommandError(f"Git branch -r command failed: {result.stderr}")
+            
+            branches = [line.strip() for line in result.stdout.strip().split('\n') if line.strip()]
+            # Filter out HEAD reference
+            branches = [branch for branch in branches if not branch.endswith('/HEAD')]
+            return branches
+            
+        except subprocess.CalledProcessError as e:
+            raise GitCommandError(f"Git branch -r failed: {e}")
+        except NotGitRepositoryError:
+            # Re-raise NotGitRepositoryError without wrapping
+            raise
+        except GitCommandError:
+            # Re-raise GitCommandError without wrapping
+            raise
+        except Exception as e:
+            raise GitInterfaceError(f"Unexpected error in get_remote_branches: {e}")
+    
+    def get_all_branches(self) -> Dict[str, List[str]]:
+        """
+        Get all branches (local and remote).
+        
+        Returns a dictionary with local and remote branches.
+        
+        Returns:
+            Dict[str, List[str]]: Dictionary with 'local' and 'remote' keys
+            
+        Raises:
+            RuntimeError: If not in a Git repository
+            subprocess.CalledProcessError: If git branch commands fail
+        """
+        try:
+            if not self.is_git_repository():
+                raise NotGitRepositoryError("Not a git repository")
+            
+            local_branches = self.get_branches()
+            remote_branches = self.get_remote_branches()
+            
+            return {
+                "local": local_branches,
+                "remote": remote_branches
+            }
+            
+        except NotGitRepositoryError:
+            # Re-raise NotGitRepositoryError without wrapping
+            raise
+        except Exception as e:
+            raise GitInterfaceError(f"Unexpected error in get_all_branches: {e}")
