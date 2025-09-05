@@ -507,3 +507,201 @@ class GitInterface:
         # 3. Execute 'git switch <branch>' command
         # 4. Handle errors and return result
         return True
+    
+    def diff(self, files: Optional[List[str]] = None, staged: bool = False) -> bool:
+        """
+        Show git diff with colors.
+        
+        Shows the differences between working tree and index, or between
+        index and HEAD. Equivalent to running 'git diff [--staged] [<files>]'.
+        
+        Args:
+            files (Optional[List[str]]): Specific files to show diff for
+            staged (bool): If True, show staged changes (--staged)
+            
+        Returns:
+            bool: True if diff was shown successfully, False otherwise
+            
+        Raises:
+            RuntimeError: If not in a Git repository
+            subprocess.CalledProcessError: If git diff command fails
+        """
+        try:
+            if not self.is_git_repository():
+                raise NotGitRepositoryError("Not a git repository")
+            
+            cmd = ['git', 'diff']
+            if staged:
+                cmd.append('--staged')
+            if files:
+                cmd.extend(files)
+            
+            result = subprocess.run(cmd, capture_output=False, text=True)
+            return result.returncode == 0
+            
+        except subprocess.CalledProcessError as e:
+            raise GitCommandError(f"Git diff failed: {e}")
+        except Exception as e:
+            raise GitInterfaceError(f"Unexpected error in diff: {e}")
+    
+    def unstage_files(self, files: Optional[List[str]] = None) -> bool:
+        """
+        Unstage files from index.
+        
+        Removes files from the staging area. Equivalent to running
+        'git reset HEAD [<files>]' or 'git restore --staged [<files>]'.
+        
+        Args:
+            files (Optional[List[str]]): Specific files to unstage, None for all
+            
+        Returns:
+            bool: True if files were unstaged successfully, False otherwise
+            
+        Raises:
+            RuntimeError: If not in a Git repository
+            subprocess.CalledProcessError: If git reset command fails
+        """
+        try:
+            if not self.is_git_repository():
+                raise NotGitRepositoryError("Not a git repository")
+            
+            cmd = ['git', 'reset', 'HEAD']
+            if files:
+                cmd.extend(files)
+            
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            return result.returncode == 0
+            
+        except subprocess.CalledProcessError as e:
+            raise GitCommandError(f"Git unstage failed: {e}")
+        except Exception as e:
+            raise GitInterfaceError(f"Unexpected error in unstage_files: {e}")
+    
+    def reset_hard(self) -> bool:
+        """
+        Reset --hard HEAD.
+        
+        Resets the working tree and index to match HEAD.
+        Equivalent to running 'git reset --hard HEAD'.
+        
+        Returns:
+            bool: True if reset was successful, False otherwise
+            
+        Raises:
+            RuntimeError: If not in a Git repository
+            subprocess.CalledProcessError: If git reset command fails
+        """
+        try:
+            if not self.is_git_repository():
+                raise NotGitRepositoryError("Not a git repository")
+            
+            cmd = ['git', 'reset', '--hard', 'HEAD']
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            return result.returncode == 0
+            
+        except subprocess.CalledProcessError as e:
+            raise GitCommandError(f"Git reset --hard failed: {e}")
+        except Exception as e:
+            raise GitInterfaceError(f"Unexpected error in reset_hard: {e}")
+    
+    def pull(self, remote: Optional[str] = None, branch: Optional[str] = None) -> bool:
+        """
+        Pull from remote repository.
+        
+        Fetches and merges changes from the remote repository.
+        Equivalent to running 'git pull [<remote>] [<branch>]'.
+        
+        Args:
+            remote (Optional[str]): Remote name to pull from
+            branch (Optional[str]): Branch name to pull
+            
+        Returns:
+            bool: True if pull was successful, False otherwise
+            
+        Raises:
+            RuntimeError: If not in a Git repository
+            subprocess.CalledProcessError: If git pull command fails
+        """
+        try:
+            if not self.is_git_repository():
+                raise NotGitRepositoryError("Not a git repository")
+            
+            cmd = ['git', 'pull']
+            if remote:
+                cmd.append(remote)
+            if branch:
+                cmd.append(branch)
+            
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            return result.returncode == 0
+            
+        except subprocess.CalledProcessError as e:
+            raise GitCommandError(f"Git pull failed: {e}")
+        except Exception as e:
+            raise GitInterfaceError(f"Unexpected error in pull: {e}")
+    
+    def push(self, remote: Optional[str] = None, branch: Optional[str] = None) -> bool:
+        """
+        Push to remote repository.
+        
+        Pushes changes to the remote repository.
+        Equivalent to running 'git push [<remote>] [<branch>]'.
+        
+        Args:
+            remote (Optional[str]): Remote name to push to
+            branch (Optional[str]): Branch name to push
+            
+        Returns:
+            bool: True if push was successful, False otherwise
+            
+        Raises:
+            RuntimeError: If not in a Git repository
+            subprocess.CalledProcessError: If git push command fails
+        """
+        try:
+            if not self.is_git_repository():
+                raise NotGitRepositoryError("Not a git repository")
+            
+            cmd = ['git', 'push']
+            if remote:
+                cmd.append(remote)
+            if branch:
+                cmd.append(branch)
+            
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            return result.returncode == 0
+            
+        except subprocess.CalledProcessError as e:
+            raise GitCommandError(f"Git push failed: {e}")
+        except Exception as e:
+            raise GitInterfaceError(f"Unexpected error in push: {e}")
+    
+    def get_version(self) -> str:
+        """
+        Get Git version.
+        
+        Returns the version of Git installed on the system.
+        Equivalent to running 'git --version'.
+        
+        Returns:
+            str: Git version string
+            
+        Raises:
+            GitNotAvailableError: If Git is not available
+            subprocess.CalledProcessError: If git --version command fails
+        """
+        try:
+            result = subprocess.run(['git', '--version'], capture_output=True, text=True)
+            if result.returncode != 0:
+                raise GitNotAvailableError("Git is not available")
+            return result.stdout.strip()
+            
+        except FileNotFoundError:
+            raise GitNotAvailableError("Git is not installed")
+        except subprocess.CalledProcessError as e:
+            raise GitCommandError(f"Git version command failed: {e}")
+        except GitNotAvailableError:
+            # Re-raise GitNotAvailableError without wrapping
+            raise
+        except Exception as e:
+            raise GitInterfaceError(f"Unexpected error in get_version: {e}")
