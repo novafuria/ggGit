@@ -17,29 +17,27 @@ class FeatCommand(BaseCommand):
     
     def execute(self, message, scope=None, ai=False, amend=False):
         """Execute the feat command."""
-        # If no message and AI is enabled, generate automatically
-        if not message and ai:
-            # TODO: Implement AI message generation
-            click.echo(ColorManager.warning("AI functionality not yet implemented"))
+        try:
+            # Check if AI should be used
+            if not message and self._is_ai_configured():
+                return self._generate_ai_message(scope, amend)
+            
+            # Check if message is required
+            if not message:
+                click.echo(ColorManager.warning("IA no configurada. Usa 'ggconfig set ai.enabled true'"))
+                click.echo(ColorManager.info("O proporciona un mensaje manual: ggfeat 'mensaje'"))
+                return 1
+            
+            # Execute manual commit
+            return self._execute_manual_commit(message, scope, amend)
+            
+        except Exception as e:
+            click.echo(ColorManager.error(f"Error: {e}"))
             return 1
-        
-        # Validate input
-        if message:
-            self.validator.validate_commit_message(message)
-        
-        # Create commit command
-        commit_cmd = CommitCommand("feat")
-        
-        # Execute commit
-        result = commit_cmd.execute(message, scope, amend)
-        
-        if result == 0:
-            click.echo(ColorManager.success("Commit realizado exitosamente"))
-        else:
-            click.echo(ColorManager.error("Error al realizar commit"))
-            return result
-        
-        return result
+    
+    def _get_commit_prefix(self):
+        """Get the commit prefix for this command."""
+        return "feat"
 
 
 @click.command()

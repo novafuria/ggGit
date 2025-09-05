@@ -14,55 +14,42 @@ from core.utils.colors import ColorManager
 class GgbreakCommand(BaseCommand):
     """Command for committing changes with break prefix."""
     
-    def execute(self, message, scope=None, amend=False):
+    def execute(self, message, scope=None, ai=False, amend=False):
         """Execute the ggbreak command."""
         try:
-            if not message or not message.strip():
-                click.echo(ColorManager.error("Message is required"))
+            # Check if AI should be used
+            if not message and self._is_ai_configured():
+                return self._generate_ai_message(scope, amend)
+            
+            # Check if message is required
+            if not message:
+                click.echo(ColorManager.warning("IA no configurada. Usa 'ggconfig set ai.enabled true'"))
+                click.echo(ColorManager.info("O proporciona un mensaje manual: ggbreak 'mensaje'"))
                 return 1
             
-            if not self.git.is_git_repository():
-                click.echo(ColorManager.error("Not a git repository"))
-                return 1
+            # Execute manual commit
+            return self._execute_manual_commit(message, scope, amend)
             
-            # Build commit message with break prefix
-            prefix = "break"
-            if scope:
-                prefix = f"{prefix}({scope})"
-            
-            commit_message = f"{prefix}: {message}"
-            
-            # Check if there are staged changes
-            staged_files = self.git.get_staged_files()
-            if not staged_files:
-                # Stage all changes if nothing is staged
-                self.git.stage_all_changes()
-            
-            # Commit with the break message
-            result = self.git.commit(commit_message)
-            
-            if result:
-                click.echo(ColorManager.success("Commit con break realizado exitosamente"))
-                return 0
-            else:
-                click.echo(ColorManager.error("Error al realizar commit con break"))
-                return 1
-                
         except Exception as e:
-            click.echo(ColorManager.error(f"Error: {str(e)}"))
+            click.echo(ColorManager.error(f"Error: {e}"))
             return 1
+    
+    def _get_commit_prefix(self):
+        """Get the commit prefix for this command."""
+        return "break"
 
 
 @click.command()
 @click.option('--amend', '-a', is_flag=True, help='Amend the last commit with the new message')
 @click.option('--scope', '-s', help='Add a scope to the prefix (e.g. break(scope): message)')
-@click.argument('message', required=True)
-def main(message, scope, amend):
+@click.option('--ai', is_flag=True, help='Usar IA para generar mensaje')
+@click.argument('message', required=False)
+def main(message, scope, amend, ai):
     """Commit changes adding the break prefix to the message"""
     try:
         # Create and run command
         cmd = GgbreakCommand()
-        return cmd.run(message=message, scope=scope, amend=amend)
+        return cmd.run(message=message, scope=scope, ai=ai, amend=amend)
         
     except Exception as e:
         click.echo(ColorManager.error(f"Error: {str(e)}"))
