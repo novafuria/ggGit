@@ -1,0 +1,17 @@
+daily_usage:
+  '2025-09-05':
+    commands:
+      ggai: 1
+    cost: 0.005
+    requests: 1
+    tokens: 50
+limits:
+  cost_limit: 5.0
+  tracking_enabled: true
+period:
+  end_date: '2025-09-05'
+  start_date: '2025-09-05'
+totals:
+  cost: 0.005
+  requests: 1
+  tokens: 50
