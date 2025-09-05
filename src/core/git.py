@@ -814,3 +814,117 @@ class GitInterface:
             raise
         except Exception as e:
             raise GitInterfaceError(f"Unexpected error in get_all_branches: {e}")
+    
+    def merge_branch(self, branch_name: str) -> bool:
+        """
+        Merge branch into current branch.
+        
+        Merges the specified branch into the current branch.
+        Equivalent to running 'git merge <branch_name>'.
+        
+        Args:
+            branch_name (str): Name of the branch to merge
+            
+        Returns:
+            bool: True if merge was successful, False otherwise
+            
+        Raises:
+            RuntimeError: If not in a Git repository
+            subprocess.CalledProcessError: If git merge command fails
+        """
+        try:
+            if not self.is_git_repository():
+                raise NotGitRepositoryError("Not a git repository")
+            
+            cmd = ['git', 'merge', branch_name]
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            
+            if result.returncode != 0:
+                raise GitCommandError(f"Git merge failed: {result.stderr}")
+            
+            return True
+            
+        except subprocess.CalledProcessError as e:
+            raise GitCommandError(f"Git merge failed: {e}")
+        except NotGitRepositoryError:
+            # Re-raise NotGitRepositoryError without wrapping
+            raise
+        except GitCommandError:
+            # Re-raise GitCommandError without wrapping
+            raise
+        except Exception as e:
+            raise GitInterfaceError(f"Unexpected error in merge_branch: {e}")
+    
+    def merge_abort(self) -> bool:
+        """
+        Abort current merge.
+        
+        Aborts the current merge operation.
+        Equivalent to running 'git merge --abort'.
+        
+        Returns:
+            bool: True if abort was successful, False otherwise
+            
+        Raises:
+            RuntimeError: If not in a Git repository
+            subprocess.CalledProcessError: If git merge --abort command fails
+        """
+        try:
+            if not self.is_git_repository():
+                raise NotGitRepositoryError("Not a git repository")
+            
+            cmd = ['git', 'merge', '--abort']
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            
+            if result.returncode != 0:
+                raise GitCommandError(f"Git merge --abort failed: {result.stderr}")
+            
+            return True
+            
+        except subprocess.CalledProcessError as e:
+            raise GitCommandError(f"Git merge --abort failed: {e}")
+        except NotGitRepositoryError:
+            # Re-raise NotGitRepositoryError without wrapping
+            raise
+        except GitCommandError:
+            # Re-raise GitCommandError without wrapping
+            raise
+        except Exception as e:
+            raise GitInterfaceError(f"Unexpected error in merge_abort: {e}")
+    
+    def merge_continue(self) -> bool:
+        """
+        Continue current merge.
+        
+        Continues the current merge operation.
+        Equivalent to running 'git merge --continue'.
+        
+        Returns:
+            bool: True if continue was successful, False otherwise
+            
+        Raises:
+            RuntimeError: If not in a Git repository
+            subprocess.CalledProcessError: If git merge --continue command fails
+        """
+        try:
+            if not self.is_git_repository():
+                raise NotGitRepositoryError("Not a git repository")
+            
+            cmd = ['git', 'merge', '--continue']
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            
+            if result.returncode != 0:
+                raise GitCommandError(f"Git merge --continue failed: {result.stderr}")
+            
+            return True
+            
+        except subprocess.CalledProcessError as e:
+            raise GitCommandError(f"Git merge --continue failed: {e}")
+        except NotGitRepositoryError:
+            # Re-raise NotGitRepositoryError without wrapping
+            raise
+        except GitCommandError:
+            # Re-raise GitCommandError without wrapping
+            raise
+        except Exception as e:
+            raise GitInterfaceError(f"Unexpected error in merge_continue: {e}")
