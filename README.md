@@ -228,15 +228,31 @@ ggconfig set ai.enabled true
 # Configure AI provider (OpenAI, Anthropic, Azure, or local)
 ggconfig set ai.provider openai
 
-# Set your API key
+# Set your API key (environment variable)
 export OPENAI_API_KEY="your-api-key-here"
 
 # Configure model
 ggconfig set ai.model gpt-3.5-turbo
 
+# For local/alternative providers, set base URL
+ggconfig set ai.base_url "http://localhost:11434/v1"  # Ollama example
+
+# For custom API key environment variable
+ggconfig set ai.api_key_env "CUSTOM_API_KEY"  # Use custom env var
+
 # Set cost limit (optional)
 ggconfig set ai.cost_limit 5.00
 ```
+
+#### Supported AI Providers
+
+| Provider | Environment Variable | Base URL | Example |
+|----------|---------------------|----------|---------|
+| **OpenAI** | `OPENAI_API_KEY` | `https://api.openai.com/v1` | Default |
+| **Anthropic** | `ANTHROPIC_API_KEY` | `https://api.anthropic.com` | Claude models |
+| **Azure OpenAI** | `AZURE_OPENAI_API_KEY` | `https://your-resource.openai.azure.com/` | Enterprise |
+| **Local (Ollama)** | `LOCAL_API_KEY` | `http://localhost:11434/v1` | Self-hosted |
+| **Custom** | Any | Any | Your own API |
 
 ### AI Features
 
@@ -245,6 +261,53 @@ ggconfig set ai.cost_limit 5.00
 - **Usage tracking**: Monitor AI consumption and costs
 - **Flexible configuration**: Support for multiple AI providers
 - **Cost management**: Set limits and track usage
+
+### AI Configuration Details
+
+#### Environment Variables
+The `ai.api_key_env` setting specifies which environment variable contains your API key:
+
+```bash
+# Default configuration uses OPENAI_API_KEY
+ggconfig set ai.api_key_env "OPENAI_API_KEY"
+export OPENAI_API_KEY="sk-your-key-here"
+
+# Custom environment variable
+ggconfig set ai.api_key_env "MY_CUSTOM_KEY"
+export MY_CUSTOM_KEY="your-custom-key-here"
+```
+
+#### Base URL Configuration
+For local or alternative providers, set the `base_url`:
+
+```bash
+# Ollama (local)
+ggconfig set ai.base_url "http://localhost:11434/v1"
+ggconfig set ai.api_key_env "OLLAMA_API_KEY"
+export OLLAMA_API_KEY="ollama"  # Usually just "ollama"
+
+# Azure OpenAI
+ggconfig set ai.base_url "https://your-resource.openai.azure.com/openai/deployments/your-deployment"
+ggconfig set ai.api_key_env "AZURE_OPENAI_API_KEY"
+export AZURE_OPENAI_API_KEY="your-azure-key"
+
+# Custom API
+ggconfig set ai.base_url "https://api.your-provider.com/v1"
+ggconfig set ai.api_key_env "CUSTOM_API_KEY"
+export CUSTOM_API_KEY="your-custom-key"
+```
+
+#### Cost Management
+```bash
+# Set daily cost limit (USD)
+ggconfig set ai.cost_limit 10.00
+
+# Enable/disable usage tracking
+ggconfig set ai.tracking_enabled true
+
+# Set usage file location
+ggconfig set ai.usage_file ".gggit/ai-usage.yaml"
+```
 
 ## 📚 Available Commands
 
@@ -411,6 +474,18 @@ ggai usage reset
 
 # Test AI connection
 ggai test
+
+# Configure for Ollama (local LLM)
+ggconfig set ai.provider local
+ggconfig set ai.base_url "http://localhost:11434/v1"
+ggconfig set ai.api_key_env "OLLAMA_API_KEY"
+export OLLAMA_API_KEY="ollama"
+
+# Configure for Azure OpenAI
+ggconfig set ai.provider azure
+ggconfig set ai.base_url "https://your-resource.openai.azure.com/openai/deployments/your-deployment"
+ggconfig set ai.api_key_env "AZURE_OPENAI_API_KEY"
+export AZURE_OPENAI_API_KEY="your-azure-key"
 ```
 
 ## 🔧 Command Options
@@ -425,12 +500,14 @@ All commands support:
 - `--ai`: Use AI for message generation (legacy, now automatic)
 
 ### AI Configuration Options
-- `ai.enabled`: Enable/disable AI features
+- `ai.enabled`: Enable/disable AI features (boolean)
 - `ai.provider`: AI provider (openai, anthropic, azure, local)
-- `ai.model`: AI model to use
-- `ai.api_key_env`: Environment variable for API key
-- `ai.cost_limit`: Maximum cost per period
-- `ai.tracking_enabled`: Enable usage tracking
+- `ai.model`: AI model to use (string)
+- `ai.api_key_env`: Environment variable name for API key (string)
+- `ai.base_url`: Base URL for API requests (string, optional)
+- `ai.cost_limit`: Maximum cost per period in USD (number)
+- `ai.tracking_enabled`: Enable usage tracking (boolean)
+- `ai.usage_file`: Path to usage tracking file (string)
 
 ## 🏗️ Architecture
 
@@ -495,10 +572,36 @@ ggconfig list
 
 ### AI Issues
 If AI features are not working:
-1. Check AI configuration: `ggconfig get ai.enabled`
-2. Verify API key: `echo $OPENAI_API_KEY`
-3. Test connection: `ggai test`
-4. Check usage: `ggai usage`
+
+1. **Check AI configuration**:
+   ```bash
+   ggconfig list
+   ```
+
+2. **Verify API key environment variable**:
+   ```bash
+   # Check if the variable is set
+   echo $OPENAI_API_KEY
+   
+   # Check which variable is configured
+   ggconfig get ai.api_key_env
+   ```
+
+3. **Test AI connection**:
+   ```bash
+   ggai test
+   ```
+
+4. **Check cost limits and usage**:
+   ```bash
+   ggai usage
+   ```
+
+5. **Common issues**:
+   - **"API key not found"**: Set the environment variable specified in `ai.api_key_env`
+   - **"Connection failed"**: Check `ai.base_url` for local/alternative providers
+   - **"Cost limit exceeded"**: Increase `ai.cost_limit` or reset usage with `ggai usage reset`
+   - **"Model not found"**: Verify `ai.model` is supported by your provider
 
 ## 🧪 Testing
 
