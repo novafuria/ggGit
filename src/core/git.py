@@ -544,6 +544,143 @@ class GitInterface:
         except Exception as e:
             raise GitInterfaceError(f"Unexpected error in diff: {e}")
     
+    def get_diff_content(self, files: Optional[List[str]] = None, staged: bool = False) -> str:
+        """
+        Get diff content as string for analysis.
+        
+        Gets the diff content between working tree and index, or between
+        index and HEAD. Equivalent to running 'git diff [--staged] [<files>]'.
+        
+        Args:
+            files (Optional[List[str]]): Specific files to get diff for
+            staged (bool): If True, get staged changes (--staged)
+            
+        Returns:
+            str: Diff content as string, empty string if no changes
+            
+        Raises:
+            NotGitRepositoryError: If not in a Git repository
+            GitCommandError: If git diff command fails
+        """
+        try:
+            if not self.is_git_repository():
+                raise NotGitRepositoryError("Not a git repository")
+            
+            cmd = ['git', 'diff']
+            if staged:
+                cmd.append('--staged')
+            if files:
+                cmd.extend(files)
+            
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+            
+            if result.returncode != 0:
+                raise GitCommandError(f"Git diff failed: {result.stderr}")
+            
+            return result.stdout
+            
+        except subprocess.TimeoutExpired:
+            raise GitCommandError("Git diff timed out")
+        except subprocess.CalledProcessError as e:
+            raise GitCommandError(f"Git diff failed: {e}")
+        except Exception as e:
+            raise GitInterfaceError(f"Unexpected error in get_diff_content: {e}")
+    
+    def get_diff_line_count(self, files: Optional[List[str]] = None, staged: bool = False) -> int:
+        """
+        Get number of lines in diff for complexity analysis.
+        
+        Counts the number of lines in the diff output, excluding context lines
+        and focusing on actual changes (additions and deletions).
+        
+        Args:
+            files (Optional[List[str]]): Specific files to count diff lines for
+            staged (bool): If True, count staged changes (--staged)
+            
+        Returns:
+            int: Number of lines in diff, 0 if no changes
+            
+        Raises:
+            NotGitRepositoryError: If not in a Git repository
+            GitCommandError: If git diff command fails
+        """
+        try:
+            if not self.is_git_repository():
+                raise NotGitRepositoryError("Not a git repository")
+            
+            cmd = ['git', 'diff', '--numstat']
+            if staged:
+                cmd.append('--staged')
+            if files:
+                cmd.extend(files)
+            
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+            
+            if result.returncode != 0:
+                raise GitCommandError(f"Git diff --numstat failed: {result.stderr}")
+            
+            # Parse numstat output to count lines
+            total_lines = 0
+            for line in result.stdout.splitlines():
+                if line.strip():
+                    parts = line.split('\t')
+                    if len(parts) >= 2:
+                        try:
+                            added = int(parts[0]) if parts[0] != '-' else 0
+                            deleted = int(parts[1]) if parts[1] != '-' else 0
+                            total_lines += added + deleted
+                        except ValueError:
+                            continue
+            
+            return total_lines
+            
+        except subprocess.TimeoutExpired:
+            raise GitCommandError("Git diff --numstat timed out")
+        except subprocess.CalledProcessError as e:
+            raise GitCommandError(f"Git diff --numstat failed: {e}")
+        except Exception as e:
+            raise GitInterfaceError(f"Unexpected error in get_diff_line_count: {e}")
+    
+    def get_file_size(self, file_path: str) -> int:
+        """
+        Get file size in bytes for complexity analysis.
+        
+        Args:
+            file_path (str): Path to the file
+            
+        Returns:
+            int: File size in bytes, 0 if file doesn't exist
+            
+        Raises:
+            OSError: If file cannot be accessed
+        """
+        try:
+            if not os.path.exists(file_path):
+                return 0
+            
+            return os.path.getsize(file_path)
+            
+        except OSError as e:
+            raise OSError(f"Cannot get size for file {file_path}: {e}")
+    
+    def get_files_to_analyze(self) -> List[str]:
+        """
+        Get files to analyze (staged if available, otherwise unstaged).
+        
+        Returns staged files if any are staged, otherwise returns unstaged files.
+        This follows the UX pattern where staged files take priority.
+        
+        Returns:
+            List[str]: List of files to analyze
+        """
+        # First check for staged files
+        staged_files = self.get_staged_files()
+        if staged_files:
+            return staged_files
+        
+        # If no staged files, return unstaged files
+        return self.get_unstaged_files()
+    
     def unstage_files(self, files: Optional[List[str]] = None) -> bool:
         """
         Unstage files from index.

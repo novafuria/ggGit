@@ -19,6 +19,7 @@ Usage:
 
 from abc import ABC, abstractmethod
 from typing import List, Optional, Any, Dict
+import os
 import click
 from ..utils.colors import ColorManager
 from ..config import ConfigManager
@@ -159,6 +160,144 @@ class BaseCommand(ABC):
             # Display user-friendly error message
             click.echo(ColorManager.error(f"Error: {str(e)}"))
             return 1
+    
+    def _is_ai_configured(self) -> bool:
+        """
+        Check if AI is configured and available.
+        
+        This method verifies that AI functionality is properly configured
+        by checking the required configuration settings and environment variables.
+        
+        Returns:
+            bool: True if AI is configured and available, False otherwise
+            
+        Note:
+            This method checks:
+            - ai.enabled is True
+            - ai.provider is set
+            - ai.api_key_env environment variable is available
+        """
+        # Verificar configuración básica
+        if not self.config.get_config('ai.enabled', False):
+            return False
+        
+        # Verificar proveedor
+        provider = self.config.get_config('ai.provider')
+        if not provider:
+            return False
+        
+        # Verificar API key
+        api_key_env = self.config.get_config('ai.api_key_env')
+        if not api_key_env or not os.getenv(api_key_env):
+            return False
+        
+        return True
+    
+    def _generate_ai_message(self, scope=None, amend=False):
+        """
+        Generate commit message using AI.
+        
+        This method integrates with the AI system to generate commit messages
+        based on the current changes, using complexity analysis to decide
+        between AI generation and educational fallback.
+        
+        Args:
+            scope (str, optional): Scope for the commit message
+            amend (bool): Whether to amend the last commit
+            
+        Returns:
+            int: Exit code (0 for success, 1 for failure)
+        """
+        try:
+            from ..ai import ComplexityAnalyzer, AiMessageGenerator, AiUsageTracker
+            
+            # Create AI components
+            analyzer = ComplexityAnalyzer(self.git, self.config)
+            usage_tracker = AiUsageTracker(self.config)
+            generator = AiMessageGenerator(self.config, usage_tracker)
+            
+            # Analyze complexity
+            should_use_ai, analysis = analyzer.should_use_ai()
+            
+            if should_use_ai:
+                # Generate with AI
+                files = analysis['files']
+                diff_content = self.git.get_diff_content(files, staged=analysis['has_staged'])
+                message = generator.generate_message(files, diff_content)
+                
+                # Add scope if provided
+                if scope:
+                    prefix = message.split(':', 1)[0]
+                    suffix = message.split(':', 1)[1] if ':' in message else message
+                    message = f"{prefix}({scope}): {suffix}"
+                
+                # Execute commit with generated message
+                return self._execute_manual_commit(message, scope, amend)
+            else:
+                # Show fallback
+                fallback = analyzer.get_fallback_message(analysis)
+                click.echo(ColorManager.warning(fallback))
+                return 1
+                
+        except Exception as e:
+            click.echo(ColorManager.error(f"Error generando mensaje con IA: {e}"))
+            return 1
+    
+    def _execute_manual_commit(self, message, scope=None, amend=False):
+        """
+        Execute commit with manual message.
+        
+        This method handles the common commit logic for all commands,
+        including validation, prefix handling, and commit execution.
+        
+        Args:
+            message (str): Commit message
+            scope (str, optional): Scope for the commit message
+            amend (bool): Whether to amend the last commit
+            
+        Returns:
+            int: Exit code (0 for success, 1 for failure)
+        """
+        try:
+            # Validate message
+            if not message or not message.strip():
+                click.echo(ColorManager.error("Message is required"))
+                return 1
+            
+            # Validate input
+            if message:
+                self.validator.validate_commit_message(message)
+            
+            # Create commit command
+            from .commit import CommitCommand
+            commit_cmd = CommitCommand(self._get_commit_prefix())
+            
+            # Execute commit
+            result = commit_cmd.execute(message, scope, amend)
+            
+            if result == 0:
+                click.echo(ColorManager.success("Commit realizado exitosamente"))
+            else:
+                click.echo(ColorManager.error("Error al realizar commit"))
+                return result
+            
+            return result
+            
+        except Exception as e:
+            click.echo(ColorManager.error(f"Error: {e}"))
+            return 1
+    
+    def _get_commit_prefix(self):
+        """
+        Get the commit prefix for this command.
+        
+        This method should be overridden by subclasses to return
+        the appropriate prefix (feat, fix, docs, etc.).
+        
+        Returns:
+            str: Commit prefix
+        """
+        return "chore"  # Default fallback
     
     def get_command_info(self) -> Dict[str, Any]:
         """
