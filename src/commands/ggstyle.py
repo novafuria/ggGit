@@ -7,9 +7,9 @@ Usage: ggstyle [options] <message>
 
 import click
 import sys
-from src.core.base_commands.base import BaseCommand
-from src.core.base_commands.commit import CommitCommand
-from src.core.utils.colors import ColorManager
+from core.base_commands.base import BaseCommand
+from core.base_commands.commit import CommitCommand
+from core.utils.colors import ColorManager
 
 
 class StyleCommand(BaseCommand):

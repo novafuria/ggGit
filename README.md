@@ -37,7 +37,7 @@
   - [🚀 Quick Installation (Recommended)](#-quick-installation-recommended)
   - [🐍 Development Environment](#-development-environment)
   - [📋 Manual Installation](#-manual-installation)
-    - [Install in Linux Systems](#install-in-linux-systems)
+    - [Install in Linux/macOS](#install-in-linuxmacos)
     - [Install in Windows (PowerShell)](#install-in-windows-powershell)
 - [🤖 AI Configuration](#-ai-configuration)
   - [Quick AI Setup](#quick-ai-setup)
@@ -69,7 +69,8 @@
 - [🐛 Troubleshooting](#-troubleshooting)
   - [Quick Health Check](#quick-health-check)
   - [Command not found](#command-not-found)
-  - [Permission denied](#permission-denied)
+  - [Python not found](#python-not-found)
+  - [Import errors](#import-errors)
   - [Configuration Issues](#configuration-issues)
   - [AI Issues](#ai-issues)
 - [🧪 Testing](#-testing)
@@ -110,26 +111,27 @@ The installation process is simple and fast. You can use our automatic installat
 ```bash
 git clone https://github.com/novafuria/ggGit
 cd ggGit
-# Set up development environment
-conda env create -f environment.yml
-conda activate gggit
-# Or with mamba (if available):
-# mamba env create -f environment.yml
-# mamba activate gggit
-./install.sh
+# Install with Python aliases
+python install.py
 ```
 
 **Windows:**
 ```powershell
 git clone https://github.com/novafuria/ggGit
 cd ggGit
-# Set up development environment
+# Install with PowerShell aliases
+.\install.ps1
+```
+
+**With Conda (Optional):**
+```bash
+git clone https://github.com/novafuria/ggGit
+cd ggGit
+# Create conda environment
 conda env create -f environment.yml
 conda activate gggit
-# Or with mamba (if available):
-# mamba env create -f environment.yml
-# mamba activate gggit
-.\install.ps1
+# Install with Python aliases
+python install.py
 ```
 
 ### 🐍 Development Environment
@@ -149,10 +151,7 @@ The `environment.yml` file defines all dependencies and can be used with both co
 
 If you prefer to install manually, follow these steps:
 
-#### Install in Linux Systems
-
-> [!NOTE]
-> The installation process is the same for Bash emulation in Windows.
+#### Install in Linux/macOS
 
 1. **Clone the repository**
 ```bash
@@ -160,27 +159,31 @@ git clone https://github.com/novafuria/ggGit
 cd ggGit
 ```
 
-2. **Make scripts executable**
+2. **Install Python dependencies**
 ```bash
-chmod +x commands/*
+pip install click>=8.0.0 pyyaml>=6.0.0 jsonschema>=4.0.0 colorama
 ```
 
-3. **Add the path to the `PATH` environment variable in the `.bashrc` file**
+3. **Create aliases in your shell config**
 ```bash
-echo "export PATH=\$PATH:$(pwd)/commands" >> ~/.bashrc
+# Add to ~/.bashrc or ~/.zshrc
+export GGGIT_ROOT="$(pwd)"
+export PYTHONPATH="$GGGIT_ROOT/src:$PYTHONPATH"
+
+# Create aliases for each command
+alias ggfeat='python $GGGIT_ROOT/src/commands/ggfeat.py'
+alias ggfix='python $GGGIT_ROOT/src/commands/ggfix.py'
+# ... (add all other commands)
 ```
 
-> [!NOTE]
-> If you are using `zsh`, you need to add the path to the `PATH` environment variable in the `.zshrc` file.
-
-4. **Reload the `.bashrc` file**
+4. **Reload your shell configuration**
 ```bash
-source ~/.bashrc
+source ~/.bashrc  # or ~/.zshrc
 ```
 
-5. **Check the installation**
+5. **Test the installation**
 ```bash
-ggv
+ggv --help
 ```
 
 #### Install in Windows (PowerShell)
@@ -191,16 +194,25 @@ git clone https://github.com/novafuria/ggGit
 cd ggGit
 ```
 
-2. **Add to PATH environment variable**
+2. **Install Python dependencies**
 ```powershell
-$currentPath = [Environment]::GetEnvironmentVariable("PATH", "User")
-$newPath = "$currentPath;$(Get-Location)\commands"
-[Environment]::SetEnvironmentVariable("PATH", $newPath, "User")
+pip install click>=8.0.0 pyyaml>=6.0.0 jsonschema>=4.0.0 colorama
 ```
 
-3. **Restart your terminal and test**
+3. **Create PowerShell aliases**
 ```powershell
-ggv
+# Add to your PowerShell profile
+$env:GGGIT_ROOT = "C:\path\to\ggGit"
+$env:PYTHONPATH = "$env:GGGIT_ROOT\src;$env:PYTHONPATH"
+
+function ggfeat { python "$env:GGGIT_ROOT\src\commands\ggfeat.py" $args }
+function ggfix { python "$env:GGGIT_ROOT\src\commands\ggfix.py" $args }
+# ... (add all other commands)
+```
+
+4. **Restart PowerShell and test**
+```powershell
+ggv --help
 ```
 
 ## 🤖 AI Configuration
@@ -458,15 +470,22 @@ Run our health check script to diagnose issues:
 
 ### Command not found
 If you get "command not found" error:
-1. Verify the scripts are executable: `ls -la commands/`
-2. Check PATH: `echo $PATH`
-3. Re-source your shell configuration: `source ~/.bashrc`
+1. Check if aliases are loaded: `alias | grep gg`
+2. Re-source your shell configuration: `source ~/.bashrc` (or `~/.zshrc`)
+3. Verify Python path: `which python`
+4. Check GGGIT_ROOT: `echo $GGGIT_ROOT`
 
-### Permission denied
-If you get permission errors:
-```bash
-chmod +x commands/*
-```
+### Python not found
+If you get "python not found" error:
+1. Install Python 3.12+: `conda install python=3.12` or download from python.org
+2. Verify installation: `python --version`
+3. Check PATH: `echo $PATH`
+
+### Import errors
+If you get Python import errors:
+1. Check PYTHONPATH: `echo $PYTHONPATH`
+2. Verify GGGIT_ROOT: `echo $GGGIT_ROOT`
+3. Install dependencies: `pip install click pyyaml jsonschema colorama`
 
 ### Configuration Issues
 Use the `ggconfig` command to check your setup:
