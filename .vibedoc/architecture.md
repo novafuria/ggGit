@@ -1209,6 +1209,7 @@ tests/
 ├── test_config_validation.py        # Tests para validación de esquemas
 ├── test_config_advanced.py          # Tests para funcionalidades avanzadas
 ├── test_config_command.py           # Tests para ConfigCommand
+├── test_git_interface.py            # Tests para GitInterface básico
 ├── test_git_interface_extended.py   # Tests para GitInterface extendido
 ├── test_git_interface_branches.py   # Tests para operaciones de ramas
 ├── test_git_interface_merge.py      # Tests para operaciones de merge
@@ -1220,6 +1221,10 @@ tests/
 ├── test_git_interactive_commands.py # Tests para comandos interactivos
 ├── test_conventional_commits_basic.py      # Tests para commits básicos
 ├── test_conventional_commits_specialized.py # Tests para commits especializados
+├── test_commit_command_final.py     # Tests para CommitCommand final
+├── test_commit_command_integration.py # Tests para integración de CommitCommand
+├── test_ggdocs.py                   # Tests para comando ggdocs
+├── test_logging_manager.py          # Tests para LoggingManager
 ├── test_ai_configuration.py         # Tests para configuración de IA
 ├── test_complexity_analyzer.py      # Tests para ComplexityAnalyzer
 ├── test_ai_usage_tracker.py         # Tests para AiUsageTracker
