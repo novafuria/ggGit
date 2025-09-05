@@ -28,8 +28,7 @@ class GgmergeCommand(BaseCommand):
             elif branch:
                 return self._merge_branch(branch)
             else:
-                click.echo(ColorManager.error("Debe especificar una rama para hacer merge"))
-                return 1
+                return self._show_merge_options()  # Nueva funcionalidad interactiva
                 
         except Exception as e:
             click.echo(ColorManager.error(f"Error: {str(e)}"))
@@ -81,6 +80,46 @@ class GgmergeCommand(BaseCommand):
                 
         except Exception as e:
             click.echo(ColorManager.error(f"Error al continuar merge: {str(e)}"))
+            return 1
+    
+    def _show_merge_options(self):
+        """Show interactive list of branches for merge."""
+        try:
+            branches = self.git.get_mergeable_branches()
+            
+            if not branches:
+                click.echo(ColorManager.warning("No hay ramas disponibles para merge"))
+                return 0
+            
+            # Mostrar lista numerada
+            click.echo(ColorManager.info("Ramas disponibles para merge:"))
+            for i, branch in enumerate(branches, 1):
+                click.echo(f"  {i}. {branch}")
+            
+            # Obtener selección del usuario
+            while True:
+                try:
+                    choice = input("\nSelecciona rama para merge (número): ").strip()
+                    
+                    if not choice:
+                        click.echo(ColorManager.error("Selección requerida"))
+                        continue
+                    
+                    choice_num = int(choice)
+                    if 1 <= choice_num <= len(branches):
+                        selected_branch = branches[choice_num - 1]
+                        return self._merge_branch(selected_branch)
+                    else:
+                        click.echo(ColorManager.error(f"Selección inválida. Ingresa un número entre 1 y {len(branches)}"))
+                        
+                except ValueError:
+                    click.echo(ColorManager.error("Selección inválida. Ingresa un número válido"))
+                except KeyboardInterrupt:
+                    click.echo(ColorManager.warning("\nOperación cancelada"))
+                    return 1
+                    
+        except Exception as e:
+            click.echo(ColorManager.error(f"Error al mostrar opciones: {str(e)}"))
             return 1
 
 

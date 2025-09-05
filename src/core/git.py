@@ -928,3 +928,153 @@ class GitInterface:
             raise
         except Exception as e:
             raise GitInterfaceError(f"Unexpected error in merge_continue: {e}")
+    
+    def get_mergeable_branches(self) -> List[str]:
+        """
+        Get list of branches that can be merged.
+        
+        Returns a list of local branches that can be merged into the current branch.
+        Excludes the current branch and remote branches.
+        
+        Returns:
+            List[str]: List of branch names that can be merged
+            
+        Raises:
+            RuntimeError: If not in a Git repository
+            subprocess.CalledProcessError: If git command fails
+        """
+        try:
+            if not self.is_git_repository():
+                raise NotGitRepositoryError("Not a git repository")
+            
+            # Get current branch
+            current_branch = self.get_current_branch()
+            if not current_branch:
+                return []
+            
+            # Get all local branches
+            local_branches = self.get_branches()
+            
+            # Filter out current branch and remote branches
+            mergeable_branches = []
+            for branch in local_branches:
+                if branch != current_branch and not branch.startswith('origin/'):
+                    mergeable_branches.append(branch)
+            
+            return mergeable_branches
+            
+        except subprocess.CalledProcessError as e:
+            raise GitCommandError(f"Git command failed: {e}")
+        except NotGitRepositoryError:
+            # Re-raise NotGitRepositoryError without wrapping
+            raise
+        except GitCommandError:
+            # Re-raise GitCommandError without wrapping
+            raise
+        except Exception as e:
+            raise GitInterfaceError(f"Unexpected error in get_mergeable_branches: {e}")
+    
+    def get_branch_info(self, branch_name: str) -> Dict[str, Any]:
+        """
+        Get detailed information about a branch.
+        
+        Args:
+            branch_name (str): Name of the branch
+            
+        Returns:
+            Dict[str, Any]: Dictionary with branch information
+            
+        Raises:
+            RuntimeError: If not in a Git repository
+            subprocess.CalledProcessError: If git command fails
+        """
+        try:
+            if not self.is_git_repository():
+                raise NotGitRepositoryError("Not a git repository")
+            
+            # Get branch information
+            cmd = ['git', 'show-branch', '--sha1-name', branch_name]
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            
+            if result.returncode != 0:
+                raise GitCommandError(f"Git show-branch failed: {result.stderr}")
+            
+            # Get last commit info
+            cmd = ['git', 'log', '--oneline', '-1', branch_name]
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            
+            last_commit = result.stdout.strip() if result.returncode == 0 else "Unknown"
+            
+            # Get branch status
+            cmd = ['git', 'branch', '-v']
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            
+            branch_status = "Unknown"
+            if result.returncode == 0:
+                for line in result.stdout.split('\n'):
+                    if branch_name in line:
+                        branch_status = line.strip()
+                        break
+            
+            return {
+                "name": branch_name,
+                "last_commit": last_commit,
+                "status": branch_status,
+                "exists": True
+            }
+            
+        except subprocess.CalledProcessError as e:
+            raise GitCommandError(f"Git command failed: {e}")
+        except NotGitRepositoryError:
+            # Re-raise NotGitRepositoryError without wrapping
+            raise
+        except GitCommandError:
+            # Re-raise GitCommandError without wrapping
+            raise
+        except Exception as e:
+            raise GitInterfaceError(f"Unexpected error in get_branch_info: {e}")
+    
+    def is_branch_mergeable(self, branch_name: str) -> bool:
+        """
+        Check if branch can be merged.
+        
+        Args:
+            branch_name (str): Name of the branch to check
+            
+        Returns:
+            bool: True if branch can be merged, False otherwise
+            
+        Raises:
+            RuntimeError: If not in a Git repository
+            subprocess.CalledProcessError: If git command fails
+        """
+        try:
+            if not self.is_git_repository():
+                raise NotGitRepositoryError("Not a git repository")
+            
+            # Check if branch exists
+            branches = self.get_branches()
+            if branch_name not in branches:
+                return False
+            
+            # Check if it's the current branch
+            current_branch = self.get_current_branch()
+            if branch_name == current_branch:
+                return False
+            
+            # Check if branch is remote
+            if branch_name.startswith('origin/'):
+                return False
+            
+            return True
+            
+        except subprocess.CalledProcessError as e:
+            raise GitCommandError(f"Git command failed: {e}")
+        except NotGitRepositoryError:
+            # Re-raise NotGitRepositoryError without wrapping
+            raise
+        except GitCommandError:
+            # Re-raise GitCommandError without wrapping
+            raise
+        except Exception as e:
+            raise GitInterfaceError(f"Unexpected error in is_branch_mergeable: {e}")

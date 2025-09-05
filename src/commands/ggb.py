@@ -25,7 +25,7 @@ class GgbCommand(BaseCommand):
             if branch_name:
                 return self._create_branch(branch_name)
             else:
-                return self._list_branches()
+                return self._show_branch_options()  # Nueva funcionalidad interactiva
                 
         except Exception as e:
             click.echo(ColorManager.error(f"Error: {str(e)}"))
@@ -98,6 +98,98 @@ class GgbCommand(BaseCommand):
             return branch_name in branches
         except:
             return False
+    
+    def _show_branch_options(self):
+        """Show interactive branch options."""
+        try:
+            click.echo(ColorManager.info("Opciones de ramas:"))
+            click.echo("  1. Listar todas las ramas")
+            click.echo("  2. Crear nueva rama")
+            click.echo("  3. Cambiar a rama existente")
+            
+            while True:
+                try:
+                    choice = input("\nSelecciona opción (número): ").strip()
+                    
+                    if not choice:
+                        click.echo(ColorManager.error("Selección requerida"))
+                        continue
+                    
+                    choice_num = int(choice)
+                    if choice_num == 1:
+                        return self._list_branches()
+                    elif choice_num == 2:
+                        branch_name = input("Ingresa nombre de la nueva rama: ").strip()
+                        if branch_name:
+                            return self._create_branch(branch_name)
+                        else:
+                            click.echo(ColorManager.error("Nombre de rama requerido"))
+                            continue
+                    elif choice_num == 3:
+                        return self._switch_to_branch()
+                    else:
+                        click.echo(ColorManager.error("Selección inválida. Ingresa 1, 2 o 3"))
+                        
+                except ValueError:
+                    click.echo(ColorManager.error("Selección inválida. Ingresa un número válido"))
+                except KeyboardInterrupt:
+                    click.echo(ColorManager.warning("\nOperación cancelada"))
+                    return 1
+                    
+        except Exception as e:
+            click.echo(ColorManager.error(f"Error al mostrar opciones: {str(e)}"))
+            return 1
+    
+    def _switch_to_branch(self):
+        """Switch to an existing branch interactively."""
+        try:
+            branches = self.git.get_branches()
+            
+            if not branches:
+                click.echo(ColorManager.warning("No hay ramas disponibles"))
+                return 0
+            
+            # Mostrar lista numerada
+            click.echo(ColorManager.info("Ramas disponibles:"))
+            for i, branch in enumerate(branches, 1):
+                current_branch = self.git.get_current_branch()
+                if branch == current_branch:
+                    click.echo(f"  {i}. {branch} (actual)")
+                else:
+                    click.echo(f"  {i}. {branch}")
+            
+            # Obtener selección del usuario
+            while True:
+                try:
+                    choice = input("\nSelecciona rama (número): ").strip()
+                    
+                    if not choice:
+                        click.echo(ColorManager.error("Selección requerida"))
+                        continue
+                    
+                    choice_num = int(choice)
+                    if 1 <= choice_num <= len(branches):
+                        selected_branch = branches[choice_num - 1]
+                        result = self.git.switch_branch(selected_branch)
+                        
+                        if result:
+                            click.echo(ColorManager.success(f"Cambiado a rama {selected_branch}"))
+                            return 0
+                        else:
+                            click.echo(ColorManager.error(f"Error al cambiar a rama {selected_branch}"))
+                            return 1
+                    else:
+                        click.echo(ColorManager.error(f"Selección inválida. Ingresa un número entre 1 y {len(branches)}"))
+                        
+                except ValueError:
+                    click.echo(ColorManager.error("Selección inválida. Ingresa un número válido"))
+                except KeyboardInterrupt:
+                    click.echo(ColorManager.warning("\nOperación cancelada"))
+                    return 1
+                    
+        except Exception as e:
+            click.echo(ColorManager.error(f"Error al cambiar rama: {str(e)}"))
+            return 1
     
     def _display_branches(self, branches, current_branch):
         """Display branches with colors and indicators."""
