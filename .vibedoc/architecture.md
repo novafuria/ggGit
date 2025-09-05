@@ -1,20 +1,91 @@
-# [architecture] - ggGit
+# [architecture] - ggGit <!-- omit in toc -->
 
 > Este documento es la culminación de la investigación y el diseño de producto. Consiste en la creación de una arquitectura de software que resuelva el problema planteado en el documento [01-research-and-assessment-of-the-problem](01-research-and-assessment-of-the-problem.md). Para eso se describirán los enfoques de cada una de las partes del sistema.
 
 ## 📋 Tabla de Contenidos <!-- omit in toc -->
 
 - [Descripción general](#descripción-general)
-
+  - [Principios Arquitectónicos](#principios-arquitectónicos)
+  - [Arquitectura General](#arquitectura-general)
+- [Arquitectura Unificada en Python](#arquitectura-unificada-en-python)
+  - [Principios de Diseño](#principios-de-diseño)
+  - [Ventajas de la Arquitectura Unificada](#ventajas-de-la-arquitectura-unificada)
 - [Sistema de comandos independientes](#sistema-de-comandos-independientes)
+  - [Descripción](#descripción)
+  - [Estructura de Comandos](#estructura-de-comandos)
+  - [Especificación de Implementación de Comandos](#especificación-de-implementación-de-comandos)
+    - [Estructura Estándar de un Comando](#estructura-estándar-de-un-comando)
+    - [Abstracciones Reutilizables Implementadas](#abstracciones-reutilizables-implementadas)
+  - [Interfaz Unificada](#interfaz-unificada)
 - [Sistema de configuración jerárquica](#sistema-de-configuración-jerárquica)
+  - [Descripción](#descripción-1)
+  - [Jerarquía de Configuración](#jerarquía-de-configuración)
+  - [Estructura de Configuración](#estructura-de-configuración)
+  - [Especificación del Sistema de Configuración](#especificación-del-sistema-de-configuración)
+    - [1. Estructura de Archivos de Configuración](#1-estructura-de-archivos-de-configuración)
+    - [2. Esquema de Configuración](#2-esquema-de-configuración)
+    - [3. Especificación de ConfigManager](#3-especificación-de-configmanager)
 - [Sistema de interfaz de usuario CLI](#sistema-de-interfaz-de-usuario-cli)
+  - [Descripción](#descripción-2)
+  - [Componentes](#componentes)
+    - [1. Especificación del Sistema de Colores](#1-especificación-del-sistema-de-colores)
+    - [2. Especificación del Sistema de Ayuda](#2-especificación-del-sistema-de-ayuda)
+    - [3. Especificación de Validación de Argumentos](#3-especificación-de-validación-de-argumentos)
+  - [Consistencia entre Comandos](#consistencia-entre-comandos)
+  - [Bibliotecas CLI Recomendadas](#bibliotecas-cli-recomendadas)
 - [Sistema de instalación y distribución](#sistema-de-instalación-y-distribución)
+  - [Descripción](#descripción-3)
+  - [Componentes](#componentes-1)
+    - [1. Especificación del Proceso de Instalación](#1-especificación-del-proceso-de-instalación)
+    - [2. Especificación de Instalación desde Repositorio](#2-especificación-de-instalación-desde-repositorio)
+    - [3. Gestión de Dependencias y Ambientes](#3-gestión-de-dependencias-y-ambientes)
+    - [4. Especificación de Actualización](#4-especificación-de-actualización)
 - [Sistema de validación y esquemas](#sistema-de-validación-y-esquemas)
+  - [Descripción](#descripción-4)
+  - [Principios de Validación](#principios-de-validación)
+  - [Componentes](#componentes-2)
+    - [1. Especificación de Validación de Configuración](#1-especificación-de-validación-de-configuración)
+    - [2. Especificación de Validación de Mensajes de Commit](#2-especificación-de-validación-de-mensajes-de-commit)
+    - [3. Especificación de Validación de Argumentos](#3-especificación-de-validación-de-argumentos-1)
 - [Sistema de integración con Git](#sistema-de-integración-con-git)
+  - [Descripción](#descripción-5)
+  - [Componentes](#componentes-3)
+    - [1. Especificación de Interfaz Git](#1-especificación-de-interfaz-git)
+    - [2. Especificación de Manejo de Errores Git](#2-especificación-de-manejo-de-errores-git)
+    - [3. Especificación de Comandos Git Wrapper](#3-especificación-de-comandos-git-wrapper)
 - [Sistema de IA para generación de commits](#sistema-de-ia-para-generación-de-commits)
+  - [Descripción](#descripción-6)
+  - [Principios de Diseño de IA](#principios-de-diseño-de-ia)
+  - [Componentes](#componentes-4)
+    - [1. ComplexityAnalyzer - Analizador de Complejidad](#1-complexityanalyzer---analizador-de-complejidad)
+    - [2. AiUsageTracker - Tracking de Uso de IA](#2-aiusagetracker---tracking-de-uso-de-ia)
+    - [3. AiMessageGenerator - Generador de Mensajes con IA](#3-aimessagegenerator---generador-de-mensajes-con-ia)
+    - [4. Comando ggai - Interfaz de IA](#4-comando-ggai---interfaz-de-ia)
+    - [5. Integración de IA en Comandos Existentes](#5-integración-de-ia-en-comandos-existentes)
+    - [6. Arquitectura de Integración de IA](#6-arquitectura-de-integración-de-ia)
 - [Sistema de observabilidad y logging](#sistema-de-observabilidad-y-logging)
+  - [Descripción](#descripción-7)
+  - [Componentes](#componentes-5)
+    - [1. Especificación del Sistema de Logging](#1-especificación-del-sistema-de-logging)
+    - [2. Especificación de Niveles de Log y Verbose](#2-especificación-de-niveles-de-log-y-verbose)
+- [Sistema de testing y calidad](#sistema-de-testing-y-calidad)
+  - [Descripción](#descripción-8)
+  - [Framework de Testing](#framework-de-testing)
+  - [Estrategia de Coverage Progresivo](#estrategia-de-coverage-progresivo)
+  - [Estructura de Testing Implementada](#estructura-de-testing-implementada)
+  - [CI/CD y Quality Gates](#cicd-y-quality-gates)
 - [Integraciones con terceros](#integraciones-con-terceros)
+  - [Descripción](#descripción-9)
+  - [Componentes](#componentes-6)
+    - [1. Integración con APIs de IA](#1-integración-con-apis-de-ia)
+  - [Consideraciones de Seguridad](#consideraciones-de-seguridad)
+    - [1. Manejo de Credenciales](#1-manejo-de-credenciales)
+    - [2. Validación de Entrada](#2-validación-de-entrada)
+    - [3. Logging Seguro](#3-logging-seguro)
+  - [Consideraciones de Rendimiento](#consideraciones-de-rendimiento)
+    - [1. Optimización de Comandos](#1-optimización-de-comandos)
+    - [2. Caching y Optimización](#2-caching-y-optimización)
+    - [3. Análisis de Complejidad](#3-análisis-de-complejidad)
 
 ## Descripción general
 
@@ -38,27 +109,28 @@ ggGit es una suite de comandos independientes de línea de comandos que simplifi
 │  │   Comandos      │    │  Configuración  │    │   Interfaz      │        │
 │  │   Independientes│    │   Jerárquica    │    │   CLI Unificada │        │
 │  │                 │    │                 │    │                 │        │
-│  │ • ggfeat (py)  │    │ • Repositorio   │    │ • Click/Typer   │        │
-│  │ • ggfix (py)   │    │ • Módulos       │    │ • Colores       │        │
-│  │ • ggconfig (py)│    │ • Usuario       │    │ • Ayuda         │        │
-│  │ • ggai (py)    │    │ • Default       │    │ • IA Integrada  │        │
+│  │ • 26 comandos   │    │ • Repositorio   │    │ • Click         │        │
+│  │ • Python aliases│    │ • Usuario       │    │ • ColorManager  │        │
+│  │ • BaseCommand   │    │ • Default       │    │ • Ayuda auto    │        │
+│  │ • CommitCommand │    │ • JSON Schema   │    │ • IA Integrada  │        │
 │  └─────────────────┘    └─────────────────┘    └─────────────────┘        │
 │           │                       │                       │                │
 │           ▼                       ▼                       ▼                │
 │  ┌─────────────────────────────────────────────────────────────────────┐   │
 │  │                    Sistema de Integración Git                      │   │
 │  │                                                                     │   │
+│  │  • GitInterface (operaciones básicas, ramas, remotos)              │   │
 │  │  • Validación de estado del repositorio                            │   │
-│  │  • Ejecución de comandos Git nativos                               │   │
 │  │  • Manejo de errores y feedback                                    │   │
 │  └─────────────────────────────────────────────────────────────────────┘   │
 │                                                                             │
 │  ┌─────────────────────────────────────────────────────────────────────┐   │
 │  │                    Sistema de IA Integrado                         │   │
 │  │                                                                     │   │
+│  │  • ComplexityAnalyzer (análisis de complejidad)                    │   │
+│  │  • AiMessageGenerator (generación de mensajes)                     │   │
+│  │  • AiUsageTracker (monitoreo de uso y costos)                      │   │
 │  │  • IA automática en comandos existentes                            │   │
-│  │  • Comando conversacional ggai                                     │   │
-│  │  • Análisis y generación automática                                │   │
 │  └─────────────────────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -1122,23 +1194,37 @@ Sistema de testing unificado que garantiza la calidad del código mediante prueb
 - Tests completos para `ConfigManager`, `GitInterface`, `LoggingManager`
 - Coverage reporting y quality gates avanzados
 
-### Estructura de Testing
+### Estructura de Testing Implementada
 
 ```
 tests/
 ├── __init__.py
-├── conftest.py              # Fixtures globales
-├── test_core/               # Tests para abstracciones core
-│   ├── test_colors.py       # Tests para ColorManager
-│   ├── test_validation.py   # Tests para ArgumentValidator
-│   └── test_base_command.py # Tests para BaseCommand
-├── test_commands/           # Tests para comandos específicos
-│   ├── test_ggfeat.py
-│   ├── test_ggfix.py
-│   └── test_ggbreak.py
-└── test_integration/        # Tests de integración
-    ├── test_command_flow.py
-    └── test_error_handling.py
+├── conftest.py                      # Fixtures globales
+├── test_base_command.py             # Tests para BaseCommand
+├── test_colors.py                   # Tests para ColorManager
+├── test_core.py                     # Tests para core modules
+├── test_commands.py                 # Tests para comandos básicos
+├── test_integration.py              # Tests de integración
+├── test_config_manager.py           # Tests para ConfigManager
+├── test_config_validation.py        # Tests para validación de esquemas
+├── test_config_advanced.py          # Tests para funcionalidades avanzadas
+├── test_config_command.py           # Tests para ConfigCommand
+├── test_git_interface_extended.py   # Tests para GitInterface extendido
+├── test_git_interface_branches.py   # Tests para operaciones de ramas
+├── test_git_interface_merge.py      # Tests para operaciones de merge
+├── test_git_interface_analysis.py   # Tests para análisis de archivos
+├── test_git_interface_interactive.py # Tests para operaciones interactivas
+├── test_git_utility_commands.py     # Tests para comandos de utilidad Git
+├── test_git_navigation_commands.py  # Tests para comandos de navegación
+├── test_git_advanced_commands.py    # Tests para comandos avanzados
+├── test_git_interactive_commands.py # Tests para comandos interactivos
+├── test_conventional_commits_basic.py      # Tests para commits básicos
+├── test_conventional_commits_specialized.py # Tests para commits especializados
+├── test_ai_configuration.py         # Tests para configuración de IA
+├── test_complexity_analyzer.py      # Tests para ComplexityAnalyzer
+├── test_ai_usage_tracker.py         # Tests para AiUsageTracker
+├── test_ggai_command.py             # Tests para comando ggai
+└── test_ai_integration.py           # Tests para integración de IA
 ```
 
 ### CI/CD y Quality Gates
@@ -1158,32 +1244,35 @@ tests/
 ## Integraciones con terceros
 
 ### Descripción
-Sistema que maneja integraciones con servicios externos como APIs de IA, manteniendo la simplicidad y consistencia del proyecto.
+Sistema que maneja integraciones con servicios externos, principalmente APIs de IA, manteniendo la simplicidad y consistencia del proyecto.
 
 ### Componentes
 
-#### 1. Especificación de Integración con APIs de IA
+#### 1. Integración con APIs de IA
 
 **Proveedores Soportados:**
-- **OpenAI**: GPT-3.5-turbo, GPT-4
-- **Anthropic**: Claude
-- **Local**: Modelos locales (opcional)
+- **OpenAI**: GPT-3.5-turbo, GPT-4 (API estándar)
+- **Anthropic**: Claude (API compatible con OpenAI)
+- **Azure OpenAI**: Servicios empresariales (API compatible)
+- **Local**: Ollama y otros modelos locales (API compatible)
 
-**Configuración Simplificada:**
+**Configuración Unificada:**
 ```yaml
 ai:
   enabled: true
   provider: "openai"  # openai, anthropic, azure, local
   api_key_env: "OPENAI_API_KEY"
   model: "gpt-3.5-turbo"
-  base_url: "https://api.openai.com/v1"  # Solo para proveedores alternativos
+  base_url: "https://api.openai.com/v1"  # Opcional para proveedores alternativos
+  cost_limit: 5.00
+  tracking_enabled: true
 ```
 
 **Manejo de Errores de IA:**
 - **Rate Limiting**: Reintentos automáticos con backoff exponencial
 - **Timeouts**: Configuración de timeouts por proveedor
-- **Fallbacks**: Cambio automático de proveedor en caso de error
-- **Cache**: Cache de respuestas para evitar llamadas repetidas
+- **Fallbacks**: Mensajes educativos cuando IA no está disponible
+- **Tracking**: Monitoreo de uso y costos para control de gastos
 
 
 
@@ -1192,37 +1281,41 @@ ai:
 ### Consideraciones de Seguridad
 
 #### 1. Manejo de Credenciales
-- Las API keys se almacenan en variables de entorno
-- No se incluyen credenciales en archivos de configuración
-- Validación de permisos para archivos de configuración
+- **API keys**: Almacenadas en variables de entorno (no en archivos de configuración)
+- **Validación**: Verificación de permisos para archivos de configuración
+- **Configuración**: `ai.api_key_env` especifica variable de entorno a usar
+- **Seguridad**: No se registran credenciales en logs ni archivos
 
 #### 2. Validación de Entrada
-- Todos los argumentos de comandos se validan
-- Sanitización de entrada para prevenir inyección
-- Validación de esquemas para configuraciones
+- **Argumentos**: Validación automática con Click y validadores personalizados
+- **Configuración**: Validación con JSON Schema para prevenir configuraciones inválidas
+- **Git**: Validación de estado del repositorio antes de operaciones
+- **IA**: Sanitización de entrada para prompts y respuestas
 
 #### 3. Logging Seguro
-- No se registran credenciales en logs
-- Rotación automática de archivos de log
-- Permisos restrictivos en archivos de configuración
+- **Credenciales**: No se registran API keys ni tokens en logs
+- **Rotación**: Rotación automática de archivos de log
+- **Permisos**: Archivos de configuración con permisos restrictivos
+- **Tracking**: Archivo de uso de IA con permisos de usuario únicamente
 
 ### Consideraciones de Rendimiento
 
 #### 1. Optimización de Comandos
-- Todos los comandos implementados en Python
-- Uso de bibliotecas optimizadas para operaciones específicas
-- Lazy loading de módulos pesados desde `core/`
-- Importaciones optimizadas entre módulos core y commands
+- **Python unificado**: Todos los comandos en Python para consistencia
+- **Aliases**: Sistema de aliases evita copia de archivos
+- **Imports**: Importaciones optimizadas con `from core.*`
+- **Lazy loading**: Carga de módulos IA solo cuando es necesario
 
-#### 2. Caching
-- Cache de configuraciones para evitar re-lectura
-- Cache de análisis de cambios para IA
-- Cache de validaciones de esquemas
+#### 2. Caching y Optimización
+- **Configuración**: Cache de configuración para evitar re-lectura
+- **Análisis IA**: Cache de análisis de complejidad para evitar recálculos
+- **Git**: Operaciones Git optimizadas con validaciones mínimas
+- **Tracking**: Almacenamiento eficiente de estadísticas de uso
 
-#### 3. Lazy Loading
-- Carga de módulos solo cuando son necesarios
-- Inicialización diferida de componentes pesados desde `core/`
-- Carga condicional de proveedores de IA
-- Importaciones dinámicas entre `commands/` y `core/`
+#### 3. Análisis de Complejidad
+- **Límites configurables**: Análisis de complejidad con límites ajustables
+- **Fallback inteligente**: Mensajes educativos cuando IA no es recomendable
+- **Tracking automático**: Monitoreo de uso sin impacto en rendimiento
+- **Configuración flexible**: Parámetros de análisis configurables por proyecto
 
 Esta arquitectura proporciona una base sólida para el desarrollo futuro de ggGit, manteniendo la flexibilidad para evolucionar según las necesidades del proyecto y la comunidad.
