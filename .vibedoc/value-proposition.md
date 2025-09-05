@@ -27,6 +27,9 @@
 - Automatización de procesos de CI/CD
 - Reducción de errores y inconsistencias en el historial de Git
 - Facilidad de adopción de mejores prácticas
+- Generación automática de mensajes de commit usando inteligencia artificial
+- Análisis inteligente de complejidad de cambios
+- Control de costos y uso de servicios de IA
 
 ### Segmento Secundario: Desarrolladores Individuales
 **Características**: Desarrolladores independientes, freelancers, y contribuyentes de código abierto que buscan optimizar su flujo de trabajo personal con Git.
@@ -36,6 +39,8 @@
 - Implementación personal de Conventional Commits
 - Optimización del flujo de trabajo individual
 - Herramientas que se integren bien con su entorno de desarrollo
+- Generación automática de mensajes de commit usando IA
+- Análisis inteligente de cambios para mejorar la calidad de commits
 
 ### Segmento Terciario: Organizaciones con Equipos DevOps
 **Características**: Empresas que tienen equipos DevOps dedicados y buscan automatizar completamente sus procesos de release y despliegue basándose en el historial de Git.
@@ -45,11 +50,13 @@
 - Integración con sistemas de CI/CD existentes
 - Automatización de generación de changelogs y versionado
 - Reducción de fallos en pipelines de automatización
+- Generación automática de mensajes de commit de alta calidad usando IA
+- Tracking y control de costos de servicios de IA en entornos corporativos
 
 ## Propuesta de valor
 
-### Valor Principal: Suite Unificada de Herramientas Git Optimizadas
-ggGit ofrece una suite completa de comandos optimizados que transforma la experiencia de trabajo con Git, combinando la potencia de la línea de comandos con la facilidad de uso necesaria para equipos con diferentes niveles de experiencia.
+### Valor Principal: Suite Unificada de Herramientas Git Optimizadas con IA Integrada
+ggGit ofrece una suite completa de 26 comandos Python optimizados que transforma la experiencia de trabajo con Git, combinando la potencia de la línea de comandos con la facilidad de uso necesaria para equipos con diferentes niveles de experiencia, e incluyendo un sistema de inteligencia artificial integrado para generación automática de mensajes de commit.
 
 ### Problemas que Resolvemos:
 
@@ -58,10 +65,13 @@ ggGit ofrece una suite completa de comandos optimizados que transforma la experi
 3. **Distribución Manual de Configuraciones**: Sistema local de configuración jerárquica que mantiene estándares de equipo sin sincronización automática
 4. **Resistencia a la Línea de Comandos**: Herramientas que facilitan la transición gradual desde interfaces gráficas
 5. **Falta de Automatización CI/CD**: Commits estructurados que permiten automatización confiable de releases y despliegues
+6. **Generación Manual de Mensajes de Commit**: Sistema de IA integrado que analiza cambios automáticamente y genera mensajes de commit inteligentes
+7. **Análisis de Complejidad de Cambios**: Evaluación automática de complejidad para decidir entre generación con IA o mensajes educativos de fallback
+8. **Control de Costos de IA**: Tracking de uso de IA, costos y límites para control de gastos en servicios de inteligencia artificial
 
 ### Valor Agregado Único:
 
-**"La única herramienta que combina la potencia de la línea de comandos con la facilidad de adopción en equipo, proporcionando un sistema unificado de gestión de configuraciones Git locales que mantiene consistencia entre todos los entornos de desarrollo sin dependencia de sincronización automática."**
+**"La única herramienta que combina la potencia de la línea de comandos con la facilidad de adopción en equipo, proporcionando un sistema unificado de gestión de configuraciones Git locales que mantiene consistencia entre todos los entornos de desarrollo sin dependencia de sincronización automática, e incluyendo un sistema de inteligencia artificial integrado para generación automática de mensajes de commit con análisis de complejidad y tracking de uso."**
 
 ### Diferenciadores Clave:
 
@@ -70,6 +80,10 @@ ggGit ofrece una suite completa de comandos optimizados que transforma la experi
 - **Integración Completa**: Solución que aborda tanto la productividad individual como la estandarización del equipo
 - **Cross-Platform**: Funcionamiento idéntico en Linux, macOS y Windows
 - **Instalación Automática**: Scripts que configuran automáticamente el entorno sin intervención manual
+- **Sistema de IA Integrado**: Inteligencia artificial integrada para generación automática de mensajes de commit con análisis de complejidad
+- **Análisis Inteligente**: Evaluación automática de complejidad de cambios para decidir entre IA y fallback educativo
+- **Tracking de Uso de IA**: Monitoreo de consumo de IA, costos y límites para control de gastos
+- **26 Comandos Python**: Suite completa de comandos independientes implementados en Python para consistencia y mantenimiento
 
 ## Canales
 
