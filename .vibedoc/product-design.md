@@ -58,55 +58,48 @@ ggGit es una suite de comandos independientes de línea de comandos que transfor
 
 4. **Sistema de IA Integrado**: Un sistema de inteligencia artificial que analiza cambios automáticamente y genera mensajes de commit usando proveedores de IA compatibles (OpenAI, Anthropic, Azure, Local), con análisis de complejidad y tracking de uso.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                    ggGit - Suite de Comandos Git Independientes           │
-│                                                                             │
-│  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐        │
-│  │   Comandos      │    │  Configuración  │    │   Integración   │        │
-│  │   Independientes│    │   Jerárquica    │    │   con Git       │        │
-│  │                 │    │                 │    │                 │        │
-│  │ • 26 comandos   │    │ • Repositorio   │    │ • GitInterface  │        │
-│  │ • Python aliases│    │ • Usuario       │    │ • Validación    │        │
-│  │ • BaseCommand   │    │ • Módulos       │    │ • Manejo errores│        │
-│  │ • CommitCommand │    │ • Default       │    │ • Feedback      │        │
-│  │ • JSON Schema   │    │ • Validación    │    │ • Operaciones   │        │
-│  └─────────────────┘    └─────────────────┘    └─────────────────┘        │
-│           │                       │                       │                │
-│           ▼                       ▼                       ▼                │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │                    Sistema de IA Integrado                         │   │
-│  │                                                                     │   │
-│  │  • ComplexityAnalyzer (análisis de complejidad)                    │   │
-│  │  • AiMessageGenerator (generación de mensajes)                     │   │
-│  │  • AiUsageTracker (monitoreo de uso y costos)                      │   │
-│  │  • IA automática en comandos existentes                            │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                                                                             │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │                    Terminal de Comandos                            │   │
-│  │                                                                     │   │
-│  │  $ ggfeat "nueva funcionalidad de login"                          │   │
-│  │  → feat: nueva funcionalidad de login                              │   │
-│  │                                                                     │   │
-│  │  $ ggfeat  # Sin argumentos - IA automática                       │   │
-│  │  → feat: implementa autenticación OAuth2 con JWT                   │   │
-│  │                                                                     │   │
-│  │  $ ggai usage  # Monitoreo de uso de IA                           │   │
-│  │  → Uso: 15 requests, Costo: $2.34, Límite: $5.00                  │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                                                                             │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │                    Flujos de Proceso                               │   │
-│  │                                                                     │   │
-│  │  1. Commit → 2. Análisis IA → 3. CI/CD → 4. Release               │   │
-│  │     ↓           ↓              ↓         ↓                         │   │
-│  │  Conventional  Complexity     Pipeline  Automático                 │   │
-│  │  Commits      Analysis       GitHub    Changelog                  │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                                                                             │
-
-└─────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    subgraph "ggGit - Suite de Comandos Git Independientes"
+        subgraph "Pilares Principales"
+            A[Comandos Independientes<br/>• 26 comandos<br/>• Python aliases<br/>• BaseCommand<br/>• CommitCommand]
+            B[Configuración Jerárquica<br/>• Repositorio<br/>• Usuario<br/>• Módulos<br/>• Default<br/>• JSON Schema]
+            C[Integración con Git<br/>• GitInterface<br/>• Validación<br/>• Manejo errores<br/>• Feedback<br/>• Operaciones]
+        end
+        
+        subgraph "Sistema de IA Integrado"
+            D[ComplexityAnalyzer<br/>análisis de complejidad]
+            E[AiMessageGenerator<br/>generación de mensajes]
+            F[AiUsageTracker<br/>monitoreo de uso y costos]
+            G[IA automática en<br/>comandos existentes]
+        end
+        
+        subgraph "Terminal de Comandos"
+            H["$ ggfeat 'nueva funcionalidad de login'<br/>→ feat: nueva funcionalidad de login"]
+            I["$ ggfeat  # Sin argumentos - IA automática<br/>→ feat: implementa autenticación OAuth2 con JWT"]
+            J["$ ggai usage  # Monitoreo de uso de IA<br/>→ Uso: 15 requests, Costo: $2.34, Límite: $5.00"]
+        end
+        
+        subgraph "Flujos de Proceso"
+            K[1. Commit] --> L[2. Análisis IA]
+            L --> M[3. CI/CD]
+            M --> N[4. Release]
+            K --> O[Conventional Commits]
+            L --> P[Complexity Analysis]
+            M --> Q[Pipeline GitHub]
+            N --> R[Automático Changelog]
+        end
+    end
+    
+    A --> D
+    B --> D
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    G --> H
+    G --> I
+    G --> J
 ```
 
 ### Eventos y Actividades Clave
@@ -302,36 +295,103 @@ Miguel trabaja en un repositorio de empresa que requiere integración con herram
 
 #### Flujo de proceso 1: Commit con Conventional Commits
 
-```
-[Usuario ejecuta ggfeat] → [Sistema valida parámetros] → [Analiza complejidad] → [Genera mensaje] → [Ejecuta git add] → [Ejecuta git commit] → [Confirma éxito]
-     ↓                              ↓                      ↓                    ↓                ↓                ↓
-[Comando inválido]           [Parámetros faltantes]  [Complejidad alta]  [Error en add]   [Error en commit] [Commit exitoso]
-     ↓                              ↓                      ↓                    ↓                ↓
-[Mostrar error]              [Solicitar parámetros]  [Fallback educativo] [Mostrar error]  [Mostrar error]   [Mostrar confirmación]
-     ↓                              ↓                      ↓
-[Mostrar error]              [Solicitar parámetros]  [Mostrar mensaje educativo]
+```mermaid
+flowchart TD
+    A[Usuario ejecuta ggfeat] --> B{Sistema valida parámetros}
+    B -->|Válido| C{Analiza complejidad}
+    B -->|Inválido| D[Comando inválido]
+    B -->|Faltantes| E[Parámetros faltantes]
+    
+    C -->|Baja| F[Genera mensaje]
+    C -->|Alta| G[Complejidad alta]
+    
+    F --> H{Ejecuta git add}
+    G --> I[Fallback educativo]
+    
+    H -->|Éxito| J{Ejecuta git commit}
+    H -->|Error| K[Error en add]
+    
+    J -->|Éxito| L[Commit exitoso]
+    J -->|Error| M[Error en commit]
+    
+    D --> N[Mostrar error]
+    E --> O[Solicitar parámetros]
+    I --> P[Mostrar mensaje educativo]
+    K --> Q[Mostrar error]
+    M --> R[Mostrar error]
+    L --> S[Mostrar confirmación]
+    
+    N --> T[Mostrar error]
+    O --> U[Solicitar parámetros]
+    P --> V[Mostrar mensaje educativo]
 ```
 
 #### Flujo de proceso 2: Configuración y gestión de módulos
 
-```
-[Usuario ejecuta ggconfig] → [Sistema detecta subcomando] → [Procesa operación] → [Valida esquema JSON] → [Aplica cambios] → [Confirma aplicación]
-     ↓                              ↓                        ↓                      ↓                ↓
-[Comando inválido]             [Subcomando inválido]    [Error de operación] [Validación falla] [Error aplicación] [Configuración exitosa]
-     ↓                              ↓                        ↓                      ↓                ↓
-[Mostrar error]               [Mostrar ayuda]           [Reintentar]          [Reportar error]   [Rollback]         [Confirmar cambios]
-     ↓                              ↓                        ↓                      ↓                ↓
-[Mostrar error]               [Mostrar ayuda]           [Reintentar]          [Reportar error]   [Rollback]         [Confirmar cambios]
+```mermaid
+flowchart TD
+    A[Usuario ejecuta ggconfig] --> B{Sistema detecta subcomando}
+    B -->|Válido| C{Procesa operación}
+    B -->|Inválido| D[Comando inválido]
+    
+    C -->|Éxito| E{Valida esquema JSON}
+    C -->|Error| F[Error de operación]
+    
+    E -->|Válido| G{Aplica cambios}
+    E -->|Inválido| H[Validación falla]
+    
+    G -->|Éxito| I[Confirma aplicación]
+    G -->|Error| J[Error aplicación]
+    
+    D --> K[Mostrar error]
+    F --> L[Reintentar]
+    H --> M[Reportar error]
+    J --> N[Rollback]
+    I --> O[Confirmar cambios]
+    
+    K --> P[Mostrar error]
+    L --> Q[Reintentar]
+    M --> R[Reportar error]
+    N --> S[Rollback]
+    O --> T[Confirmar cambios]
 ```
 
 #### Flujo de proceso 3: Integración con CI/CD
 
-```
-[Commit exitoso] → [Actualiza tracking IA] → [Ejecuta tests] → [Pipeline CI/CD] → [Valida formato] → [Genera changelog] → [Deploy automático]
-     ↓                   ↓                    ↓                ↓                ↓                ↓                ↓
-[Commit inválido]   [Error tracking]     [Tests fallan]   [Pipeline falla] [Validación falla] [Error changelog] [Deploy manual]
-     ↓                   ↓                    ↓                ↓                ↓                ↓
-[Rechazar commit]   [Continuar sin tracking] [Rechazar commit] [Notificar equipo] [Rechazar commit] [Generar manual] [Intervención manual]
+```mermaid
+flowchart TD
+    A[Commit exitoso] --> B{Actualiza tracking IA}
+    B -->|Éxito| C{Ejecuta tests}
+    B -->|Error| D[Error tracking]
+    
+    C -->|Éxito| E{Pipeline CI/CD}
+    C -->|Falla| F[Tests fallan]
+    
+    E -->|Éxito| G{Valida formato}
+    E -->|Falla| H[Pipeline falla]
+    
+    G -->|Válido| I{Genera changelog}
+    G -->|Inválido| J[Validación falla]
+    
+    I -->|Éxito| K{Deploy automático}
+    I -->|Error| L[Error changelog]
+    
+    K -->|Éxito| M[Deploy exitoso]
+    K -->|Falla| N[Deploy manual]
+    
+    D --> O[Continuar sin tracking]
+    F --> P[Rechazar commit]
+    H --> Q[Notificar equipo]
+    J --> R[Rechazar commit]
+    L --> S[Generar manual]
+    N --> T[Intervención manual]
+    
+    O --> C
+    P --> U[Rechazar commit]
+    Q --> V[Notificar equipo]
+    R --> W[Rechazar commit]
+    S --> X[Generar manual]
+    T --> Y[Intervención manual]
 ```
 
 
