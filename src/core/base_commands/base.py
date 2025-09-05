@@ -19,6 +19,7 @@ Usage:
 
 from abc import ABC, abstractmethod
 from typing import List, Optional, Any, Dict
+import os
 import click
 from ..utils.colors import ColorManager
 from ..config import ConfigManager
@@ -159,6 +160,38 @@ class BaseCommand(ABC):
             # Display user-friendly error message
             click.echo(ColorManager.error(f"Error: {str(e)}"))
             return 1
+    
+    def _is_ai_configured(self) -> bool:
+        """
+        Check if AI is configured and available.
+        
+        This method verifies that AI functionality is properly configured
+        by checking the required configuration settings and environment variables.
+        
+        Returns:
+            bool: True if AI is configured and available, False otherwise
+            
+        Note:
+            This method checks:
+            - ai.enabled is True
+            - ai.provider is set
+            - ai.api_key_env environment variable is available
+        """
+        # Verificar configuración básica
+        if not self.config.get_config('ai.enabled', False):
+            return False
+        
+        # Verificar proveedor
+        provider = self.config.get_config('ai.provider')
+        if not provider:
+            return False
+        
+        # Verificar API key
+        api_key_env = self.config.get_config('ai.api_key_env')
+        if not api_key_env or not os.getenv(api_key_env):
+            return False
+        
+        return True
     
     def get_command_info(self) -> Dict[str, Any]:
         """
