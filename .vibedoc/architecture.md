@@ -95,41 +95,60 @@ src/
 ├── core/                  # Lógica central y abstracciones
 │   ├── __init__.py
 │   ├── config.py          # ConfigManager
-│   ├── git.py             # GitWrapper
+│   ├── git.py             # GitInterface
 │   ├── validation.py      # Validadores
 │   ├── base_commands/     # Comandos base reutilizables
 │   │   ├── __init__.py
 │   │   ├── base.py        # BaseCommand
 │   │   ├── commit.py      # CommitCommand
 │   │   └── config.py      # ConfigCommand
+│   ├── ai/                # Sistema de IA
+│   │   ├── __init__.py
+│   │   ├── complexity_analyzer.py  # ComplexityAnalyzer
+│   │   ├── usage_tracker.py        # AiUsageTracker
+│   │   └── message_generator.py    # AiMessageGenerator
 │   └── utils/             # Utilidades
 │       ├── __init__.py
-│       ├── colors.py      # Sistema de colores
-│       └── logging.py     # Sistema de logging
+│       ├── colors.py      # ColorManager
+│       └── logging.py     # LoggingManager
 └── commands/              # Comandos específicos ejecutables
-    ├── ggfeat.py          # Comando de feature commits
-    ├── ggfix.py           # Comando de fix commits
-    ├── ggbreak.py         # Comando de breaking changes
-    ├── ggdocs.py          # Comando de documentación
-    ├── ggstyle.py         # Comando de cambios de estilo
-    ├── ggrefactor.py      # Comando de refactorización
-    ├── ggtest.py          # Comando de tests
-    ├── ggchore.py         # Comando de tareas de mantenimiento
-    ├── ggperf.py          # Comando de mejoras de rendimiento
-    ├── ggci.py            # Comando de cambios en CI/CD
-    ├── ggbuild.py         # Comando de cambios en build system
-    ├── ggconfig.py        # Gestión de configuración
-    ├── ggai.py            # Generación de commits con IA
-    ├── gga.py             # Git add simplificado
-    ├── ggs.py             # Git status simplificado
-    ├── ggl.py             # Git log simplificado
-    └── ...
+    ├── # Conventional Commits
+    ├── ggfeat.py          # Feature commits
+    ├── ggfix.py           # Fix commits
+    ├── ggdocs.py          # Documentation commits
+    ├── ggstyle.py         # Style commits
+    ├── ggrefactor.py      # Refactor commits
+    ├── ggtest.py          # Test commits
+    ├── ggchore.py         # Chore commits
+    ├── ggperf.py          # Performance commits
+    ├── ggci.py            # CI/CD commits
+    ├── ggbuild.py         # Build system commits
+    ├── ggbreak.py         # Breaking change commits
+    ├── # Git Operations
+    ├── gga.py             # Git add
+    ├── ggs.py             # Git status
+    ├── ggl.py             # Git log
+    ├── ggdif.py           # Git diff
+    ├── ggunstage.py       # Git unstage
+    ├── ggreset.py         # Git reset
+    ├── # Branch Management
+    ├── ggmain.py          # Switch to main
+    ├── ggdevelop.py       # Switch to develop
+    ├── ggb.py             # List/create branches
+    ├── ggmerge.py         # Merge branches
+    ├── # Remote Operations
+    ├── ggpl.py            # Git pull
+    ├── ggpp.py            # Git push
+    ├── # AI & Configuration
+    ├── ggai.py            # AI commands
+    ├── ggconfig.py        # Configuration management
+    └── ggv.py             # Version info
 ```
 
 ### Especificación de Implementación de Comandos
 
 #### Estructura Estándar de un Comando
-Cada comando debe seguir esta estructura:
+Cada comando sigue esta estructura implementada:
 
 ```python
 #!/usr/bin/env python3
@@ -140,9 +159,38 @@ Usage: ggfeat [options] <message>
 """
 
 import click
-from core.config import ConfigManager
-from core.git import GitInterface
-from core.validation import ArgumentValidator
+import sys
+from core.base_commands.base import BaseCommand
+from core.base_commands.commit import CommitCommand
+from core.utils.colors import ColorManager
+
+
+class FeatCommand(BaseCommand):
+    """Command for creating feature commits."""
+    
+    def execute(self, message, scope=None, ai=False, amend=False):
+        """Execute the feat command."""
+        # Si no hay mensaje y IA está habilitada, generar automáticamente
+        if not message and self._is_ai_configured():
+            message = self._generate_ai_message()
+            if not message:
+                return 1
+        
+        # Crear commit command
+        commit_cmd = CommitCommand("feat")
+        
+        # Ejecutar commit (validación incluida en CommitCommand)
+        result = commit_cmd.execute(message, scope, amend)
+        
+        # Manejar resultado
+        if result == 0:
+            click.echo(ColorManager.success("Commit realizado exitosamente"))
+        else:
+            click.echo(ColorManager.error("Error al realizar commit"))
+            return result
+        
+        return result
+
 
 @click.command()
 @click.option('--scope', '-s', help='Scope del commit')
@@ -152,69 +200,68 @@ from core.validation import ArgumentValidator
 def main(scope, ai, amend, message):
     """Commit changes adding the feat prefix to the message"""
     try:
-        # Inicializar componentes
-        config = ConfigManager()
-        git = GitInterface()
-        validator = ArgumentValidator()
-        
-        # Si no hay mensaje y IA está habilitada, generar automáticamente
-        if not message and ai:
-            message = generate_ai_message(git, config)
-        
-        # Validar entrada
-        if message:
-            validator.validate_commit_message(message)
-        
-        # Ejecutar operación
-        git.stage_all_changes()
-        commit_message = f"feat({scope}): {message}" if scope else f"feat: {message}"
-        git.commit(commit_message)
-        
-        # Mostrar resultado
-        click.echo(click.style("✅ Commit realizado exitosamente", fg="green"))
-        
+        command = FeatCommand()
+        result = command.execute(message, scope, ai, amend)
+        sys.exit(result)
     except Exception as e:
-        click.echo(click.style(f"❌ Error: {str(e)}", fg="red"))
+        click.echo(ColorManager.error(f"Error: {str(e)}"))
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()
 ```
 
-#### Abstracciones Reutilizables
+#### Abstracciones Reutilizables Implementadas
 
-**Click Integration**: Todos los comandos usan Click para interfaz unificada:
-- Decoradores `@click.command()` y `@click.option()` para definición de comandos
-- `click.echo()` y `click.style()` para salida con colores
-- Ayuda automática generada por Click
-- Validación automática de argumentos y tipos
+**BaseCommand** (`core/base_commands/base.py`): Clase base para todos los comandos:
+- `execute()`: Método abstracto para ejecutar comando
+- `_is_ai_configured()`: Verificar si IA está configurada
+- `_generate_ai_message()`: Generar mensaje usando IA
+- `_execute_manual_commit()`: Ejecutar commit manual
+- `_get_commit_prefix()`: Obtener prefijo del comando
 
-**ConfigManager** (`core/config.py`): Gestiona configuración jerárquica:
+**CommitCommand** (`core/base_commands/commit.py`): Lógica reutilizable de commits:
+- `execute(message, scope, amend)`: Ejecutar commit con validación
+- Validación automática de mensajes y scopes
+- Integración con GitInterface para operaciones Git
+- Manejo de errores y códigos de salida
+
+**ConfigCommand** (`core/base_commands/config.py`): Gestión de configuración:
+- `execute(action, key, value, level)`: Ejecutar operaciones de configuración
+- Soporte para `get`, `set`, `list`, `reset`
+- Validación de esquemas JSON
+- Manejo de jerarquía de configuración
+
+**ConfigManager** (`core/config.py`): Gestión de configuración jerárquica:
 - `get_config(key, default=None)`: Obtener valor de configuración
+- `set_config(key, value, level)`: Establecer valor de configuración
 - `load_hierarchical_config()`: Cargar configuración siguiendo jerarquía
 - `validate_config(config)`: Validar configuración con esquemas
+- `get_config_level(key)`: Obtener nivel de configuración
+- `list_config_keys(level)`: Listar claves de configuración
+- `reset_config(level, key)`: Resetear configuración
 
 **GitInterface** (`core/git.py`): Interfaz unificada con Git:
-- `stage_all_changes()`: Stage todos los cambios
-- `commit(message)`: Realizar commit
-- `get_current_branch()`: Obtener rama actual
-- `is_git_repository()`: Verificar si es repositorio Git
-
-**ArgumentValidator** (`core/validation.py`): Validación de argumentos:
-- `validate_commit_message(message)`: Validar mensaje de commit
-- `validate_scope(scope)`: Validar scope
-- `validate_required_args(args, count)`: Validar argumentos requeridos
-
-**BaseCommand** (`core/base_commands/base.py`): Clase base para comandos:
-- `execute()`: Método abstracto para ejecutar comando
-- `validate_args()`: Validación común de argumentos
-- `setup_logging()`: Configuración de logging
+- **Operaciones básicas**: `stage_all_changes()`, `commit()`, `get_current_branch()`
+- **Operaciones de ramas**: `switch_branch()`, `get_branches()`, `merge_branch()`
+- **Operaciones remotas**: `pull()`, `push()`, `get_remote_branches()`
+- **Análisis**: `get_diff_content()`, `get_files_to_analyze()`, `get_file_size()`
+- **Validación**: `is_git_repository()`, `validate_clean_working_directory()`
 
 **ColorManager** (`core/utils/colors.py`): Sistema de colores unificado:
 - `success(message)`: Mensajes de éxito en verde
 - `error(message)`: Mensajes de error en rojo
 - `warning(message)`: Mensajes de advertencia en amarillo
 - `info(message)`: Mensajes informativos en azul
+- `operation(message)`: Mensajes de operación en cyan
+- `highlight(message)`: Mensajes destacados en negrita
+
+**LoggingManager** (`core/utils/logging.py`): Sistema de logging:
+- Configuración centralizada de logging
+- Rotación automática de archivos de log
+- Niveles configurables (DEBUG, INFO, WARNING, ERROR)
+- Formato consistente de mensajes de log
 
 ### Interfaz Unificada
 
@@ -542,43 +589,50 @@ Sistema que facilita la instalación, actualización y distribución de ggGit en
 - pyyaml>=6.0 (manejo de configuración)
 - colorama (colores multiplataforma)
 
-**Estructura de Instalación:**
+**Estructura de Instalación (Sistema de Aliases):**
 ```
-~/.gggit/
-├── commands/              # Scripts Python ejecutables (desde src/commands/)
-├── core/                  # Módulos core (desde src/core/)
-├── config/               # Archivos de configuración
-│   ├── default-config.yaml
-│   ├── user-config.yaml
-│   └── modules/
-├── logs/                 # Archivos de log
-└── cache/                # Cache temporal
+ggGit/                    # Directorio del proyecto clonado
+├── src/                  # Código fuente
+│   ├── core/            # Módulos core
+│   └── commands/        # Scripts Python ejecutables
+├── install.py           # Script de instalación Python
+├── install.ps1          # Script de instalación PowerShell
+├── environment.yml      # Dependencias conda
+└── requirements-dev.txt # Dependencias de desarrollo
+
+# Aliases creados en shell config (~/.bashrc, ~/.zshrc, PowerShell profile)
+export GGGIT_ROOT="/path/to/ggGit"
+export PYTHONPATH="$GGGIT_ROOT/src:$PYTHONPATH"
+alias ggfeat='python $GGGIT_ROOT/src/commands/ggfeat.py'
+alias ggfix='python $GGGIT_ROOT/src/commands/ggfix.py'
+# ... (todos los comandos)
 ```
 
-**Proceso de Instalación:**
-1. **Verificación de Dependencias**: Comprobar Python, Git y Conda/Mamba
-2. **Configuración del Ambiente**: Crear ambiente virtual con `environment.yml`
-3. **Creación de Directorios**: Estructura de directorios estándar
-4. **Copia de Módulos Core**: Instalar módulos de `src/core/` a `~/.gggit/core/`
-5. **Copia de Comandos**: Instalar scripts Python ejecutables de `src/commands/` a `~/.gggit/commands/`
-6. **Configuración de PATH**: Agregar `~/.gggit/commands` al PATH
-7. **Configuración Inicial**: Crear archivos de configuración por defecto
-8. **Verificación**: Comprobar que la instalación fue exitosa
+**Proceso de Instalación (Sistema de Aliases):**
+1. **Verificación de Dependencias**: Comprobar Python 3.12+ y Git
+2. **Clonado del Repositorio**: `git clone https://github.com/novafuria/ggGit`
+3. **Instalación de Dependencias**: `pip install click pyyaml jsonschema colorama`
+4. **Creación de Aliases**: Script automático crea aliases en shell config
+5. **Configuración de Variables**: `GGGIT_ROOT` y `PYTHONPATH` configurados
+6. **Verificación**: Comprobar que la instalación fue exitosa
+7. **Activación**: Reiniciar terminal o ejecutar `source ~/.bashrc`
 
 #### 2. Especificación de Instalación desde Repositorio
 
-**Instalación Directa:**
+**Instalación Directa (Sistema de Aliases):**
 - Clonar repositorio desde GitHub
-- Ejecutar script de instalación local
-- Copia automática de `src/core/` y `src/commands/` a `~/.gggit/`
-- Configuración automática de PATH
-- Creación de directorios de configuración
+- Ejecutar `python install.py` (Linux/macOS) o `.\install.ps1` (Windows)
+- Creación automática de aliases en shell config
+- Configuración automática de variables de entorno
+- Instalación automática de dependencias Python
 
-**Ventajas de Instalación Local:**
-- Consistencia entre usuarios y CI/CD
-- Sin dependencia de gestores de paquetes
-- Actualizaciones mediante `git pull`
-- Fácil desarrollo y testing
+**Ventajas del Sistema de Aliases:**
+- **Simplicidad**: Solo clonar y ejecutar script
+- **Consistencia**: Mismo código fuente para todos los usuarios
+- **Actualizaciones**: `git pull` para obtener últimas versiones
+- **Desarrollo**: Fácil testing y desarrollo local
+- **Multiplataforma**: Funciona en Linux, macOS y Windows
+- **Sin PATH**: No requiere modificar PATH del sistema
 
 #### 3. Gestión de Dependencias y Ambientes
 
@@ -787,7 +841,7 @@ Sistema que proporciona una interfaz unificada para interactuar con Git, manejan
 ## Sistema de IA para generación de commits
 
 ### Descripción
-Sistema que utiliza inteligencia artificial para analizar cambios y generar mensajes de commit automáticamente. La integración de IA está simplificada para usar solo proveedores con API compatible con OpenAI.
+Sistema que utiliza inteligencia artificial para analizar cambios y generar mensajes de commit automáticamente. La integración de IA está implementada con componentes modulares que proporcionan análisis de complejidad, generación de mensajes y tracking de uso.
 
 ### Principios de Diseño de IA
 
@@ -797,114 +851,200 @@ Sistema que utiliza inteligencia artificial para analizar cambios y generar mens
 
 **Integración Natural**: La IA se integra naturalmente en comandos existentes sin requerir configuración adicional.
 
+**Análisis Inteligente**: El sistema analiza la complejidad de los cambios para decidir entre generación automática con IA o mensajes educativos de fallback.
+
+**Tracking de Uso**: Monitoreo de consumo de IA, costos y límites para control de gastos.
+
 ### Componentes
 
-#### 1. Especificación del Analizador de Cambios
-
-**Análisis de Archivos Staged:**
-- Categorización automática de archivos por tipo (source, test, docs, config, assets)
-- Detección de patrones de cambios (bug fix, feature, refactor, docs)
-- Análisis de diffs para determinar el tipo de cambio
-- Sugerencia automática del tipo de commit
-
-**Categorización de Archivos:**
-- **Source**: `.py`, `.js`, `.java`, `.cpp`, `.c`, `.go`, `.rs`
-- **Test**: Archivos con `test`, `spec`, `.test`, `.spec`
-- **Docs**: `.md`, `.txt`, `.rst`, `.adoc`
-- **Config**: `.yml`, `.yaml`, `.json`, `.toml`, `.ini`
-- **Assets**: Imágenes, fuentes, archivos binarios
-
-**Patrones de Cambio:**
-- **Bug Fix**: Cambios en lógica de manejo de errores, correcciones de bugs
-- **Feature**: Nuevas funcionalidades, métodos, clases
-- **Refactor**: Reestructuración de código sin cambiar funcionalidad
-- **Docs**: Cambios en documentación
-- **Test**: Agregado o modificación de tests
-
-#### 2. Especificación del Generador de Mensajes con IA
-
-**Proveedores de IA Soportados:**
-- **OpenAI**: GPT-3.5-turbo, GPT-4 (API estándar)
-- **Anthropic**: Claude (API compatible con OpenAI)
-- **Azure OpenAI**: Servicios de Azure (API compatible)
-- **Local**: Modelos locales con API compatible (opcional)
-
-**Configuración de IA:**
-```yaml
-ai:
-  enabled: true
-  provider: "openai"
-  api_key_env: "OPENAI_API_KEY"
-  model: "gpt-3.5-turbo"
-  base_url: "https://api.openai.com/v1"  # Opcional para proveedores alternativos
-```
-
-**Prompt Estándar:**
-El sistema debe generar prompts que incluyan:
-- Lista de archivos modificados
-- Categorización de archivos
-- Patrones de cambio detectados
-- Tipo de commit sugerido
-- Instrucciones para formato Conventional Commits
-
-**Validación de Respuesta:**
-- Verificar que el mensaje siga formato Conventional Commits
-- Validar longitud máxima de descripción
-- Confirmar que el tipo sugerido sea válido
-- Proponer correcciones si es necesario
-
-#### 3. Especificación de Integración de IA en Comandos Existentes
-
-**IA Automática en Comandos:**
-- **ggfeat sin argumentos**: Analizar cambios y generar mensaje automáticamente
-- **ggfix sin argumentos**: Analizar cambios y generar mensaje automáticamente
-- **ggbreak sin argumentos**: Analizar cambios y generar mensaje automáticamente
-
-**Flags de IA:**
-- `--ai`: Habilitar generación automática con IA
-- `--no-ai`: Deshabilitar IA (comportamiento manual)
-- `--ai-provider <provider>`: Especificar proveedor de IA
-- `--ai-model <model>`: Especificar modelo de IA
-
-**Flujo de IA Automática:**
-1. Usuario ejecuta comando sin argumentos
-2. Sistema detecta que se requiere mensaje
-3. Analiza cambios staged automáticamente
-4. Genera mensaje con IA
-5. Muestra sugerencia al usuario
-6. Permite aceptar, rechazar o modificar
-
-#### 4. Especificación del Comando ggai Conversacional
+#### 1. ComplexityAnalyzer - Analizador de Complejidad
 
 **Funcionalidad:**
-- Iniciar conversación interactiva con IA
-- Ejecutar acciones complejas relacionadas con Git
-- Generar scripts y comandos automáticamente
-- Resolver problemas de Git con asistencia de IA
+- Analiza la complejidad de cambios para decidir entre IA y fallback
+- Evalúa número de archivos, líneas de diff y tamaño de archivos
+- Aplica límites configurables para determinar si usar IA
+- Genera mensajes educativos de fallback cuando no se recomienda IA
 
-**Modos de Operación:**
-- **Conversacional**: Chat interactivo con IA
-- **Ejecutivo**: Ejecutar comandos sugeridos por IA
-- **Asistente**: Ayuda para resolver problemas de Git
+**Métodos Principales:**
+- `should_use_ai()`: Determina si usar IA basado en complejidad
+- `get_fallback_message()`: Genera mensaje educativo de fallback
+- `get_analysis_summary()`: Proporciona resumen del análisis
 
-**Opciones del Comando:**
-- `--conversation`: Modo conversacional interactivo
-- `--execute`: Ejecutar comandos sugeridos por IA
-- `--help`: Modo asistente para problemas
-- `--provider <provider>`: Especificar proveedor de IA
-- `--model <model>`: Especificar modelo de IA
+**Criterios de Análisis:**
+- **Número de archivos**: Límite configurable (default: 10)
+- **Líneas de diff**: Límite configurable (default: 200)
+- **Tamaño de archivos**: Límite configurable (default: 5000 bytes)
+- **Tipos de archivos**: Categorización por extensión y patrón
 
-**Ejemplos de Uso:**
-```bash
-# Conversación interactiva
-ggai --conversation
+#### 2. AiUsageTracker - Tracking de Uso de IA
 
-# Ejecutar comandos sugeridos por IA
-ggai --execute "resuelve conflictos de merge"
+**Funcionalidad:**
+- Monitorea consumo de IA, tokens y costos estimados
+- Aplica límites de costo configurados
+- Almacena estadísticas en archivo YAML
+- Proporciona comandos para reset y consulta de uso
 
-# Asistente para problemas
-ggai --help "error al hacer push"
+**Métodos Principales:**
+- `increment_usage()`: Incrementa contadores de uso
+- `get_usage_stats()`: Obtiene estadísticas de uso
+- `is_cost_limit_exceeded()`: Verifica si se excedió límite de costo
+- `reset_usage()`: Resetea contadores de uso
+
+**Configuración:**
+- Archivo de tracking: `.gggit/ai-usage.yaml` (configurable)
+- Límite de costo: `ai.cost_limit` en configuración
+- Tracking habilitado: `ai.tracking_enabled` en configuración
+
+#### 3. AiMessageGenerator - Generador de Mensajes con IA
+
+**Funcionalidad:**
+- Genera mensajes de commit usando servicios de IA
+- Implementa versión mock para desarrollo y testing
+- Integra con tracking de uso para monitoreo
+- Soporta múltiples proveedores de IA
+
+**Métodos Principales:**
+- `generate_message()`: Genera mensaje basado en archivos y diff
+- `test_connection()`: Prueba conexión con proveedor de IA
+- `_analyze_file_types()`: Analiza tipos de archivos modificados
+- `_analyze_change_type()`: Determina tipo de cambio
+
+**Proveedores Soportados:**
+- **OpenAI**: GPT-3.5-turbo, GPT-4
+- **Anthropic**: Claude (API compatible)
+- **Azure OpenAI**: Servicios empresariales
+- **Local**: Ollama y otros modelos locales
+
+#### 4. Comando ggai - Interfaz de IA
+
+**Funcionalidad:**
+- Comando principal para gestión de IA
+- Subcomandos para diferentes operaciones
+- Integración con todos los componentes de IA
+- Interfaz unificada para testing y monitoreo
+
+**Subcomandos:**
+- `ggai main`: Genera mensaje de commit usando IA
+- `ggai usage`: Muestra estadísticas de uso de IA
+- `ggai usage reset`: Resetea contadores de uso
+- `ggai test`: Prueba conexión con proveedor de IA
+
+**Configuración de IA Implementada:**
+```yaml
+ai:
+  enabled: true                    # Habilitar funcionalidades de IA
+  provider: "openai"              # openai, anthropic, azure, local
+  api_key_env: "OPENAI_API_KEY"   # Variable de entorno para API key
+  model: "gpt-3.5-turbo"          # Modelo de IA a utilizar
+  base_url: "https://api.openai.com/v1"  # URL base (opcional para proveedores alternativos)
+  cost_limit: 5.00                # Límite de costo en USD por período
+  tracking_enabled: true          # Habilitar tracking de uso
+  usage_file: ".gggit/ai-usage.yaml"  # Archivo de tracking de uso
+  analysis:                       # Configuración de análisis de complejidad
+    max_files: 10                 # Máximo número de archivos para análisis
+    max_diff_lines: 200           # Máximo número de líneas de diff
+    max_file_size: 5000           # Máximo tamaño de archivo en bytes
 ```
+
+**Parámetros de Configuración Detallados:**
+
+| Parámetro | Tipo | Default | Descripción |
+|-----------|------|---------|-------------|
+| `ai.enabled` | boolean | `false` | Habilitar/deshabilitar funcionalidades de IA |
+| `ai.provider` | string | `"openai"` | Proveedor de IA (openai, anthropic, azure, local) |
+| `ai.api_key_env` | string | `"OPENAI_API_KEY"` | Nombre de variable de entorno para API key |
+| `ai.model` | string | `"gpt-3.5-turbo"` | Modelo de IA a utilizar |
+| `ai.base_url` | string | `null` | URL base para proveedores alternativos |
+| `ai.cost_limit` | number | `5.00` | Límite de costo en USD por período |
+| `ai.tracking_enabled` | boolean | `true` | Habilitar tracking de uso de IA |
+| `ai.usage_file` | string | `".gggit/ai-usage.yaml"` | Archivo para tracking de uso |
+| `ai.analysis.max_files` | integer | `10` | Máximo archivos para análisis de complejidad |
+| `ai.analysis.max_diff_lines` | integer | `200` | Máximo líneas de diff para análisis |
+| `ai.analysis.max_file_size` | integer | `5000` | Máximo tamaño de archivo en bytes |
+
+**Integración en Comandos Existentes:**
+- **IA Automática**: Comandos sin argumentos activan IA automáticamente
+- **Análisis Inteligente**: ComplexityAnalyzer decide si usar IA o fallback
+- **Fallback Educativo**: Mensajes informativos cuando no se recomienda IA
+- **Tracking Automático**: Monitoreo de uso en todas las operaciones de IA
+
+#### 5. Integración de IA en Comandos Existentes
+
+**IA Automática en Comandos:**
+- **Comandos sin argumentos**: Todos los comandos de commit activan IA automáticamente
+- **Análisis de complejidad**: ComplexityAnalyzer evalúa si usar IA o fallback
+- **Fallback inteligente**: Mensajes educativos cuando no se recomienda IA
+- **Tracking automático**: Monitoreo de uso en todas las operaciones
+
+**Flujo de IA Automática:**
+1. Usuario ejecuta comando sin argumentos (ej: `ggfeat`)
+2. Sistema verifica si IA está habilitada
+3. ComplexityAnalyzer evalúa complejidad de cambios
+4. Si se recomienda IA: genera mensaje automáticamente
+5. Si no se recomienda IA: muestra mensaje educativo de fallback
+6. Tracking de uso se actualiza automáticamente
+
+**Comandos con IA Integrada:**
+- `ggfeat`, `ggfix`, `ggdocs`, `ggstyle`, `ggchore`
+- `ggbuild`, `ggci`, `ggperf`, `ggtest`, `ggbreak`
+- Todos los comandos de commit convencional
+
+**Configuración de IA por Comando:**
+- Configuración global en `ai.*` se aplica a todos los comandos
+- No hay flags específicos de IA (comportamiento automático)
+- Fallback educativo configurable por tipo de comando
+
+#### 6. Arquitectura de Integración de IA
+
+**Patrón de Integración:**
+```python
+# En cada comando de commit
+def execute(self, message, scope=None, ai=False, amend=False):
+    # Verificar si IA está configurada
+    if not message and self._is_ai_configured():
+        # Analizar complejidad
+        if self.analyzer.should_use_ai():
+            # Generar mensaje con IA
+            message = self._generate_ai_message()
+        else:
+            # Mostrar fallback educativo
+            self._show_fallback_message()
+            return 1
+    
+    # Continuar con commit normal
+    return self._execute_manual_commit(message, scope, amend)
+```
+
+**Componentes de Integración:**
+- **BaseCommand**: Métodos helper para IA (`_is_ai_configured`, `_generate_ai_message`)
+- **CommitCommand**: Lógica de commit reutilizable
+- **ComplexityAnalyzer**: Análisis de complejidad
+- **AiMessageGenerator**: Generación de mensajes
+- **AiUsageTracker**: Tracking de uso
+
+**Configuración de IA por Componente:**
+
+**ComplexityAnalyzer:**
+- `ai.analysis.max_files`: Límite de archivos para análisis
+- `ai.analysis.max_diff_lines`: Límite de líneas de diff
+- `ai.analysis.max_file_size`: Límite de tamaño de archivo
+
+**AiUsageTracker:**
+- `ai.tracking_enabled`: Habilitar/deshabilitar tracking
+- `ai.usage_file`: Archivo de almacenamiento de estadísticas
+- `ai.cost_limit`: Límite de costo en USD
+
+**AiMessageGenerator:**
+- `ai.enabled`: Habilitar/deshabilitar generación de mensajes
+- `ai.provider`: Proveedor de IA (openai, anthropic, azure, local)
+- `ai.api_key_env`: Variable de entorno para API key
+- `ai.model`: Modelo de IA a utilizar
+- `ai.base_url`: URL base para proveedores alternativos
+
+**Integración en Comandos:**
+- `ai.enabled`: Controla activación global de IA
+- Todos los parámetros se aplican automáticamente a comandos de commit
+- No requiere configuración adicional por comando
 
 ## Sistema de observabilidad y logging
 
