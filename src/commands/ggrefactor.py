@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-ggfeat - Commit changes adding the feat prefix to the message
+ggrefactor - Commit changes adding the refactor prefix to the message
 
-Usage: ggfeat [options] <message>
+Usage: ggrefactor [options] <message>
 """
 
 import click
@@ -12,27 +12,23 @@ from src.core.base_commands.commit import CommitCommand
 from src.core.utils.colors import ColorManager
 
 
-class FeatCommand(BaseCommand):
-    """Command for creating feature commits."""
+class RefactorCommand(BaseCommand):
+    """Command for creating refactor commits."""
     
     def execute(self, message, scope=None, ai=False, amend=False):
-        """Execute the feat command."""
+        """Execute the refactor command."""
         # If no message and AI is enabled, generate automatically
         if not message and ai:
-            # TODO: Implement AI message generation
             click.echo(ColorManager.warning("AI functionality not yet implemented"))
             return 1
         
-        # Validate input
-        if message:
-            self.validator.validate_commit_message(message)
-        
         # Create commit command
-        commit_cmd = CommitCommand("feat")
+        commit_cmd = CommitCommand("refactor")
         
-        # Execute commit
+        # Execute commit (validation included in CommitCommand)
         result = commit_cmd.execute(message, scope, amend)
         
+        # Handle result
         if result == 0:
             click.echo(ColorManager.success("Commit realizado exitosamente"))
         else:
@@ -48,10 +44,10 @@ class FeatCommand(BaseCommand):
 @click.option('--amend', '-a', is_flag=True, help='Amend the last commit')
 @click.argument('message', required=False)
 def main(scope, ai, amend, message):
-    """Commit changes adding the feat prefix to the message"""
+    """Commit changes adding the refactor prefix to the message"""
     try:
         # Create and run command
-        cmd = FeatCommand()
+        cmd = RefactorCommand()
         return cmd.run(message=message, scope=scope, ai=ai, amend=amend)
         
     except Exception as e:
