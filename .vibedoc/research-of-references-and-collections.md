@@ -110,10 +110,10 @@ Existe una oportunidad para crear herramientas que complementen la integración 
 Herramientas como GitHub Copilot, Tabnine, y otras utilizan IA para sugerir código, documentación, y mensajes de commit basándose en el contexto del código y los cambios realizados.
 
 #### Puntos de dolor
-Aunque estas herramientas son efectivas para sugerir código y documentación, su integración con Git y la generación de mensajes de commit específicos es limitada. Muchas están atadas a IDEs específicos y no proporcionan la flexibilidad de línea de comandos que prefieren algunos desarrolladores.
+Aunque estas herramientas son efectivas para sugerir código y documentación, su integración con Git y la generación de mensajes de commit específicos es limitada. Muchas están atadas a IDEs específicos y no proporcionan la flexibilidad de línea de comandos que prefieren algunos desarrolladores. Además, no hay herramientas que analicen automáticamente la complejidad de los cambios para decidir cuándo usar IA y cuándo proporcionar feedback educativo, ni sistemas de tracking de uso de IA para control de costos.
 
 #### Oportunidades de mejora
-Existe una oportunidad clara para crear herramientas de línea de comandos que integren capacidades de IA para la generación automática de mensajes de commit, proporcionando la flexibilidad de la terminal con la inteligencia de las herramientas de IA modernas.
+Existe una oportunidad clara para crear herramientas de línea de comandos que integren capacidades de IA para la generación automática de mensajes de commit, proporcionando la flexibilidad de la terminal con la inteligencia de las herramientas de IA modernas. Esta oportunidad incluye el desarrollo de sistemas de análisis de complejidad que decidan automáticamente cuándo usar IA y cuándo proporcionar feedback educativo, así como sistemas de tracking de uso de IA para control de costos en entornos corporativos.
 
 ## Colecciones
 
@@ -220,3 +220,8 @@ Colección de herramientas, librerías y recursos relacionados con la integraci�
 - [OpenAI Codex](https://openai.com/blog/openai-codex/) - Modelo de IA para generación de código
 - [AI Commit Message Generator](https://github.com/di-sikshya/ai-commit-message-generator) - Generador de mensajes de commit con IA
 - [Conventional Commits with AI](https://github.com/search?q=conventional+commits+ai) - Búsqueda de herramientas de IA para Conventional Commits
+- [Ollama](https://ollama.ai/) - Herramienta para ejecutar modelos de IA localmente
+- [Anthropic Claude](https://www.anthropic.com/) - Modelo de IA para generación de código y documentación
+- [Azure OpenAI](https://azure.microsoft.com/en-us/products/ai-services/openai-service) - Servicios de IA empresariales
+- [Commit Message Generator](https://github.com/ahmadawais/commit-message-generator) - Generador de mensajes de commit usando IA
+- [AI Code Review](https://github.com/search?q=ai+code+review) - Herramientas de IA para revisión de código

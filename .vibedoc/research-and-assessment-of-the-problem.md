@@ -16,7 +16,7 @@
 
 ## Introducción al problema
 
-El problema que enfrentan los desarrolladores y equipos de desarrollo es la ineficiencia y la falta de consistencia en el uso de Git, especialmente en lo que respecta a la implementación de Conventional Commits. Los procesos actuales de trabajo con Git son manuales, propensos a errores y requieren un conocimiento técnico profundo que no todos los miembros del equipo poseen.
+El problema que enfrentan los desarrolladores y equipos de desarrollo es la ineficiencia y la falta de consistencia en el uso de Git, especialmente en lo que respecta a la implementación de Conventional Commits. Los procesos actuales de trabajo con Git son manuales, propensos a errores y requieren un conocimiento técnico profundo que no todos los miembros del equipo poseen. Además, la generación de mensajes de commit descriptivos y estructurados sigue siendo un proceso manual que consume tiempo y no aprovecha las capacidades de inteligencia artificial disponibles.
 
 Los flujos de trabajo actuales se basan en comandos Git nativos que son verbosos, difíciles de recordar y no proporcionan validaciones automáticas para mantener la consistencia en los mensajes de commit. Esto resulta en un historial de Git fragmentado, dificulta la automatización de procesos de CI/CD y genera fricción en el flujo de trabajo diario de los desarrolladores.
 
@@ -343,6 +343,8 @@ graph TD
 - **Inconsistencia**: Diferentes desarrolladores pueden describir cambios similares de manera diferente
 - **Falta de contexto**: No siempre es claro qué cambios son más importantes o relevantes
 - **Dificultad de descripción**: Cambios complejos pueden ser difíciles de resumir en una línea
+- **Falta de herramientas de IA**: No hay herramientas integradas que puedan analizar cambios automáticamente y sugerir mensajes de commit apropiados
+- **Tiempo de generación**: El proceso manual de escribir mensajes descriptivos consume tiempo valioso de desarrollo
 
 ## 🔗 Integraciones con otros sistemas
 
