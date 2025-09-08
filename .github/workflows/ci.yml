@@ -122,7 +122,7 @@ jobs:
         pip install -r requirements-dev.txt
     
     - name: Download test results
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v5
       with:
         name: test-results-3.12
         path: test-results/
