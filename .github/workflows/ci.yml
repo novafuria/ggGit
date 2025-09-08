@@ -81,7 +81,7 @@ jobs:
         pytest tests/ --cov=src --cov-report=xml --cov-report=html --cov-report=term-missing --junitxml=test-results-all.xml --cov-fail-under=80
     
     - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v5
       with:
         file: ./coverage.xml
         flags: unittests
