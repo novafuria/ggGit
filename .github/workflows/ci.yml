@@ -30,7 +30,7 @@ jobs:
         channel-priority: strict
     
     - name: Cache conda dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.conda/pkgs
         key: ${{ runner.os }}-conda-${{ hashFiles('environment.yml') }}
