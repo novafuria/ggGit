@@ -101,6 +101,6 @@ ideas/
 
 ## Referencias
 
-- [1.3 - reflexion-final-iniciativa-adopcion-vibedoc](1.3 - reflexion-final-iniciativa-adopcion-vibedoc.md)
+- [1b - reflexion-final-iniciativa-adopcion-vibedoc](1.3 - reflexion-final-iniciativa-adopcion-vibedoc.md)
 - [2.1 - procesos validacion documentacion-codigo](2.1 - procesos validacion documentacion-codigo.md)
 - [2.2 - sincronizacion entre zettels](2.2 - sincronizacion entre zettels.md)

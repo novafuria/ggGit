@@ -123,4 +123,4 @@ El `LoggingManager` está completamente funcional y integrado. Los comandos `ggf
 ## Referencias
 
 - [STORY-1.2.3.3-implementacion-loggingmanager-basico.md](../planning/iniciatives/INI-1-adopcion-vibedoc-gggit/epics/EPIC-1.2-adecuacion-codigo-arquitectura/stories/STORY-1.2.3.3-implementacion-loggingmanager-basico.md)
-- [1.2.3.3 - analisis alcance loggingmanager.md](./1.2.3.3%20-%20analisis%20alcance%20loggingmanager.md)
+- [3a5 - analisis alcance loggingmanager.md](./3a5%20-%20analisis%20alcance%20loggingmanager.md)

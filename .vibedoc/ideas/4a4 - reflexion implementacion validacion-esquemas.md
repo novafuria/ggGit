@@ -178,4 +178,4 @@ El sistema de validación está completamente funcional. Las siguientes historia
 ## Referencias
 
 - [STORY-1.2.4.2-implementacion-validacion-esquemas.md](../planning/iniciatives/INI-1-adopcion-vibedoc-gggit/epics/EPIC-1.2-adecuacion-codigo-arquitectura/stories/STORY-1.2.4.2-implementacion-validacion-esquemas.md)
-- [1.2.4.1 - reflexion implementacion configmanager-basico.md](./1.2.4.1%20-%20reflexion%20implementacion%20configmanager-basico.md)
+- [4a2 - reflexion implementacion configmanager-basico.md](./4a2%20-%20reflexion%20implementacion%20configmanager-basico.md)

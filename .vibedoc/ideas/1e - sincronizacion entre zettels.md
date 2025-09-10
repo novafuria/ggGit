@@ -8,7 +8,7 @@ La metodología Vibedoc actual no proporciona mecanismos explícitos para detect
 
 ## Contexto
 
-Esta idea surge de la reflexión documentada en [1.2.2.3 - reflexion implementacion abstracciones](1.2.2.3 - reflexion implementacion abstracciones.md), específicamente de la sección "Identificación de Mejoras" donde se identificó la **importancia de la sincronización entre diferentes zettels** como un punto crítico para la metodología Vibedoc.
+Esta idea surge de la reflexión documentada en [2b3 - reflexion implementacion abstracciones](1.2.2.3 - reflexion implementacion abstracciones.md), específicamente de la sección "Identificación de Mejoras" donde se identificó la **importancia de la sincronización entre diferentes zettels** como un punto crítico para la metodología Vibedoc.
 
 ## Problema Identificado
 
@@ -116,7 +116,7 @@ Desarrollar herramientas que:
 
 ## Referencias
 
-- [1.2.2.3 - reflexion implementacion abstracciones](1.2.2.3 - reflexion implementacion abstracciones.md)
-- [1.2.7 - soporte para conda e instalacion de dependencias](1.2.7 - soporte para conda e instalacion de dependencias.md)
-- [1.2.2.1 - incorporar github actions para unitetests](1.2.2.1 - incorporar github actions para unitetests.md)
-- [1.2.2.2 - decisiones implementacion abstracciones](1.2.2.2 - decisiones implementacion abstracciones.md)
+- [2b3 - reflexion implementacion abstracciones](1.2.2.3 - reflexion implementacion abstracciones.md)
+- [6a - soporte conda instalacion dependencias](1.2.7 - soporte para conda e instalacion de dependencias.md)
+- [2b1 - incorporar github actions unitetests](2b1%20-%20incorporar%20github%20actions%20unitetests.md)
+- [2b2 - decisiones implementacion abstracciones](1.2.2.2 - decisiones implementacion abstracciones.md)

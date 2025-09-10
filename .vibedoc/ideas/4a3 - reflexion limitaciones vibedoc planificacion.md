@@ -70,6 +70,6 @@ La metodología Vibedoc sigue siendo valiosa para la planificación y documentac
 
 ## Referencias
 
-- [1.2.4 - comando de configuracion](1.2.4 - comando de configuracion.md)
+- [4a1 - comando de configuracion](1.2.4 - comando de configuracion.md)
 - [architecture.md](../architecture.md)
-- [1.2.3 - comandos base](1.2.3 - comandos base.md)
+- [3a - comandos base](1.2.3 - comandos base.md)

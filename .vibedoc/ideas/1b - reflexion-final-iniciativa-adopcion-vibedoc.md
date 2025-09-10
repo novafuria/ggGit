@@ -283,24 +283,24 @@ La implementación identificó áreas de mejora para Vibedoc:
 ## Referencias
 
 ### **Zettels de Reflexión**
-- [1.2.2.3 - reflexion implementacion abstracciones](1.2.2.3 - reflexion implementacion abstracciones.md)
-- [1.2.3.2 - reflexion comandos base](1.2.3.2 - reflexion comandos base.md)
-- [1.2.4.2 - reflexion comandos especificos](1.2.4.2 - reflexion comandos especificos.md)
-- [1.2.5.2 - reflexion comandos especificos](1.2.5.2 - reflexion comandos especificos.md)
-- [1.2.7.1.2 - reflexion configuracion ia basica](1.2.7.1.2 - reflexion configuracion ia basica.md)
-- [1.2.7.2.2 - reflexion analisis complejidad](1.2.7.2.2 - reflexion analisis complejidad.md)
-- [1.2.7.3.2 - reflexion comando ggai basico](1.2.7.3.2 - reflexion comando ggai basico.md)
-- [1.2.7.4.2 - reflexion integracion comandos existentes](1.2.7.4.2 - reflexion integracion comandos existentes.md)
+- [2b3 - reflexion implementacion abstracciones](1.2.2.3 - reflexion implementacion abstracciones.md)
+- [3a4 - reflexion implementacion commitcommand](1.2.3.2 - reflexion comandos base.md)
+- [4a4 - reflexion implementacion validacion-esquemas](1.2.4.2 - reflexion comandos especificos.md)
+- [3b9 - reflexion comandos-conventional-commits-especializados](1.2.5.2 - reflexion comandos especificos.md)
+- [9b2 - reflexion-configuracion-ia-basica](1.2.7.1.2 - reflexion configuracion ia basica.md)
+- [9b4 - reflexion-analisis-complejidad](1.2.7.2.2 - reflexion analisis complejidad.md)
+- [9b6 - reflexion-comando-ggai-basico](1.2.7.3.2 - reflexion comando ggai basico.md)
+- [9b8 - reflexion-integracion-comandos-existentes](1.2.7.4.2 - reflexion integracion comandos existentes.md)
 
 ### **Zettels de Decisiones**
-- [1.2.2.2 - decisiones implementacion abstracciones](1.2.2.2 - decisiones implementacion abstracciones.md)
-- [1.2.3.1 - decisiones comandos base](1.2.3.1 - decisiones comandos base.md)
-- [1.2.4.1 - decisiones comandos especificos](1.2.4.1 - decisiones comandos especificos.md)
-- [1.2.5.1 - decisiones comandos especificos](1.2.5.1 - decisiones comandos especificos.md)
-- [1.2.7.1.1 - decisiones configuracion ia basica](1.2.7.1.1 - decisiones configuracion ia basica.md)
-- [1.2.7.2.1 - decisiones analisis complejidad](1.2.7.2.1 - decisiones analisis complejidad.md)
-- [1.2.7.3.1 - decisiones comando ggai basico](1.2.7.3.1 - decisiones comando ggai basico.md)
-- [1.2.7.4.1 - decisiones integracion comandos existentes](1.2.7.4.1 - decisiones integracion comandos existentes.md)
+- [2b2 - decisiones implementacion abstracciones](1.2.2.2 - decisiones implementacion abstracciones.md)
+- [3a1 - patrones manejo errores gitinterface](1.2.3.1 - decisiones comandos base.md)
+- [4a2 - reflexion implementacion configmanager-basico](1.2.4.1 - decisiones comandos especificos.md)
+- [3b4 - decisiones story-1.2.5.1](1.2.5.1 - decisiones comandos especificos.md)
+- [9b1 - decisiones-configuracion-ia-basica](1.2.7.1.1 - decisiones configuracion ia basica.md)
+- [9b3 - decisiones-analisis-complejidad](1.2.7.2.1 - decisiones analisis complejidad.md)
+- [9b5 - decisiones-comando-ggai-basico](1.2.7.3.1 - decisiones comando ggai basico.md)
+- [9b7 - decisiones-integracion-comandos-existentes](1.2.7.4.1 - decisiones integracion comandos existentes.md)
 
 ### **Documentación de Vibedoc**
 - [README.md](README.md)

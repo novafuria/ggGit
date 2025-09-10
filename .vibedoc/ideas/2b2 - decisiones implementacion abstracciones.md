@@ -1,7 +1,7 @@
 # Decisiones: Implementación de Abstracciones
 
 ## Contexto
-Este zettel documenta las decisiones consensuadas para la implementación de abstracciones basadas en el análisis de la idea [1.2.2 - implementacion de abstracciones](1.2.2 - implementacion de abstracciones.md).
+Este zettel documenta las decisiones consensuadas para la implementación de abstracciones basadas en el análisis de la idea [2b - implementacion abstracciones](1.2.2 - implementacion de abstracciones.md).
 
 ## Decisiones Técnicas
 

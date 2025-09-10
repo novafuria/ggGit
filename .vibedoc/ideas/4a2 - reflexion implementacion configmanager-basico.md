@@ -155,4 +155,4 @@ El `ConfigManager` básico está completamente funcional. Las siguientes histori
 ## Referencias
 
 - [STORY-1.2.4.1-implementacion-configmanager-basico.md](../planning/iniciatives/INI-1-adopcion-vibedoc-gggit/epics/EPIC-1.2-adecuacion-codigo-arquitectura/stories/STORY-1.2.4.1-implementacion-configmanager-basico.md)
-- [1.2.4 - analisis serie historias configuracion.md](./1.2.4%20-%20analisis%20serie%20historias%20configuracion.md)
+- [4a - analisis serie historias configuracion.md](./4a%20-%20analisis%20serie%20historias%20configuracion.md)

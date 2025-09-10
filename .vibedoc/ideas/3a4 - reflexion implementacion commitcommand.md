@@ -101,4 +101,4 @@ La implementación está completa y funcional. Los comandos `ggfeat`, `ggfix`, y
 ## Referencias
 
 - [STORY-1.2.3.2-implementacion-commitcommand-execute.md](../planning/iniciatives/INI-1-adopcion-vibedoc-gggit/epics/EPIC-1.2-adecuacion-codigo-arquitectura/stories/STORY-1.2.3.2-implementacion-commitcommand-execute.md)
-- [1.2.3.2 - ajustes alcance commitcommand.md](./1.2.3.2%20-%20ajustes%20alcance%20commitcommand.md)
+- [3a3 - ajustes alcance commitcommand.md](./3a3%20-%20ajustes%20alcance%20commitcommand.md)

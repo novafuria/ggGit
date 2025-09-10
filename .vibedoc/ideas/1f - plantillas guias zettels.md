@@ -8,7 +8,7 @@ La metodología Vibedoc actual no proporciona plantillas específicas para difer
 
 ## Contexto
 
-Esta idea surge de la reflexión documentada en [1.2.2.3 - reflexion implementacion abstracciones](1.2.2.3 - reflexion implementacion abstracciones.md), específicamente de la sección "Identificación de Mejoras" donde se identificó la necesidad de **plantillas y guías más específicas** para diferentes tipos de zettels como una mejora importante para la metodología Vibedoc.
+Esta idea surge de la reflexión documentada en [2b3 - reflexion implementacion abstracciones](1.2.2.3 - reflexion implementacion abstracciones.md), específicamente de la sección "Identificación de Mejoras" donde se identificó la necesidad de **plantillas y guías más específicas** para diferentes tipos de zettels como una mejora importante para la metodología Vibedoc.
 
 ## Problema Identificado
 
@@ -163,7 +163,7 @@ Esta idea surge de la reflexión documentada en [1.2.2.3 - reflexion implementac
 
 ## Referencias
 
-- [1.2.2.3 - reflexion implementacion abstracciones](1.2.2.3 - reflexion implementacion abstracciones.md)
-- [1.2.2.2 - decisiones implementacion abstracciones](1.2.2.2 - decisiones implementacion abstracciones.md) (ejemplo de zettel de decisiones)
-- [1.2.7.1 - analisis dependencias y ambientes](1.2.7.1 - analisis dependencias y ambientes.md) (ejemplo de zettel de análisis)
-- [1.2.7.3 - reflexion](1.2.7.3 - reflexion.md) (ejemplo de zettel de reflexión)
+- [2b3 - reflexion implementacion abstracciones](1.2.2.3 - reflexion implementacion abstracciones.md)
+- [2b2 - decisiones implementacion abstracciones](1.2.2.2 - decisiones implementacion abstracciones.md) (ejemplo de zettel de decisiones)
+- [6a1 - analisis dependencias y ambientes](6a1%20-%20analisis%20dependencias%20y%20ambientes.md) (ejemplo de zettel de análisis)
+- [6a3 - reflexion implementacion dependencias](6a3%20-%20reflexion%20implementacion%20dependencias.md) (ejemplo de zettel de reflexión)

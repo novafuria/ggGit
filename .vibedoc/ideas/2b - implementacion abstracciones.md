@@ -1,6 +1,6 @@
 # implementacion de abstracciones
 
-# Una vez que contamos con la estructura de carpetas [1.2.1 - estructura de directorios python](1.2.1 - estructura de directorios python.md) debemos implementar las abstracciones base.
+# Una vez que contamos con la estructura de carpetas [2a - estructura directorios python](1.2.1 - estructura de directorios python.md) debemos implementar las abstracciones base.
 
 Estas abstracciones se dividen en dos bloques:
 

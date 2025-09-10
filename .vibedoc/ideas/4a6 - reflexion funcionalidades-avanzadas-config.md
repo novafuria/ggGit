@@ -282,4 +282,4 @@ La serie de historias de configuración está **completamente terminada**. Todas
 ## Referencias
 
 - [STORY-1.2.4.4-implementacion-funcionalidades-avanzadas-config.md](../planning/iniciatives/INI-1-adopcion-vibedoc-gggit/epics/EPIC-1.2-adecuacion-codigo-arquitectura/stories/STORY-1.2.4.4-implementacion-funcionalidades-avanzadas-config.md)
-- [1.2.4.3 - reflexion implementacion configcommand-execute.md](./1.2.4.3%20-%20reflexion%20implementacion%20configcommand-execute.md)
+- [4a5 - reflexion implementacion configcommand-execute.md](./4a5%20-%20reflexion%20implementacion%20configcommand-execute.md)

@@ -195,4 +195,4 @@ El comando `ggconfig` está completamente funcional para operaciones básicas. L
 ## Referencias
 
 - [STORY-1.2.4.3-implementacion-configcommand-execute.md](../planning/iniciatives/INI-1-adopcion-vibedoc-gggit/epics/EPIC-1.2-adecuacion-codigo-arquitectura/stories/STORY-1.2.4.3-implementacion-configcommand-execute.md)
-- [1.2.4.2 - reflexion implementacion validacion-esquemas.md](./1.2.4.2%20-%20reflexion%20implementacion%20validacion-esquemas.md)
+- [4a4 - reflexion implementacion validacion-esquemas.md](./4a4%20-%20reflexion%20implementacion%20validacion-esquemas.md)

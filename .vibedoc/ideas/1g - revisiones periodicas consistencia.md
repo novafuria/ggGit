@@ -8,7 +8,7 @@ Necesitamos establecer un proceso estructurado de revisiones periódicas que ase
 
 ## Contexto
 
-Esta idea surge de la reflexión documentada en [1.2.2.3 - reflexion implementacion abstracciones](1.2.2.3 - reflexion implementacion abstracciones.md), específicamente de la sección "Próximos Pasos" donde se identificó la necesidad de **implementar revisiones periódicas de consistencia** como una mejora metodológica importante.
+Esta idea surge de la reflexión documentada en [2b3 - reflexion implementacion abstracciones](1.2.2.3 - reflexion implementacion abstracciones.md), específicamente de la sección "Próximos Pasos" donde se identificó la necesidad de **implementar revisiones periódicas de consistencia** como una mejora metodológica importante.
 
 ## Problema Identificado
 
@@ -165,7 +165,7 @@ Esta idea surge de la reflexión documentada en [1.2.2.3 - reflexion implementac
 
 ## Referencias
 
-- [1.2.2.3 - reflexion implementacion abstracciones](1.2.2.3 - reflexion implementacion abstracciones.md)
+- [2b3 - reflexion implementacion abstracciones](1.2.2.3 - reflexion implementacion abstracciones.md)
 - [2.1 - procesos validacion documentacion-codigo](2.1 - procesos validacion documentacion-codigo.md)
 - [2.2 - sincronizacion entre zettels](2.2 - sincronizacion entre zettels.md)
-- [1.2.2.2 - decisiones implementacion abstracciones](1.2.2.2 - decisiones implementacion abstracciones.md)
+- [2b2 - decisiones implementacion abstracciones](1.2.2.2 - decisiones implementacion abstracciones.md)

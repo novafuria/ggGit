@@ -4,9 +4,9 @@
 
 Este zettel documenta la reflexión sobre el proceso de implementación de abstracciones desarrollado a través de los zettels 1.2.2.*, específicamente:
 
-- [1.2.2 - implementacion de abstracciones](1.2.2 - implementacion de abstracciones.md)
-- [1.2.2.1 - incorporar github actions para unitetests](1.2.2.1 - incorporar github actions para unitetests.md)
-- [1.2.2.2 - decisiones implementacion abstracciones](1.2.2.2 - decisiones implementacion abstracciones.md)
+- [2b - implementacion abstracciones](1.2.2 - implementacion de abstracciones.md)
+- [2b1 - incorporar github actions unitetests](2b1%20-%20incorporar%20github%20actions%20unitetests.md)
+- [2b2 - decisiones implementacion abstracciones](1.2.2.2 - decisiones implementacion abstracciones.md)
 
 ## Resumen Ejecutivo
 
@@ -181,7 +181,7 @@ El proyecto ggGit ahora cuenta con una base arquitectónica sólida, bien docume
 
 ## Referencias
 
-- [1.2.2 - implementacion de abstracciones](1.2.2 - implementacion de abstracciones.md)
-- [1.2.2.1 - incorporar github actions para unitetests](1.2.2.1 - incorporar github actions para unitetests.md)
-- [1.2.2.2 - decisiones implementacion abstracciones](1.2.2.2 - decisiones implementacion abstracciones.md)
+- [2b - implementacion abstracciones](1.2.2 - implementacion de abstracciones.md)
+- [2b1 - incorporar github actions unitetests](2b1%20-%20incorporar%20github%20actions%20unitetests.md)
+- [2b2 - decisiones implementacion abstracciones](1.2.2.2 - decisiones implementacion abstracciones.md)
 - [STORY-1.2.2.2-preparacion-ideas-posteriores](../planning/iniciatives/INI-1-adopcion-vibedoc-gggit/epics/EPIC-1.2-adecuacion-codigo-arquitectura/stories/STORY-1.2.2.2-preparacion-ideas-posteriores.md)

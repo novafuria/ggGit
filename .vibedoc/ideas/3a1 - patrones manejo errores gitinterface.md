@@ -68,4 +68,4 @@ Esta decisión establece el patrón base para:
 
 - [STORY-1.2.3.1-implementacion-gitinterface-basico.md](../planning/iniciatives/INI-1-adopcion-vibedoc-gggit/epics/EPIC-1.2-adecuacion-codigo-arquitectura/stories/STORY-1.2.3.1-implementacion-gitinterface-basico.md)
 - [architecture.md](../architecture.md)
-- [1.2.3 - comandos base.md](1.2.3%20-%20comandos%20base.md)
+- [3a - comandos base.md](3a%20-%20comandos%20base.md)

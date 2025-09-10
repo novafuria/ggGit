@@ -121,7 +121,7 @@ Tercera historia de la épica EPIC-2.1 (Reorganización Estructura Zettelkasten)
 - ✅ Commit histórico como punto de referencia
 
 **Recomendaciones para STORY-2.1.4**:
-1. **Buscar patrones**: Usar regex para encontrar referencias formato `[1.2.3.4 - nombre]`
+1. **Buscar patrones**: Usar regex para encontrar referencias formato `[3b5 - nombre]` (nueva numeración Luhmann)
 2. **Actualizar sistemáticamente**: Por sistema arquitectónico
 3. **Validar navegación**: Probar enlaces después de actualización
 4. **Incluir planning**: Actualizar referencias desde historias/épicas

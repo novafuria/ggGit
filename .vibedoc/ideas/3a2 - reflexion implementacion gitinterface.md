@@ -50,4 +50,4 @@
 ## Referencias
 
 - [STORY-1.2.3.1-implementacion-gitinterface-basico.md](../planning/iniciatives/INI-1-adopcion-vibedoc-gggit/epics/EPIC-1.2-adecuacion-codigo-arquitectura/stories/STORY-1.2.3.1-implementacion-gitinterface-basico.md)
-- [1.2.3.1 - patrones manejo errores gitinterface.md](1.2.3.1%20-%20patrones%20manejo%20errores%20gitinterface.md)
+- [3a1 - patrones manejo errores gitinterface.md](3a1%20-%20patrones%20manejo%20errores%20gitinterface.md)

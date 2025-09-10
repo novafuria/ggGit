@@ -8,7 +8,7 @@ La metodología Vibedoc actual no proporciona mecanismos explícitos para detect
 
 ## Contexto
 
-Esta idea surge de la reflexión documentada en [1.2.2.3 - reflexion implementacion abstracciones](1.2.2.3 - reflexion implementacion abstracciones.md), específicamente de la sección "Identificación de Mejoras" donde se identificó la **necesidad de procesos de validación documentación-código** como una mejora crítica para la metodología Vibedoc.
+Esta idea surge de la reflexión documentada en [2b3 - reflexion implementacion abstracciones](1.2.2.3 - reflexion implementacion abstracciones.md), específicamente de la sección "Identificación de Mejoras" donde se identificó la **necesidad de procesos de validación documentación-código** como una mejora crítica para la metodología Vibedoc.
 
 ## Problema Identificado
 
@@ -91,6 +91,6 @@ Incorporar validaciones en el pipeline de integración continua:
 
 ## Referencias
 
-- [1.2.2.3 - reflexion implementacion abstracciones](1.2.2.3 - reflexion implementacion abstracciones.md)
-- [1.2.2.2 - decisiones implementacion abstracciones](1.2.2.2 - decisiones implementacion abstracciones.md)
-- [1.2.7.3 - reflexion](1.2.7.3 - reflexion.md) (ejemplo de inconsistencias en gestión de dependencias)
+- [2b3 - reflexion implementacion abstracciones](1.2.2.3 - reflexion implementacion abstracciones.md)
+- [2b2 - decisiones implementacion abstracciones](1.2.2.2 - decisiones implementacion abstracciones.md)
+- [6a3 - reflexion implementacion dependencias](6a3%20-%20reflexion%20implementacion%20dependencias.md) (ejemplo de inconsistencias en gestión de dependencias)

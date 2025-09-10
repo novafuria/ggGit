@@ -1,7 +1,7 @@
 # decisiones estructura directorios python
 
 ## Idea
-Decidimos sobre la estructura de directorios Python para ggGit basándonos en la idea [1.2.1 - estructura de directorios python](1.2.1 - estructura de directorios python.md).
+Decidimos sobre la estructura de directorios Python para ggGit basándonos en la idea [2a - estructura directorios python](2a%20-%20estructura%20directorios%20python.md).
 
 ## Decisiones Tomadas
 
@@ -53,9 +53,9 @@ gggit/
 ### Impacto en Ideas Siguientes
 
 Esta estructura facilita las implementaciones de:
-- [1.2.2 - implementacion de abstracciones](1.2.2 - implementacion de abstracciones.md): Trabajar en `core/`
-- [1.2.3 - comandos base](1.2.3 - comandos base.md): Trabajar en `core/base_commands/`
-- [1.2.4 - comando de configuracion](1.2.4 - comando de configuracion.md): Usar abstracciones de `core/`
+- [2b - implementacion abstracciones](2b%20-%20implementacion%20abstracciones.md): Trabajar en `core/`
+- [3a - comandos base](3a%20-%20comandos%20base.md): Trabajar en `core/base_commands/`
+- [4a1 - comando de configuracion](4a1%20-%20comando%20de%20configuracion.md): Usar abstracciones de `core/`
 
 ### Próximos Pasos
 
