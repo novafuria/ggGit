@@ -88,3 +88,20 @@ La nueva estructura permitirá navegación intuitiva, ubicación rápida de info
 - **Zettel de decisiones**: [4.1 - decisiones reorganizacion estructura zettelkasten](../../../ideas/4.1 - decisiones reorganizacion estructura zettelkasten.md)
 - **Arquitectura de referencia**: [architecture.md](../../../architecture.md)
 - **Reflexión INI-1**: [1.3 - reflexion-final-iniciativa-adopcion-vibedoc](../../../ideas/1.3 - reflexion-final-iniciativa-adopcion-vibedoc.md)
+
+## 📋 Historias de la Épica
+
+### ✅ Historias Completadas
+
+1. **STORY-2.1.1**: [Preparación Zettels de Entrada](stories/STORY-2.1.1-preparacion-zettels-entrada.md) - Crear 13 zettels de entrada y script de migración
+2. **STORY-2.1.2**: [Revisión y Validación del Script](stories/STORY-2.1.2-revision-validacion-script.md) - Validar script en entorno de prueba
+3. **STORY-2.1.3**: [Ejecución de Migración](stories/STORY-2.1.3-ejecucion-migracion.md) - Ejecutar migración real con preservación de historia
+4. **STORY-2.1.4**: [Actualización de Referencias](stories/STORY-2.1.4-actualizacion-referencias.md) - Corregir 72+ referencias internas post-migración
+
+### 🔄 Historias En Proceso
+
+6. **STORY-2.1.6**: [Reorganización Zettels Metodológicos](stories/STORY-2.1.6-reorganizacion-zettels-metodologicos.md) - Reubicar zettels metodológicos bajo Sistema 1 (Vibedoc)
+
+### 📋 Historias Pendientes
+
+5. **STORY-2.1.5**: [Validación Final y Reflexión](stories/STORY-2.1.5-validacion-final-reflexion.md) - Validación completa y reflexión de épica
