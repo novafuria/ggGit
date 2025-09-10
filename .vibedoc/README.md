@@ -38,6 +38,11 @@
     - [🎨 Diseño de Producto](#-diseño-de-producto)
     - [🗺️ Planificación y Desglose](#️-planificación-y-desglose)
 - [🌱 Evolución de Ideas con Git y Zettelkasten](#-evolución-de-ideas-con-git-y-zettelkasten)
+  - [🗂️ Sistema Zettelkasten Luhmann para Ideas](#️-sistema-zettelkasten-luhmann-para-ideas)
+    - [Principios Clave](#principios-clave)
+    - [Estructura Recomendada](#estructura-recomendada)
+    - [Numeración Luhmann en Acción](#numeración-luhmann-en-acción)
+    - [Beneficios Comprobados](#beneficios-comprobados)
 - [🛠️ Cómo Empezar](#️-cómo-empezar)
 - [🔭 Visión a Futuro](#-visión-a-futuro)
 
