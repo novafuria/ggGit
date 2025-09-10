@@ -1,4 +1,4 @@
-# 13c - Reflexión STORY-2.1.3: Ejecución de Migración
+# 1h3 - Reflexión STORY-2.1.3: Ejecución de Migración
 
 ## Contexto de la Reflexión
 
@@ -6,7 +6,7 @@
 **Historia**: STORY-2.1.3 - Ejecución de Migración  
 **Estado**: ✅ COMPLETADA  
 **Duración**: ~1 hora  
-**Historia anterior**: [13b - reflexion story-2.1.2](13b - reflexion story-2.1.2-revision-validacion-script.md)
+**Historia anterior**: [1h2 - reflexion story-2.1.2](1h2 - reflexion story-2.1.2-revision-validacion-script.md)
 
 Tercera historia de la épica EPIC-2.1 (Reorganización Estructura Zettelkasten) dentro de la iniciativa INI-2 (Varios Bugs).
 
@@ -136,9 +136,9 @@ Tercera historia de la épica EPIC-2.1 (Reorganización Estructura Zettelkasten)
 
 ### 🔗 Continuidad de Conocimiento
 **Uso de reflexiones anteriores**:
-- **13a**: Proporcionó preparación metodológica
-- **13b**: Generó confianza técnica total
-- **13c**: Documenta transformación histórica
+- **1h1**: Proporcionó preparación metodológica
+- **1h2**: Generó confianza técnica total
+- **1h3**: Documenta transformación histórica
 - **Próximo**: Guiará actualización de referencias
 
 ## Próximos Pasos
@@ -152,7 +152,7 @@ Tercera historia de la épica EPIC-2.1 (Reorganización Estructura Zettelkasten)
 
 - **Historia completada**: [STORY-2.1.3](../planning/iniciatives/INI-2-varios-bugs/epics/EPIC-2.1-reorganizacion-zettelkasten/stories/STORY-2.1.3-ejecucion-migracion.md)
 - **Commit histórico**: `789f72d` - Reorganizar zettelkasten: migración a sistema Luhmann
-- **Historia anterior**: [13b - reflexion story-2.1.2](13b - reflexion story-2.1.2-revision-validacion-script.md)
+- **Historia anterior**: [1h2 - reflexion story-2.1.2](1h2 - reflexion story-2.1.2-revision-validacion-script.md)
 - **Arquitectura base**: [architecture.md](../architecture.md)
 
 ---

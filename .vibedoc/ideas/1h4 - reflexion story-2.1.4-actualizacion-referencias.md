@@ -1,4 +1,4 @@
-# 13d - Reflexión STORY-2.1.4: Actualización de Referencias
+# 1h4 - Reflexión STORY-2.1.4: Actualización de Referencias
 
 ## Contexto de la Reflexión
 
@@ -6,7 +6,7 @@
 **Historia**: STORY-2.1.4 - Actualización de Referencias  
 **Estado**: ✅ COMPLETADA  
 **Duración**: ~2 horas  
-**Historia anterior**: [13c - reflexion story-2.1.3](13c%20-%20reflexion%20story-2.1.3-ejecucion-migracion.md)
+**Historia anterior**: [1h3 - reflexion story-2.1.3](1h3 - reflexion story-2.1.3-ejecucion-migracion.md)
 
 Cuarta historia de la épica EPIC-2.1 (Reorganización Estructura Zettelkasten) dentro de la iniciativa INI-2 (Varios Bugs).
 
@@ -126,10 +126,10 @@ Cuarta historia de la épica EPIC-2.1 (Reorganización Estructura Zettelkasten) 
 
 ### 🔗 Continuidad de Conocimiento Perfecta
 **Uso de reflexiones anteriores**:
-- **13a**: Proporcionó preparación metodológica
-- **13b**: Generó confianza técnica
-- **13c**: Documentó transformación histórica
-- **13d**: Completa funcionalidad del sistema
+- **1h1**: Proporcionó preparación metodológica
+- **1h2**: Generó confianza técnica
+- **1h3**: Documentó transformación histórica
+- **1h4**: Completa funcionalidad del sistema
 - **Próximo**: Validará éxito completo de la épica
 
 ## Preparación para Siguiente Historia
@@ -174,7 +174,7 @@ Cuarta historia de la épica EPIC-2.1 (Reorganización Estructura Zettelkasten) 
 
 - **Historia completada**: [STORY-2.1.4](../planning/iniciatives/INI-2-varios-bugs/epics/EPIC-2.1-reorganizacion-zettelkasten/stories/STORY-2.1.4-actualizacion-referencias.md)
 - **Commit histórico**: `91f4c19` - fix: actualizar todas las referencias internas post-migración Luhmann
-- **Historia anterior**: [13c - reflexion story-2.1.3](13c%20-%20reflexion%20story-2.1.3-ejecucion-migracion.md)
+- **Historia anterior**: [1h3 - reflexion story-2.1.3](1h3 - reflexion story-2.1.3-ejecucion-migracion.md)
 - **Herramientas creadas**: [actualizar_referencias.sh](actualizar_referencias.sh), [mapa_actualizacion_referencias.md](mapa_actualizacion_referencias.md)
 
 ---
