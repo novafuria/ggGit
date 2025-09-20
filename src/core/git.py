@@ -526,8 +526,6 @@ class GitInterface:
             return False
         
         # Check for consecutive dots
-        if '..' in branch_name:
-            return False
         
         return True
     
