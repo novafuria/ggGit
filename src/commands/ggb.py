@@ -164,8 +164,15 @@ class GgbCommand(BaseCommand):
     def _has_uncommitted_changes(self):
         """Check if there are uncommitted changes."""
         try:
+            # Check for unstaged files (modified tracked files)
             unstaged_files = self.git.get_unstaged_files()
-            return len(unstaged_files) > 0
+            
+            # Check for untracked files
+            result = subprocess.run(['git', 'ls-files', '--others', '--exclude-standard'], 
+                                  capture_output=True, text=True, timeout=10)
+            untracked_files = [line.strip() for line in result.stdout.splitlines() if line.strip()] if result.returncode == 0 else []
+            
+            return len(unstaged_files) > 0 or len(untracked_files) > 0
         except:
             return False
     
@@ -183,8 +190,8 @@ class GgbCommand(BaseCommand):
                     choice = input("\nSelecciona opción (1-3): ").strip()
                     
                     if choice == "1":
-                        # Stash changes
-                        result = subprocess.run(['git', 'stash'], capture_output=True, text=True)
+                        # Stash changes (including untracked files)
+                        result = subprocess.run(['git', 'stash', '--include-untracked'], capture_output=True, text=True)
                         if result.returncode == 0:
                             click.echo(ColorManager.success("Cambios guardados en stash"))
                             return True
@@ -193,13 +200,14 @@ class GgbCommand(BaseCommand):
                             return False
                     
                     elif choice == "2":
-                        # Discard changes
-                        result = subprocess.run(['git', 'reset', '--hard', 'HEAD'], capture_output=True, text=True)
-                        if result.returncode == 0:
+                        # Discard changes (including untracked files)
+                        result1 = subprocess.run(['git', 'reset', '--hard', 'HEAD'], capture_output=True, text=True)
+                        result2 = subprocess.run(['git', 'clean', '-fd'], capture_output=True, text=True)
+                        if result1.returncode == 0 and result2.returncode == 0:
                             click.echo(ColorManager.success("Cambios descartados"))
                             return True
                         else:
-                            click.echo(ColorManager.error(f"Error al descartar cambios: {result.stderr}"))
+                            click.echo(ColorManager.error(f"Error al descartar cambios: {result1.stderr or result2.stderr}"))
                             return False
                     
                     elif choice == "3":
