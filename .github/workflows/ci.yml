@@ -17,7 +17,7 @@ jobs:
     - uses: actions/checkout@v4
     
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
     
@@ -30,7 +30,7 @@ jobs:
         channel-priority: strict
     
     - name: Cache conda dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.conda/pkgs
         key: ${{ runner.os }}-conda-${{ hashFiles('environment.yml') }}
@@ -81,7 +81,7 @@ jobs:
         pytest tests/ --cov=src --cov-report=xml --cov-report=html --cov-report=term-missing --junitxml=test-results-all.xml --cov-fail-under=80
     
     - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v5
       with:
         file: ./coverage.xml
         flags: unittests
@@ -89,7 +89,7 @@ jobs:
         fail_ci_if_error: false
     
     - name: Upload test results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: test-results-${{ matrix.python-version }}
@@ -122,7 +122,7 @@ jobs:
         pip install -r requirements-dev.txt
     
     - name: Download test results
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v5
       with:
         name: test-results-3.12
         path: test-results/
@@ -218,7 +218,7 @@ jobs:
         bandit -r src -f json -o bandit-report.json || true
     
     - name: Upload security reports
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: security-reports

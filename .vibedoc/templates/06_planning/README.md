@@ -15,13 +15,16 @@ Este documento describe la estructura de carpetas y archivos para operar con las
 ```bash
 .
 ├── iniciatives/
-│   ├── INI-<zettlekasten-identifier>-<title>/ # Cada iniciativa tiene su propio archivo de especificación.
+│   ├── INI-<zettelkasten-identifier>-<title>/ # Cada iniciativa tiene su propio archivo de especificación.
 │   │   ├── epics/
-│   │   │   ├── EPIC-<zettlekasten-identifier>-<title>.md # Cada epic tiene su propio archivo de especificación.
+│   │   │   ├── EPIC-<zettelkasten-identifier>-<title>.md # Cada epic tiene su propio archivo de especificación.
 │   │   │   └── stories/
-│   │   │       ├── STORY-<zettlekasten-identifier>-<title>.md # Cada story tiene su propio archivo de especificación.
-│   └── INI-<zettlekasten-identifier>-<title>.md # Cada iniciativa tiene su propio archivo de especificación.
+│   │   │       ├── STORY-<zettelkasten-identifier>-<title>.md # Cada story tiene su propio archivo de especificación.
+│   └── INI-<zettelkasten-identifier>-<title>.md # Cada iniciativa tiene su propio archivo de especificación.
 ```
+
+> [!NOTE]
+> **Zettelkasten-identifier** sigue la numeración Luhmann (ej: 2.1, 2.1.1, 2.1.2) que refleja la construcción temporal del conocimiento y se alinea con los sistemas arquitectónicos del proyecto.
 
 ## Iniciativas
 
@@ -29,9 +32,9 @@ Una iniciativa representa una etapa de desarrollo que tiene un objetivo y una du
 
 Cada iniciativa:
 
-- Se identifica con un código interno `INI-<zettlekasten-identifier>-<title>`.
+- Se identifica con un código interno `INI-<zettelkasten-identifier>-<title>`.
 - En la estructura de carpetas de este repositorio, se encuentra en la carpeta `iniciatives`.
-- Tiene su propio archivo de especificación `iniciatives/INI-<zettlekasten-identifier>-<title>/iniciative.md`.
+- Tiene su propio archivo de especificación `iniciatives/INI-<zettelkasten-identifier>-<title>/iniciative.md`.
 - Se completa siguiendo la plantilla de especificación de iniciativas disponible en `templates/iniciative.md`.
 
 > [!NOTE]
@@ -43,9 +46,9 @@ Un epic representa una tarea compleja que se divide en varias stories. Cada epic
 
 Cada epica:
 
-- Se identifica con un código interno `EPIC-<zettlekasten-identifier>-<title>`.
-- En la estructura de carpetas de este repositorio, se encuentra en la carpeta `iniciatives/INI-<zettlekasten-identifier>-<title>/epics`.
-- Tiene su propio archivo de especificación `iniciatives/INI-<zettlekasten-identifier>-<title>/epics/EPIC-<zettlekasten-identifier>-<title>.md`.
+- Se identifica con un código interno `EPIC-<zettelkasten-identifier>-<title>`.
+- En la estructura de carpetas de este repositorio, se encuentra en la carpeta `iniciatives/INI-<zettelkasten-identifier>-<title>/epics`.
+- Tiene su propio archivo de especificación `iniciatives/INI-<zettelkasten-identifier>-<title>/epics/EPIC-<zettelkasten-identifier>-<title>.md`.
 - Se completa siguiendo la plantilla de especificación de epics disponible en `templates/epic.md`.
 
 > [!NOTE]
@@ -57,10 +60,41 @@ Una story representa una tarea concreta que se realiza en una iniciativa.
 
 Cada story:
 
-- Se identifica con un código interno `STORY-<zettlekasten-identifier>-<title>`.
-- En la estructura de carpetas de este repositorio, se encuentra en la carpeta `iniciatives/INI-<zettlekasten-identifier>-<title>/epics/EPIC-<zettlekasten-identifier>-<title>/stories`.
-- Tiene su propio archivo de especificación `iniciatives/INI-<zettlekasten-identifier>-<title>/epics/EPIC-<zettlekasten-identifier>-<title>/stories/STORY-<zettlekasten-identifier>-<title>.md`.
+- Se identifica con un código interno `STORY-<zettelkasten-identifier>-<title>`.
+- En la estructura de carpetas de este repositorio, se encuentra en la carpeta `iniciatives/INI-<zettelkasten-identifier>-<title>/epics/EPIC-<zettelkasten-identifier>-<title>/stories`.
+- Tiene su propio archivo de especificación `iniciatives/INI-<zettelkasten-identifier>-<title>/epics/EPIC-<zettelkasten-identifier>-<title>/stories/STORY-<zettelkasten-identifier>-<title>.md`.
 - Se completa siguiendo la plantilla de especificación de stories disponible en `templates/story.md`.
 
 > [!NOTE]
 > Es posible que alguna sección de dependencias, recursos o supuestos clave, queden vacías. Si alguna sección de la plantilla va a quedar vacía, porque no se aplica a la historia, se completa con un `No aplica`.
+
+## Reflexiones y Retrorevisión
+
+### Reflexiones de Historia
+
+Cada historia debe generar un **zettel de reflexión** que documente:
+- Logros principales y artefactos generados
+- Aprendizajes técnicos y metodológicos
+- Preparación para la siguiente historia
+- Contexto temporal para futuras referencias
+
+**Ubicación**: `.vibedoc/ideas/<zettelkasten-id> - reflexion <story-identifier>.md`  
+**Ejemplo**: `1h2 - reflexion story-2.1.1-preparacion-zettels-entrada.md`
+
+### Reflexión de Épica
+
+Al completar una épica, crear una **reflexión épica** que incluya:
+- Evaluación completa de logros vs objetivos
+- Métricas de éxito y lecciones aprendidas
+- Impacto en el proyecto y preparación futura
+- Validación de metodología aplicada
+
+### Retrorevisión de Documentación
+
+Post-épica, realizar **retrorevisión** de documentación:
+1. **README Vibedoc**: Actualizar con nuevos aprendizajes metodológicos
+2. **Architecture.md**: Verificar alineación con cambios estructurales
+3. **Templates**: Incorporar mejoras basadas en experiencia práctica
+4. **Validación**: Confirmar coherencia documental completa
+
+Esta fase asegura que el conocimiento generado se preserve y beneficie futuras iniciativas.

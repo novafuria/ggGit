@@ -119,17 +119,8 @@ class ComplexityAnalyzer:
         """
         analysis = self.analyze_complexity()
         
-        # Get configuration limits
-        max_files = self.config.get_config('ai.analysis.max_files', 10)
-        max_diff_lines = self.config.get_config('ai.analysis.max_diff_lines', 200)
-        max_file_size = self.config.get_config('ai.analysis.max_file_size', 5000)
-        
-        # Check if any limit is exceeded
-        if (analysis['file_count'] > max_files or 
-            analysis['diff_lines'] > max_diff_lines or 
-            analysis['max_file_size'] > max_file_size):
-            return False, analysis
-        
+        # Always use AI - removed complexity limits for better user experience
+        # Cost control is handled by ai.cost_limit in configuration
         return True, analysis
     
     def get_fallback_message(self, analysis: Dict[str, Any]) -> str:

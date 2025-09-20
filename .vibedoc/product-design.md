@@ -56,7 +56,7 @@ ggGit es una suite de comandos independientes de línea de comandos que transfor
 
 3. **Sistema de Integración con Git**: Una interfaz unificada que abstrae las operaciones Git complejas, proporcionando validación de estado del repositorio, manejo de errores consistente y feedback visual mejorado.
 
-4. **Sistema de IA Integrado**: Un sistema de inteligencia artificial que analiza cambios automáticamente y genera mensajes de commit usando proveedores de IA compatibles (OpenAI, Anthropic, Azure, Local), con análisis de complejidad y tracking de uso.
+4. **Sistema de IA Integrado**: Un sistema de inteligencia artificial que genera mensajes de commit automáticamente usando IA real (Ollama local) en todos los comandos, con contexto específico por tipo de commit y tracking de uso.
 
 ```mermaid
 graph TB
@@ -105,8 +105,8 @@ graph TB
 ### Eventos y Actividades Clave
 
 - **Commit de Código**: El desarrollador ejecuta un comando ggGit que genera automáticamente un Conventional Commit válido
-- **IA Automática**: El sistema analiza cambios automáticamente y genera mensajes de commit usando IA cuando es apropiado
-- **Análisis de Complejidad**: El sistema evalúa la complejidad de cambios para decidir entre generación automática con IA o mensajes educativos de fallback
+- **IA Automática**: El sistema genera mensajes de commit usando IA real (Ollama) automáticamente en todos los comandos
+- **IA Unificada**: Todos los comandos de commit usan IA automáticamente sin análisis de complejidad
 - **Configuración de Equipo**: El Tech Lead define estándares en archivos YAML que se comparten con el equipo
 - **Gestión de Módulos**: El sistema detecta automáticamente el contexto de trabajo y aplica configuraciones específicas
 - **Tracking de IA**: El sistema monitorea el uso de IA, costos y límites para control de gastos
@@ -210,11 +210,11 @@ El usuario ejecuta un comando ggGit desde la terminal, especificando la operaci�
 
 María es una desarrolladora que acaba de terminar una corrección de bug. En lugar de recordar la sintaxis exacta de Git y escribir manualmente el mensaje siguiendo Conventional Commits, simplemente ejecuta `ggfix "corrige validación de email"`. El sistema automáticamente genera el commit con el formato correcto "fix: corrige validación de email", lo que le ahorra tiempo y asegura que el mensaje siga los estándares del equipo.
 
-Alternativamente, María puede ejecutar `ggfix` sin argumentos, y el sistema analizará automáticamente los cambios, generará un mensaje de commit usando IA si es apropiado, o mostrará un mensaje educativo de fallback si la complejidad es demasiado alta.
+Alternativamente, María puede ejecutar `ggfix` sin argumentos, y el sistema automáticamente generará un mensaje de commit usando IA real (Ollama) con contexto específico para correcciones de bugs, proporcionando mensajes descriptivos y precisos.
 
 ###### Tech Lead que quiere estandarizar commits del equipo
 
-Carlos es Tech Lead de un equipo de 8 desarrolladores. Quiere asegurar que todos los commits sigan el mismo formato. Configura ggGit con templates personalizados, configuración de IA para generación automática de mensajes, y ejecuta `ggconfig setup -m work-team --interactive` para crear la configuración del equipo. Ahora todos los miembros del equipo pueden usar comandos como `ggfeat`, `ggfix`, y `ggbreak` que automáticamente generan commits consistentes usando IA cuando es apropiado, reduciendo la necesidad de revisar cada mensaje manualmente y mejorando la calidad de los mensajes de commit.
+Carlos es Tech Lead de un equipo de 8 desarrolladores. Quiere asegurar que todos los commits sigan el mismo formato. Configura ggGit con configuración de IA real (Ollama) y ejecuta `ggconfig setup -m work-team --interactive` para crear la configuración del equipo. Ahora todos los miembros del equipo pueden usar comandos como `ggfeat`, `ggfix`, y `ggbreak` que automáticamente generan commits consistentes usando IA real en todos los comandos, reduciendo la necesidad de revisar cada mensaje manualmente y mejorando significativamente la calidad de los mensajes de commit.
 
 #### Configurar ggGit
 ##### Descripción

@@ -469,15 +469,64 @@ class GitInterface:
             RuntimeError: If not in a Git repository
             ValueError: If branch name is invalid
             subprocess.CalledProcessError: If git branch command fails
-            
-        Note:
-            This method will be implemented in STORY-1.2.3 - comandos base
         """
-        # TODO: Implement git branch creation
-        # 1. Verify we're in a git repository
-        # 2. Validate branch name
-        # 3. Execute 'git branch <name> [<start>]' command
-        # 4. Handle errors and return result
+        if not self.is_git_repository():
+            raise RuntimeError("Not a git repository")
+        
+        # Validate branch name
+        if not self._is_valid_branch_name(branch_name):
+            raise ValueError(f"Invalid branch name: {branch_name}")
+        
+        try:
+            # Build git branch command
+            cmd = ['git', 'branch', branch_name]
+            if start_point:
+                cmd.append(start_point)
+            
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=30
+            )
+            
+            if result.returncode != 0:
+                raise subprocess.CalledProcessError(
+                    result.returncode, 
+                    ' '.join(cmd),
+                    result.stderr
+                )
+            
+            return True
+            
+        except subprocess.TimeoutExpired:
+            raise subprocess.CalledProcessError(1, ' '.join(cmd), "Timeout")
+        except subprocess.CalledProcessError as e:
+            raise e
+        except Exception as e:
+            raise subprocess.CalledProcessError(1, ' '.join(cmd), str(e))
+    
+    def _is_valid_branch_name(self, branch_name: str) -> bool:
+        """Validate branch name format."""
+        if not branch_name or not branch_name.strip():
+            return False
+        
+        # Check length
+        if len(branch_name) > 255:
+            return False
+        
+        # Check for invalid characters
+        invalid_chars = ['..', '~', '^', ':', '?', '*', '[', '\\']
+        for char in invalid_chars:
+            if char in branch_name:
+                return False
+        
+        # Check for leading/trailing dots
+        if branch_name.startswith('.') or branch_name.endswith('.'):
+            return False
+        
+        # Check for consecutive dots
+        
         return True
     
     def switch_branch(self, branch_name: str) -> bool:
@@ -497,16 +546,43 @@ class GitInterface:
             RuntimeError: If not in a Git repository
             ValueError: If branch doesn't exist
             subprocess.CalledProcessError: If git checkout/switch command fails
-            
-        Note:
-            This method will be implemented in STORY-1.2.3 - comandos base
         """
-        # TODO: Implement git branch switching
-        # 1. Verify we're in a git repository
-        # 2. Check if branch exists
-        # 3. Execute 'git switch <branch>' command
-        # 4. Handle errors and return result
-        return True
+        if not self.is_git_repository():
+            raise RuntimeError("Not a git repository")
+        
+        try:
+            # Use git switch (preferred) or fallback to git checkout
+            result = subprocess.run(
+                ['git', 'switch', branch_name],
+                capture_output=True,
+                text=True,
+                timeout=30
+            )
+            
+            if result.returncode != 0:
+                # Fallback to git checkout if git switch fails
+                result = subprocess.run(
+                    ['git', 'checkout', branch_name],
+                    capture_output=True,
+                    text=True,
+                    timeout=30
+                )
+                
+                if result.returncode != 0:
+                    raise subprocess.CalledProcessError(
+                        result.returncode, 
+                        f"git checkout {branch_name}",
+                        result.stderr
+                    )
+            
+            return True
+            
+        except subprocess.TimeoutExpired:
+            raise subprocess.CalledProcessError(1, f"git switch {branch_name}", "Timeout")
+        except subprocess.CalledProcessError as e:
+            raise e
+        except Exception as e:
+            raise subprocess.CalledProcessError(1, f"git switch {branch_name}", str(e))
     
     def diff(self, files: Optional[List[str]] = None, staged: bool = False) -> bool:
         """
@@ -973,7 +1049,7 @@ class GitInterface:
             if not self.is_git_repository():
                 raise NotGitRepositoryError("Not a git repository")
             
-            cmd = ['git', 'merge', branch_name]
+            cmd = ['git', 'merge', '--no-ff', '--no-edit', branch_name]
             result = subprocess.run(cmd, capture_output=True, text=True)
             
             if result.returncode != 0:

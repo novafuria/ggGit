@@ -223,13 +223,12 @@ class BaseCommand(ABC):
                 # Generate with AI
                 files = analysis['files']
                 diff_content = self.git.get_diff_content(files, staged=analysis['has_staged'])
-                message = generator.generate_message(files, diff_content)
                 
-                # Add scope if provided
-                if scope:
-                    prefix = message.split(':', 1)[0]
-                    suffix = message.split(':', 1)[1] if ':' in message else message
-                    message = f"{prefix}({scope}): {suffix}"
+                # Get commit type from the command
+                commit_type = self._get_commit_prefix() if hasattr(self, '_get_commit_prefix') else None
+                
+                # Generate message with context
+                message = generator.generate_message(files, diff_content, commit_type)
                 
                 # Execute commit with generated message
                 return self._execute_manual_commit(message, scope, amend)

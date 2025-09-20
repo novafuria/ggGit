@@ -17,25 +17,27 @@ class TestCommand(BaseCommand):
     
     def execute(self, message, scope=None, ai=False, amend=False):
         """Execute the test command."""
-        # If no message and AI is enabled, generate automatically
-        if not message and ai:
-            click.echo(ColorManager.warning("AI functionality not yet implemented"))
+        try:
+            # Check if AI should be used
+            if not message and self._is_ai_configured():
+                return self._generate_ai_message(scope, amend)
+            
+            # Check if message is required
+            if not message:
+                click.echo(ColorManager.warning("IA no configurada. Usa 'ggconfig set ai.enabled true'"))
+                click.echo(ColorManager.info("O proporciona un mensaje manual: ggtest 'mensaje'"))
+                return 1
+            
+            # Execute manual commit
+            return self._execute_manual_commit(message, scope, amend)
+            
+        except Exception as e:
+            click.echo(ColorManager.error(f"Error: {e}"))
             return 1
-        
-        # Create commit command
-        commit_cmd = CommitCommand("test")
-        
-        # Execute commit (validation included in CommitCommand)
-        result = commit_cmd.execute(message, scope, amend)
-        
-        # Handle result
-        if result == 0:
-            click.echo(ColorManager.success("Commit realizado exitosamente"))
-        else:
-            click.echo(ColorManager.error("Error al realizar commit"))
-            return result
-        
-        return result
+    
+    def _get_commit_prefix(self):
+        """Get the commit prefix for this command."""
+        return "test"
 
 
 @click.command()

@@ -124,6 +124,7 @@ function ggfeat { & '$PythonPath' "`$env:GGGIT_ROOT\src\commands\ggfeat.py" `$ar
 function ggfix { & '$PythonPath' "`$env:GGGIT_ROOT\src\commands\ggfix.py" `$args }
 function ggdocs { & '$PythonPath' "`$env:GGGIT_ROOT\src\commands\ggdocs.py" `$args }
 function ggstyle { & '$PythonPath' "`$env:GGGIT_ROOT\src\commands\ggstyle.py" `$args }
+function ggrefactor { & '$PythonPath' "`$env:GGGIT_ROOT\src\commands\ggrefactor.py" `$args }
 function ggchore { & '$PythonPath' "`$env:GGGIT_ROOT\src\commands\ggchore.py" `$args }
 function ggbuild { & '$PythonPath' "`$env:GGGIT_ROOT\src\commands\ggbuild.py" `$args }
 function ggci { & '$PythonPath' "`$env:GGGIT_ROOT\src\commands\ggci.py" `$args }
@@ -182,7 +183,7 @@ Write-Info "Available commands:"
 $commands = @(
     'gga', 'ggs', 'ggl', 'ggdif', 'ggunstage', 'ggreset',
     'ggmain', 'ggdevelop', 'ggb', 'ggmerge', 'ggpl', 'ggpp',
-    'ggfeat', 'ggfix', 'ggdocs', 'ggstyle', 'ggchore', 
+    'ggfeat', 'ggfix', 'ggdocs', 'ggstyle', 'ggrefactor', 'ggchore', 
     'ggbuild', 'ggci', 'ggperf', 'ggtest', 'ggbreak',
     'ggai', 'ggconfig', 'ggv'
 )
