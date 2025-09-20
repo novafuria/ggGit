@@ -1051,7 +1051,7 @@ class GitInterface:
             if not self.is_git_repository():
                 raise NotGitRepositoryError("Not a git repository")
             
-            cmd = ['git', 'merge', branch_name]
+            cmd = ['git', 'merge', '--no-ff', '--no-edit', branch_name]
             result = subprocess.run(cmd, capture_output=True, text=True)
             
             if result.returncode != 0:
