@@ -391,8 +391,17 @@ Requirements:
         # Clean response
         message = response.strip()
         
-        # Remove markdown formatting
-        message = re.sub(r'```.*?```', '', message, flags=re.DOTALL)
+        # Extract content from code blocks if present
+        if '```' in message:
+            # Extract content between code blocks
+            code_block_match = re.search(r'```.*?\n(.*?)```', message, flags=re.DOTALL)
+            if code_block_match:
+                message = code_block_match.group(1).strip()
+            else:
+                # Remove code block markers
+                message = re.sub(r'```.*?```', '', message, flags=re.DOTALL)
+        
+        # Remove other markdown formatting
         message = re.sub(r'`([^`]+)`', r'\1', message)
         message = re.sub(r'\*\*([^*]+)\*\*', r'\1', message)
         message = re.sub(r'\*([^*]+)\*', r'\1', message)
