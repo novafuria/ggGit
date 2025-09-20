@@ -85,7 +85,7 @@ def create_aliases():
     commands = [
         'gga', 'ggs', 'ggl', 'ggdif', 'ggunstage', 'ggreset',
         'ggmain', 'ggdevelop', 'ggb', 'ggmerge', 'ggpl', 'ggpp',
-        'ggfeat', 'ggfix', 'ggdocs', 'ggstyle', 'ggchore', 
+        'ggfeat', 'ggfix', 'ggdocs', 'ggstyle', 'ggrefactor', 'ggchore', 
         'ggbuild', 'ggci', 'ggperf', 'ggtest', 'ggbreak',
         'ggai', 'ggconfig', 'ggv'
     ]
@@ -252,7 +252,7 @@ def main():
     commands = [
         'gga', 'ggs', 'ggl', 'ggdif', 'ggunstage', 'ggreset',
         'ggmain', 'ggdevelop', 'ggb', 'ggmerge', 'ggpl', 'ggpp',
-        'ggfeat', 'ggfix', 'ggdocs', 'ggstyle', 'ggchore', 
+        'ggfeat', 'ggfix', 'ggdocs', 'ggstyle', 'ggrefactor', 'ggchore', 
         'ggbuild', 'ggci', 'ggperf', 'ggtest', 'ggbreak',
         'ggai', 'ggconfig', 'ggv'
     ]

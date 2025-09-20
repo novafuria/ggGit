@@ -34,7 +34,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Make all scripts executable
 print_info "Making scripts executable..."
-chmod +x "$SCRIPT_DIR/commands"/*
+chmod +x "$SCRIPT_DIR/src/commands"/*
 
 print_success "Scripts are now executable"
 
@@ -49,19 +49,19 @@ elif [[ "$SHELL" == *"bash"* ]]; then
 else
     print_warning "Unknown shell: $SHELL"
     print_info "Please manually add the following line to your shell configuration file:"
-    echo "export PATH=\$PATH:$SCRIPT_DIR/commands"
+    echo "export PATH=\$PATH:$SCRIPT_DIR/src/commands"
     exit 0
 fi
 
 # Check if PATH is already configured
-if grep -q "$SCRIPT_DIR/commands" "$SHELL_CONFIG" 2>/dev/null; then
+if grep -q "$SCRIPT_DIR/src/commands" "$SHELL_CONFIG" 2>/dev/null; then
     print_info "ggGit is already in your PATH"
 else
     # Add to PATH
     print_info "Adding ggGit to your PATH in $SHELL_CONFIG"
     echo "" >> "$SHELL_CONFIG"
     echo "# ggGit commands" >> "$SHELL_CONFIG"
-    echo "export PATH=\$PATH:$SCRIPT_DIR/commands" >> "$SHELL_CONFIG"
+    echo "export PATH=\$PATH:$SCRIPT_DIR/src/commands" >> "$SHELL_CONFIG"
     
     print_success "Added to $SHELL_CONFIG"
 fi
@@ -78,7 +78,7 @@ print_info "Test the installation with:"
 echo "  ggv --help"
 echo ""
 print_info "Available commands:"
-COMMANDS_LIST=$(ls "$SCRIPT_DIR/commands" | tr '\n' ', ' | sed 's/, $//')
+COMMANDS_LIST=$(ls "$SCRIPT_DIR/src/commands" | tr '\n' ', ' | sed 's/, $//')
 echo "  $COMMANDS_LIST"
 echo ""
 print_info "For help with any command, use:"
