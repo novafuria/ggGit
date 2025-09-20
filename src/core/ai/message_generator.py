@@ -85,18 +85,18 @@ class AiMessageGenerator:
         else:
             prefix = "chore"
         
-        # Create descriptive message
+        # Create descriptive message (without prefix - CommitCommand will add it)
         if len(files) == 1:
             file_name = os.path.basename(files[0])
-            message = f"{prefix}: update {file_name}"
+            message = f"update {file_name}"
         else:
-            message = f"{prefix}: update {len(files)} files"
+            message = f"update {len(files)} files"
         
-        # Add scope if applicable
+        # Add scope if applicable (without prefix)
         if file_types:
             scope = self._get_scope_from_file_types(file_types)
             if scope:
-                message = f"{prefix}({scope}): update {len(files)} files"
+                message = f"({scope}) {message}"
         
         # Track usage (mock values)
         self._track_usage(len(files), len(diff_content.splitlines()))
