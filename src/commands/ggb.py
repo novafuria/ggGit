@@ -74,11 +74,6 @@ class GgbCommand(BaseCommand):
             else:
                 # Create new branch
                 try:
-                    # Check for uncommitted changes before creating branch
-                    if self._has_uncommitted_changes():
-                        if not self._handle_uncommitted_changes():
-                            return 1
-                    
                     result = self.git.create_branch(clean_name)
                     if result:
                         # Switch to the new branch after creating it
@@ -95,7 +90,7 @@ class GgbCommand(BaseCommand):
                             error_msg = e.stderr if e.stderr else str(e)
                             if "would be overwritten" in error_msg or "local changes" in error_msg:
                                 click.echo(ColorManager.warning(f"Rama '{clean_name}' creada pero no se pudo cambiar"))
-                                click.echo(ColorManager.warning("Tienes cambios sin commitear que serían sobrescritos"))
+                                click.echo(ColorManager.warning("Tienes cambios que serían sobrescritos"))
                                 click.echo(ColorManager.info("Opciones:"))
                                 click.echo("  1. Hacer commit de los cambios: git add . && git commit -m 'mensaje'")
                                 click.echo("  2. Guardar cambios temporalmente: git stash")
@@ -359,3 +354,4 @@ def main(branch_name):
 
 if __name__ == "__main__":
     sys.exit(main())
+modificacion
