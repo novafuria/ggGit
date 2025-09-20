@@ -11,6 +11,14 @@ import requests
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 
+# Constants for conventional commit prefixes
+CONVENTIONAL_COMMIT_PREFIXES = r'^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|break)(\([^)]+\))?:\s*'
+
+# Token estimation multiplier
+# This multiplier accounts for the fact that AI tokens are typically longer than simple word splits
+# and includes overhead for special tokens, formatting, and context
+TOKEN_ESTIMATION_MULTIPLIER = 1.3
+
 
 class AiMessageGenerator:
     """
@@ -407,8 +415,7 @@ Requirements:
         message = re.sub(r'\*([^*]+)\*', r'\1', message)
         
         # Remove any conventional commit prefix if present
-        prefix_pattern = r'^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|break)(\([^)]+\))?:\s*'
-        message = re.sub(prefix_pattern, '', message, flags=re.IGNORECASE)
+        message = re.sub(CONVENTIONAL_COMMIT_PREFIXES, '', message, flags=re.IGNORECASE)
         
         # Clean up extra whitespace
         message = re.sub(r'\s+', ' ', message).strip()
@@ -431,8 +438,8 @@ Requirements:
             return
         
         # Estimate tokens (rough calculation)
-        prompt_tokens = len(prompt.split()) * 1.3  # Rough estimate
-        response_tokens = len(response.split()) * 1.3
+        prompt_tokens = len(prompt.split()) * TOKEN_ESTIMATION_MULTIPLIER
+        response_tokens = len(response.split()) * TOKEN_ESTIMATION_MULTIPLIER
         
         total_tokens = int(prompt_tokens + response_tokens)
         
