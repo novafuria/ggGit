@@ -970,22 +970,30 @@ Sistema que utiliza inteligencia artificial para analizar cambios y generar mens
 #### 3. AiMessageGenerator - Generador de Mensajes con IA
 
 **Funcionalidad:**
-- Genera mensajes de commit usando servicios de IA
-- Implementa versión mock para desarrollo y testing
+- Genera mensajes de commit usando servicios de IA reales
+- Implementa integración completa con Ollama (modelo local)
 - Integra con tracking de uso para monitoreo
-- Soporta múltiples proveedores de IA
+- Soporta múltiples proveedores de IA con API compatible
 
 **Métodos Principales:**
-- `generate_message()`: Genera mensaje basado en archivos y diff
-- `test_connection()`: Prueba conexión con proveedor de IA
-- `_analyze_file_types()`: Analiza tipos de archivos modificados
-- `_analyze_change_type()`: Determina tipo de cambio
+- `generate_message(files, diff_content, commit_type)`: Genera mensaje con contexto específico
+- `test_connection()`: Prueba conexión real con proveedor de IA
+- `_call_ollama_api(prompt)`: Llamada real a API de Ollama
+- `_build_context_prompt(files, diff, commit_type)`: Construye prompt contextual
+- `_process_ai_response(response)`: Procesa y limpia respuesta de IA
+- `_get_commit_type_context(commit_type)`: Contexto específico por tipo de commit
 
 **Proveedores Soportados:**
-- **OpenAI**: GPT-3.5-turbo, GPT-4
+- **Ollama (Local)**: Modelos locales como gemma3:4b (IMPLEMENTADO)
+- **OpenAI**: GPT-3.5-turbo, GPT-4 (API compatible)
 - **Anthropic**: Claude (API compatible)
-- **Azure OpenAI**: Servicios empresariales
-- **Local**: Ollama y otros modelos locales
+- **Azure OpenAI**: Servicios empresariales (API compatible)
+
+**Características Implementadas:**
+- **Prompt contextual inteligente**: Incluye tipo de commit, archivos y diff
+- **Procesamiento robusto**: Manejo de markdown, prefijos y formato
+- **Contexto específico**: Diferentes prompts según tipo de commit
+- **Error handling**: Sin fallback a mock, errores claros
 
 #### 4. Comando ggai - Interfaz de IA
 
@@ -1006,9 +1014,9 @@ Sistema que utiliza inteligencia artificial para analizar cambios y generar mens
 ai:
   enabled: true                    # Habilitar funcionalidades de IA
   provider: "openai"              # openai, anthropic, azure, local
-  api_key_env: "OPENAI_API_KEY"   # Variable de entorno para API key
-  model: "gpt-3.5-turbo"          # Modelo de IA a utilizar
-  base_url: "https://api.openai.com/v1"  # URL base (opcional para proveedores alternativos)
+  api_key_env: "GGGIT_AI_KEY"     # Variable de entorno para API key (ACTUALIZADO)
+  model: "gemma3:4b"              # Modelo de IA a utilizar (Ollama local)
+  base_url: "http://localhost:11434"  # URL base para Ollama local
   cost_limit: 5.00                # Límite de costo en USD por período
   tracking_enabled: true          # Habilitar tracking de uso
   usage_file: ".gggit/ai-usage.yaml"  # Archivo de tracking de uso
@@ -1017,6 +1025,12 @@ ai:
     max_diff_lines: 200           # Máximo número de líneas de diff
     max_file_size: 5000           # Máximo tamaño de archivo en bytes
 ```
+
+**Nota de Configuración:**
+- **Variable de entorno**: Debe configurarse `GGGIT_AI_KEY` (no `OPENAI_API_KEY`)
+- **Ollama local**: Requiere Ollama ejecutándose en `http://localhost:11434`
+- **Modelo recomendado**: `gemma3:4b` para mejor rendimiento local
+- **Bug resuelto**: Configuración desalineada entre variable de entorno y configuración
 
 **Parámetros de Configuración Detallados:**
 
@@ -1042,81 +1056,94 @@ ai:
 
 #### 5. Integración de IA en Comandos Existentes
 
-**IA Automática en Comandos:**
-- **Comandos sin argumentos**: Todos los comandos de commit activan IA automáticamente
-- **Análisis de complejidad**: ComplexityAnalyzer evalúa si usar IA o fallback
-- **Fallback inteligente**: Mensajes educativos cuando no se recomienda IA
+**IA Automática en Comandos (UNIFICADA):**
+- **TODOS los comandos de commit**: Activan IA automáticamente sin argumentos
+- **Sin análisis de complejidad**: Lógica de protección removida (commit `9c6755a`)
+- **IA real implementada**: Usa Ollama local para generación de mensajes
+- **Contexto específico**: Cada comando pasa su tipo de commit a la IA
 - **Tracking automático**: Monitoreo de uso en todas las operaciones
 
-**Flujo de IA Automática:**
+**Flujo de IA Automática Unificado:**
 1. Usuario ejecuta comando sin argumentos (ej: `ggfeat`)
 2. Sistema verifica si IA está habilitada
-3. ComplexityAnalyzer evalúa complejidad de cambios
-4. Si se recomienda IA: genera mensaje automáticamente
-5. Si no se recomienda IA: muestra mensaje educativo de fallback
+3. **IA se ejecuta directamente** (sin análisis de complejidad)
+4. Genera mensaje contextual con tipo de commit específico
+5. Procesa respuesta y limpia prefijos automáticamente
 6. Tracking de uso se actualiza automáticamente
 
-**Comandos con IA Integrada:**
-- `ggfeat`, `ggfix`, `ggdocs`, `ggstyle`, `ggchore`
-- `ggbuild`, `ggci`, `ggperf`, `ggtest`, `ggbreak`
-- Todos los comandos de commit convencional
+**Comandos con IA Integrada (TODOS):**
+- **Conventional Commits**: `ggfeat`, `ggfix`, `ggdocs`, `ggstyle`, `ggchore`
+- **Comandos Especializados**: `ggbuild`, `ggci`, `ggperf`, `ggtest`, `ggbreak`
+- **Comandos de Navegación**: `ggmain`, `ggb`, `ggmerge` (implementados)
+- **Todos los comandos de commit** ahora usan IA automáticamente
 
 **Configuración de IA por Comando:**
-- Configuración global en `ai.*` se aplica a todos los comandos
-- No hay flags específicos de IA (comportamiento automático)
-- Fallback educativo configurable por tipo de comando
+- **Configuración global**: `ai.*` se aplica a todos los comandos
+- **Patrón unificado**: BaseCommand pasa `commit_type` a AiMessageGenerator
+- **Sin flags específicos**: Comportamiento automático en todos los comandos
+- **Contexto inteligente**: Prompts específicos según tipo de commit
 
 #### 6. Arquitectura de Integración de IA
 
-**Patrón de Integración:**
+**Patrón de Integración (ACTUALIZADO):**
 ```python
 # En cada comando de commit
 def execute(self, message, scope=None, ai=False, amend=False):
     # Verificar si IA está configurada
     if not message and self._is_ai_configured():
-        # Analizar complejidad
-        if self.analyzer.should_use_ai():
-            # Generar mensaje con IA
-            message = self._generate_ai_message()
-        else:
-            # Mostrar fallback educativo
-            self._show_fallback_message()
-            return 1
+        # Generar mensaje con IA directamente (sin análisis de complejidad)
+        return self._generate_ai_message(scope, amend)
     
     # Continuar con commit normal
     return self._execute_manual_commit(message, scope, amend)
+
+# En BaseCommand._generate_ai_message()
+def _generate_ai_message(self, scope=None, amend=False):
+    # Obtener archivos y diff
+    files = analysis['files']
+    diff_content = self.git.get_diff_content(files, staged=analysis['has_staged'])
+    
+    # Obtener tipo de commit del comando
+    commit_type = self._get_commit_prefix() if hasattr(self, '_get_commit_prefix') else None
+    
+    # Generar mensaje con contexto específico
+    message = generator.generate_message(files, diff_content, commit_type)
+    
+    # Ejecutar commit con mensaje generado
+    return self._execute_manual_commit(message, scope, amend)
 ```
 
-**Componentes de Integración:**
+**Componentes de Integración (ACTUALIZADOS):**
 - **BaseCommand**: Métodos helper para IA (`_is_ai_configured`, `_generate_ai_message`)
 - **CommitCommand**: Lógica de commit reutilizable
-- **ComplexityAnalyzer**: Análisis de complejidad
-- **AiMessageGenerator**: Generación de mensajes
+- **AiMessageGenerator**: Generación de mensajes con IA real (Ollama)
 - **AiUsageTracker**: Tracking de uso
+- **ComplexityAnalyzer**: Ya no se usa (lógica de protección removida)
 
-**Configuración de IA por Componente:**
+**Configuración de IA por Componente (ACTUALIZADA):**
 
-**ComplexityAnalyzer:**
-- `ai.analysis.max_files`: Límite de archivos para análisis
-- `ai.analysis.max_diff_lines`: Límite de líneas de diff
-- `ai.analysis.max_file_size`: Límite de tamaño de archivo
+**AiMessageGenerator (PRINCIPAL):**
+- `ai.enabled`: Habilitar/deshabilitar generación de mensajes
+- `ai.provider`: Proveedor de IA (openai, anthropic, azure, local)
+- `ai.api_key_env`: Variable de entorno para API key (GGGIT_AI_KEY)
+- `ai.model`: Modelo de IA a utilizar (gemma3:4b)
+- `ai.base_url`: URL base para proveedores alternativos (http://localhost:11434)
 
 **AiUsageTracker:**
 - `ai.tracking_enabled`: Habilitar/deshabilitar tracking
 - `ai.usage_file`: Archivo de almacenamiento de estadísticas
 - `ai.cost_limit`: Límite de costo en USD
 
-**AiMessageGenerator:**
-- `ai.enabled`: Habilitar/deshabilitar generación de mensajes
-- `ai.provider`: Proveedor de IA (openai, anthropic, azure, local)
-- `ai.api_key_env`: Variable de entorno para API key
-- `ai.model`: Modelo de IA a utilizar
-- `ai.base_url`: URL base para proveedores alternativos
+**ComplexityAnalyzer (OBSOLETO):**
+- Ya no se usa en la implementación actual
+- Lógica de protección removida en commit `9c6755a`
+- Configuración `ai.analysis.*` no se aplica
 
-**Integración en Comandos:**
+**Integración en Comandos (UNIFICADA):**
 - `ai.enabled`: Controla activación global de IA
-- Todos los parámetros se aplican automáticamente a comandos de commit
-- No requiere configuración adicional por comando
+- **Todos los comandos** usan IA automáticamente sin argumentos
+- **Contexto específico**: Cada comando pasa su tipo de commit
+- **Sin configuración adicional**: Comportamiento automático en todos los comandos
 
 ## Sistema de observabilidad y logging
 
