@@ -8,6 +8,7 @@ Usage: ggb [<branch_name>]
 import click
 import sys
 import re
+import subprocess
 from core.base_commands.base import BaseCommand
 from core.utils.colors import ColorManager
 
@@ -47,17 +48,51 @@ class GgbCommand(BaseCommand):
             click.echo(ColorManager.error("Nombre de rama inválido"))
             return 1
         
-        if self._branch_exists(clean_name):
-            click.echo(ColorManager.warning(f"Rama {clean_name} ya existe, cambiando a ella"))
-            result = self.git.switch_branch(clean_name)
-        else:
-            result = self.git.create_branch(clean_name)
-        
-        if result:
-            click.echo(ColorManager.success(f"Rama {clean_name} creada/cambiada exitosamente"))
-            return 0
-        else:
-            click.echo(ColorManager.error("Error al crear/cambiar rama"))
+        try:
+            if self._branch_exists(clean_name):
+                click.echo(ColorManager.warning(f"Rama {clean_name} ya existe, cambiando a ella"))
+                try:
+                    result = self.git.switch_branch(clean_name)
+                    if result:
+                        click.echo(ColorManager.success(f"Cambiado a rama '{clean_name}'"))
+                        return 0
+                    else:
+                        click.echo(ColorManager.error(f"Error al cambiar a rama '{clean_name}'"))
+                        return 1
+                except subprocess.CalledProcessError as e:
+                    error_msg = e.stderr if e.stderr else str(e)
+                    if "would be overwritten" in error_msg or "local changes" in error_msg:
+                        click.echo(ColorManager.warning("Tienes cambios sin commitear que serían sobrescritos"))
+                        click.echo(ColorManager.info("Opciones:"))
+                        click.echo("  1. Hacer commit de los cambios: git add . && git commit -m 'mensaje'")
+                        click.echo("  2. Guardar cambios temporalmente: git stash")
+                        click.echo("  3. Descartar cambios: git reset --hard HEAD")
+                        return 1
+                    else:
+                        click.echo(ColorManager.error(f"Error al cambiar a rama '{clean_name}': {error_msg}"))
+                        return 1
+            else:
+                # Create new branch
+                try:
+                    result = self.git.create_branch(clean_name)
+                    if result:
+                        click.echo(ColorManager.success(f"Rama '{clean_name}' creada exitosamente"))
+                        return 0
+                    else:
+                        click.echo(ColorManager.error(f"Error al crear rama '{clean_name}'"))
+                        return 1
+                except subprocess.CalledProcessError as e:
+                    click.echo(ColorManager.error(f"Error al crear rama '{clean_name}': {e.stderr}"))
+                    return 1
+                    
+        except ValueError as e:
+            click.echo(ColorManager.error(f"Error de validación: {str(e)}"))
+            return 1
+        except RuntimeError as e:
+            click.echo(ColorManager.error(f"Error de Git: {str(e)}"))
+            return 1
+        except Exception as e:
+            click.echo(ColorManager.error(f"Error inesperado: {str(e)}"))
             return 1
     
     def _convert_branch_name(self, name):
