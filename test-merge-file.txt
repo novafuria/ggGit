@@ -1,2 +1,0 @@
-Cambio en rama test-merge-source
-Cambio en rama principal
