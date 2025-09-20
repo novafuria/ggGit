@@ -26,12 +26,12 @@ def create_branch(self, branch_name: str, start_point: Optional[str] = None) -> 
         bool: True if branch was created successfully, False otherwise
         
     Raises:
-        RuntimeError: If not in a Git repository
+        NotGitRepositoryError: If not in a Git repository
         ValueError: If branch name is invalid
-        subprocess.CalledProcessError: If git branch command fails
+        GitCommandError: If git branch command fails
     """
     if not self.is_git_repository():
-        raise RuntimeError("Not a git repository")
+        raise NotGitRepositoryError("Not a git repository")
     
     # Validate branch name
     if not self._is_valid_branch_name(branch_name):
@@ -46,25 +46,24 @@ def create_branch(self, branch_name: str, start_point: Optional[str] = None) -> 
         result = subprocess.run(
             cmd,
             capture_output=True,
-            text=True,
-            timeout=30
+            text=True
         )
         
         if result.returncode != 0:
-            raise subprocess.CalledProcessError(
-                result.returncode,
-                ' '.join(cmd),
-                result.stderr
-            )
+            raise GitCommandError(f"Git branch command failed: {result.stderr}")
         
         return True
         
-    except subprocess.TimeoutExpired:
-        raise subprocess.CalledProcessError(1, ' '.join(cmd), "Timeout")
     except subprocess.CalledProcessError as e:
-        raise e
+        raise GitCommandError(f"Git branch failed: {e}")
+    except NotGitRepositoryError:
+        # Re-raise NotGitRepositoryError without wrapping
+        raise
+    except GitCommandError:
+        # Re-raise GitCommandError without wrapping
+        raise
     except Exception as e:
-        raise subprocess.CalledProcessError(1, ' '.join(cmd), str(e))
+        raise GitInterfaceError(f"Unexpected error in create_branch: {e}")
 
 def _is_valid_branch_name(self, branch_name: str) -> bool:
     """Validate branch name format."""
@@ -97,16 +96,17 @@ def _is_valid_branch_name(self, branch_name: str) -> bool:
 ### **Fortalezas de la Propuesta**
 - ✅ **Uso de `git branch`**: Comando estándar para creación de ramas
 - ✅ **Validación de nombre**: Verificación de formato antes de ejecutar
-- ✅ **Manejo de errores robusto**: Diferentes tipos de error
-- ✅ **Timeout apropiado**: Evita bloqueos indefinidos
+- ✅ **Manejo de errores consistente**: Sigue patrones establecidos en GitInterface
+- ✅ **Excepciones específicas**: Usa `NotGitRepositoryError`, `GitCommandError`, `GitInterfaceError`
 - ✅ **Soporte para start_point**: Permite crear ramas desde puntos específicos
 - ✅ **Validación previa**: Verifica que es repositorio Git
 
 ### **Consideraciones Técnicas**
-- **`git branch` vs `git checkout -b`**: `git branch` solo crea, no cambia
+- **`git branch` vs `git checkout -b`**: `git branch` solo crea, no cambia (separación de responsabilidades)
 - **Validación de nombres**: Sigue las reglas de Git para nombres de rama
-- **Manejo de errores**: Diferentes códigos de error para diferentes situaciones
-- **Timeout**: 30 segundos debería ser suficiente para la mayoría de casos
+- **Manejo de errores**: Sigue el patrón establecido en GitInterface (3a1)
+- **Sin timeout**: No es necesario para operaciones simples de Git
+- **start_point**: Parámetro opcional para crear ramas desde commits específicos (ej: `git branch nueva-rama main`)
 
 ## Alternativas Consideradas
 
@@ -179,22 +179,27 @@ def _validate_start_point(self, start_point: str) -> bool:
 - **Contras**: Operación adicional, más complejo
 - **Propuesta**: Sí, validar existencia para mejor UX
 
-### **3. ¿Manejar start_point opcional?**
+### **3. ¿Manejar archivos no committeados en switch?**
+- **Pros**: Mejor experiencia de usuario, evita errores de Git
+- **Contras**: Más complejo, requiere lógica adicional
+- **Propuesta**: Sí, preguntar al usuario si quiere llevar archivos o descartarlos
+
+### **4. ¿Usar git stash para archivos no committeados?**
+- **Pros**: Preserva cambios del usuario, experiencia fluida
+- **Contras**: Requiere manejo de stash, más complejo
+- **Propuesta**: Sí, usar git stash para llevar archivos a la nueva rama
+
+### **5. ¿Manejar start_point opcional?**
 - **Pros**: Más flexible, permite crear desde cualquier punto
 - **Contras**: Más complejo, requiere validación adicional
 - **Propuesta**: Sí, implementar start_point opcional
-
-### **4. ¿Timeout de 30 segundos es apropiado?**
-- **Pros**: Evita bloqueos indefinidos
-- **Contras**: Puede ser muy corto para repositorios grandes
-- **Propuesta**: 30 segundos es razonable, ajustar si es necesario
 
 ## Implementación Propuesta
 
 ### **Fase 1: Implementación Básica**
 1. Implementar `create_branch()` con `git branch`
 2. Validación básica de nombres de rama
-3. Manejo básico de errores
+3. Manejo básico de errores siguiendo patrones GitInterface
 4. Tests unitarios básicos
 
 ### **Fase 2: Validaciones Adicionales**
@@ -202,23 +207,107 @@ def _validate_start_point(self, start_point: str) -> bool:
 2. Mejorar mensajes de error
 3. Tests de integración
 
-### **Fase 3: Optimizaciones**
-1. Manejo de conflictos de nombres
-2. Validación de start_point
+### **Fase 3: Manejo de Archivos No Committeados**
+1. Detectar archivos no committeados antes del switch
+2. Preguntar al usuario si quiere llevar archivos o descartarlos
+3. Implementar git stash para preservar cambios
+4. Tests de integración con archivos no committeados
+
+### **Fase 4: Optimizaciones**
+1. Validación de start_point
+2. Manejo de conflictos de nombres
 3. Tests de rendimiento
+
+## Flujo de Trabajo Git
+
+### **⚠️ IMPORTANTE: Mantener Rama de Trabajo**
+Durante las pruebas y desarrollo, es **CRÍTICO** mantener el flujo de trabajo correcto:
+
+1. **Trabajar en rama de trabajo**: `fix/ggb-not-checkout-neither-not-create-branch` (rama actual)
+2. **Implementar en rama de trabajo**: Hacer cambios en la rama actual
+3. **Probar en rama de trabajo**: Ejecutar tests y validaciones
+4. **Commit en rama de trabajo**: Guardar cambios con mensaje descriptivo
+5. **NO trabajar en ramas de prueba**: Evitar trabajar en `main` u otras ramas
+
+### **Riesgos de No Seguir el Flujo**
+- **Pérdida de código**: Cambios en ramas incorrectas pueden perderse
+- **Historia confusa**: Commits en ramas de prueba crean historial desordenado
+- **Conflictos de merge**: Cambios en múltiples ramas pueden causar conflictos
+- **Dificultad de seguimiento**: No se puede rastrear el progreso del desarrollo
+
+### **Proceso Recomendado**
+```bash
+# 1. Verificar rama actual
+git branch
+
+# 2. Si no estamos en fix/ggb-not-checkout-neither-not-create-branch, cambiar
+git checkout fix/ggb-not-checkout-neither-not-create-branch
+
+# 3. Implementar cambios
+# ... código ...
+
+# 4. Probar cambios
+python src/commands/ggb.py nueva-rama
+
+# 5. Commit cambios
+git add .
+git commit -m "feat: implement create_branch() method
+
+- Add proper implementation using git branch
+- Handle branch name validation
+- Follow GitInterface error patterns
+- Fix ggb command branch creation bug"
+
+# 6. Continuar desarrollo en la misma rama
+```
+
+### **Validación del Flujo**
+- **Antes de implementar**: Verificar que estamos en `fix/ggb-not-checkout-neither-not-create-branch`
+- **Después de cada cambio**: Commit inmediato con mensaje descriptivo
+- **Antes de probar**: Verificar que los cambios están committeados
+- **Después de probar**: Documentar resultados en zettels
 
 ## Integración con ggb
 
 ### **Flujo de Trabajo Propuesto**
 1. `ggb` verifica si rama existe
-2. Si existe: usa `switch_branch()` para cambiar
-3. Si no existe: usa `create_branch()` para crear
-4. Después de crear: usa `switch_branch()` para cambiar
+2. Si existe: 
+   - Verifica si hay archivos no committeados
+   - Si hay archivos: pregunta al usuario si quiere llevarlos o descartarlos
+   - Usa `switch_branch()` para cambiar
+3. Si no existe: 
+   - Usa `create_branch()` para crear
+   - Verifica si hay archivos no committeados
+   - Si hay archivos: pregunta al usuario si quiere llevarlos o descartarlos
+   - Usa `switch_branch()` para cambiar
+
+### **Manejo de Archivos No Committeados**
+```python
+def _handle_uncommitted_changes(self, branch_name: str) -> bool:
+    """Handle uncommitted changes before switching branches."""
+    if self.git.has_uncommitted_changes():
+        click.echo(ColorManager.warning("Tienes archivos sin commitear"))
+        choice = input("¿Quieres llevarlos a la nueva rama? (s/n): ").strip().lower()
+        
+        if choice in ['s', 'si', 'y', 'yes']:
+            # Stash changes
+            self.git.stash_changes()
+            click.echo(ColorManager.info("Cambios guardados en stash"))
+            return True
+        else:
+            # Discard changes
+            self.git.discard_changes()
+            click.echo(ColorManager.info("Cambios descartados"))
+            return True
+    
+    return False
+```
 
 ### **Ventajas del Enfoque**
 - **Separación de responsabilidades**: Cada método tiene una función específica
 - **Reutilización**: `create_branch()` puede usarse en otros comandos
 - **Flexibilidad**: Permite crear sin cambiar si es necesario
+- **Experiencia de usuario**: Manejo inteligente de archivos no committeados
 
 ## Referencias
 
