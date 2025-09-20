@@ -7,10 +7,10 @@ daily_usage:
     tokens: 50
   '2025-09-20':
     commands:
-      ggai: 9
+      ggai: 30
     cost: 0.1332
-    requests: 9
-    tokens: 1332
+    requests: 30
+    tokens: 3964
 limits:
   cost_limit: 5.0
   tracking_enabled: true
@@ -19,5 +19,5 @@ period:
   start_date: '2025-09-05'
 totals:
   cost: 0.13820000000000002
-  requests: 10
-  tokens: 1382
+  requests: 31
+  tokens: 4014
