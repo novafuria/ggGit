@@ -74,10 +74,37 @@ class GgbCommand(BaseCommand):
             else:
                 # Create new branch
                 try:
+                    # Check for uncommitted changes before creating branch
+                    if self._has_uncommitted_changes():
+                        if not self._handle_uncommitted_changes():
+                            return 1
+                    
                     result = self.git.create_branch(clean_name)
                     if result:
-                        click.echo(ColorManager.success(f"Rama '{clean_name}' creada exitosamente"))
-                        return 0
+                        # Switch to the new branch after creating it
+                        try:
+                            switch_result = self.git.switch_branch(clean_name)
+                            if switch_result:
+                                click.echo(ColorManager.success(f"Rama '{clean_name}' creada y cambiado a ella"))
+                                return 0
+                            else:
+                                click.echo(ColorManager.warning(f"Rama '{clean_name}' creada pero no se pudo cambiar a ella"))
+                                click.echo(ColorManager.info(f"Puedes cambiar manualmente con: git checkout {clean_name}"))
+                                return 0
+                        except subprocess.CalledProcessError as e:
+                            error_msg = e.stderr if e.stderr else str(e)
+                            if "would be overwritten" in error_msg or "local changes" in error_msg:
+                                click.echo(ColorManager.warning(f"Rama '{clean_name}' creada pero no se pudo cambiar"))
+                                click.echo(ColorManager.warning("Tienes cambios sin commitear que serían sobrescritos"))
+                                click.echo(ColorManager.info("Opciones:"))
+                                click.echo("  1. Hacer commit de los cambios: git add . && git commit -m 'mensaje'")
+                                click.echo("  2. Guardar cambios temporalmente: git stash")
+                                click.echo("  3. Descartar cambios: git reset --hard HEAD")
+                                click.echo(f"  4. Cambiar manualmente después: git checkout {clean_name}")
+                                return 0
+                            else:
+                                click.echo(ColorManager.error(f"Error al cambiar a rama '{clean_name}': {error_msg}"))
+                                return 1
                     else:
                         click.echo(ColorManager.error(f"Error al crear rama '{clean_name}'"))
                         return 1
@@ -132,6 +159,66 @@ class GgbCommand(BaseCommand):
             branches = self.git.get_branches()
             return branch_name in branches
         except:
+            return False
+    
+    def _has_uncommitted_changes(self):
+        """Check if there are uncommitted changes."""
+        try:
+            unstaged_files = self.git.get_unstaged_files()
+            return len(unstaged_files) > 0
+        except:
+            return False
+    
+    def _handle_uncommitted_changes(self):
+        """Handle uncommitted changes before creating/switching branches."""
+        try:
+            click.echo(ColorManager.warning("Tienes cambios sin commitear"))
+            click.echo(ColorManager.info("¿Qué quieres hacer con estos cambios?"))
+            click.echo("  1. Conservarlos (stash)")
+            click.echo("  2. Descartarlos")
+            click.echo("  3. Cancelar operación")
+            
+            while True:
+                try:
+                    choice = input("\nSelecciona opción (1-3): ").strip()
+                    
+                    if choice == "1":
+                        # Stash changes
+                        result = subprocess.run(['git', 'stash'], capture_output=True, text=True)
+                        if result.returncode == 0:
+                            click.echo(ColorManager.success("Cambios guardados en stash"))
+                            return True
+                        else:
+                            click.echo(ColorManager.error(f"Error al guardar cambios: {result.stderr}"))
+                            return False
+                    
+                    elif choice == "2":
+                        # Discard changes
+                        result = subprocess.run(['git', 'reset', '--hard', 'HEAD'], capture_output=True, text=True)
+                        if result.returncode == 0:
+                            click.echo(ColorManager.success("Cambios descartados"))
+                            return True
+                        else:
+                            click.echo(ColorManager.error(f"Error al descartar cambios: {result.stderr}"))
+                            return False
+                    
+                    elif choice == "3":
+                        # Cancel operation
+                        click.echo(ColorManager.info("Operación cancelada"))
+                        return False
+                    
+                    else:
+                        click.echo(ColorManager.error("Selección inválida. Ingresa 1, 2 o 3"))
+                        
+                except KeyboardInterrupt:
+                    click.echo(ColorManager.warning("\nOperación cancelada"))
+                    return False
+                except Exception as e:
+                    click.echo(ColorManager.error(f"Error: {str(e)}"))
+                    return False
+                    
+        except Exception as e:
+            click.echo(ColorManager.error(f"Error al manejar cambios: {str(e)}"))
             return False
     
     def _show_branch_options(self):
