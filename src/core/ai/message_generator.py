@@ -301,9 +301,7 @@ class AiMessageGenerator:
 Files modified: {file_context}
 
 Changes:
-```
 {diff_content}
-```
 
 {additional_context}
 
@@ -312,8 +310,8 @@ Requirements:
 - Keep description under 50 characters
 - Be specific about what was changed
 - Use imperative mood (e.g., "add", "fix", "update")
-
-Generate only the commit message, no explanations:"""
+- Do not use markdown formatting or code blocks
+- Generate only the commit message, no explanations"""
 
         return prompt
     
@@ -393,9 +391,18 @@ Generate only the commit message, no explanations:"""
         # Clean response
         message = response.strip()
         
+        # Remove markdown formatting
+        message = re.sub(r'```.*?```', '', message, flags=re.DOTALL)
+        message = re.sub(r'`([^`]+)`', r'\1', message)
+        message = re.sub(r'\*\*([^*]+)\*\*', r'\1', message)
+        message = re.sub(r'\*([^*]+)\*', r'\1', message)
+        
         # Remove any conventional commit prefix if present
         prefix_pattern = r'^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|break)(\([^)]+\))?:\s*'
         message = re.sub(prefix_pattern, '', message, flags=re.IGNORECASE)
+        
+        # Clean up extra whitespace
+        message = re.sub(r'\s+', ' ', message).strip()
         
         # Ensure it's not empty
         if not message:
