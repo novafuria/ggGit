@@ -497,16 +497,43 @@ class GitInterface:
             RuntimeError: If not in a Git repository
             ValueError: If branch doesn't exist
             subprocess.CalledProcessError: If git checkout/switch command fails
-            
-        Note:
-            This method will be implemented in STORY-1.2.3 - comandos base
         """
-        # TODO: Implement git branch switching
-        # 1. Verify we're in a git repository
-        # 2. Check if branch exists
-        # 3. Execute 'git switch <branch>' command
-        # 4. Handle errors and return result
-        return True
+        if not self.is_git_repository():
+            raise RuntimeError("Not a git repository")
+        
+        try:
+            # Use git switch (preferred) or fallback to git checkout
+            result = subprocess.run(
+                ['git', 'switch', branch_name],
+                capture_output=True,
+                text=True,
+                timeout=30
+            )
+            
+            if result.returncode != 0:
+                # Fallback to git checkout if git switch fails
+                result = subprocess.run(
+                    ['git', 'checkout', branch_name],
+                    capture_output=True,
+                    text=True,
+                    timeout=30
+                )
+                
+                if result.returncode != 0:
+                    raise subprocess.CalledProcessError(
+                        result.returncode, 
+                        f"git checkout {branch_name}",
+                        result.stderr
+                    )
+            
+            return True
+            
+        except subprocess.TimeoutExpired:
+            raise subprocess.CalledProcessError(1, f"git switch {branch_name}", "Timeout")
+        except subprocess.CalledProcessError as e:
+            raise e
+        except Exception as e:
+            raise subprocess.CalledProcessError(1, f"git switch {branch_name}", str(e))
     
     def diff(self, files: Optional[List[str]] = None, staged: bool = False) -> bool:
         """
