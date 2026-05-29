@@ -105,6 +105,9 @@ class TestComponentIntegration:
     
     def test_git_interface_integration(self, git_interface, mock_subprocess):
         """Test GitInterface integration with subprocess."""
+        # Set mock return value to be string 'success' rather than bytes
+        mock_subprocess.return_value.stdout = "success\n"
+        
         # Test that GitInterface can be initialized
         assert isinstance(git_interface, GitInterface)
         
@@ -290,7 +293,10 @@ class TestGitIntegration:
         # Test boolean methods
         assert isinstance(git_interface.is_git_repository(), bool)
         assert isinstance(git_interface.stage_all_changes(), bool)
-        assert isinstance(git_interface.stage_files([]), bool)
+        
+        with pytest.raises(ValueError, match="La lista de archivos no puede estar vacía"):
+            git_interface.stage_files([])
+            
         assert isinstance(git_interface.commit("test"), bool)
         
         # Test string methods
