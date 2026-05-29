@@ -345,9 +345,22 @@ def test_helpers():
     return TestHelpers
 
 
-# ============================================================================
-# Pytest Configuration
-# ============================================================================
+@pytest.fixture(autouse=True)
+def clean_logging_handlers():
+    """Ensure all logging handlers are closed after each test to prevent I/O errors."""
+    yield
+    import logging
+    
+    # Close all handlers on the gggit root logger
+    root_logger = logging.getLogger('gggit')
+    for handler in list(root_logger.handlers):
+        handler.close()
+        root_logger.removeHandler(handler)
+    
+    # Also clean up standard library root logger just in case
+    for handler in list(logging.root.handlers):
+        handler.close()
+        logging.root.removeHandler(handler)
 
 def pytest_configure(config):
     """Configure pytest with custom markers."""

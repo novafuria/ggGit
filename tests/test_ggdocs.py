@@ -30,75 +30,51 @@ class TestDocsCommandExecute:
         """Test successful execution."""
         cmd = DocsCommand()
         
-        with patch('src.commands.ggdocs.CommitCommand') as mock_commit_class:
-            mock_commit = MagicMock()
-            mock_commit.execute.return_value = 0
-            mock_commit_class.return_value = mock_commit
+        with patch.object(cmd, '_execute_manual_commit', return_value=0) as mock_execute:
+            result = cmd.execute("update README")
             
-            with patch('src.commands.ggdocs.ColorManager.success') as mock_success:
-                result = cmd.execute("update README")
-                
-                assert result == 0
-                mock_commit_class.assert_called_once_with("docs")
-                mock_commit.execute.assert_called_once_with("update README", None, False)
-                mock_success.assert_called_once_with("Commit realizado exitosamente")
+            assert result == 0
+            mock_execute.assert_called_once_with("update README", None, False)
     
     def test_execute_with_scope(self):
         """Test execution with scope."""
         cmd = DocsCommand()
         
-        with patch('src.commands.ggdocs.CommitCommand') as mock_commit_class:
-            mock_commit = MagicMock()
-            mock_commit.execute.return_value = 0
-            mock_commit_class.return_value = mock_commit
+        with patch.object(cmd, '_execute_manual_commit', return_value=0) as mock_execute:
+            result = cmd.execute("update API docs", scope="api")
             
-            with patch('src.commands.ggdocs.ColorManager.success') as mock_success:
-                result = cmd.execute("update API docs", scope="api")
-                
-                assert result == 0
-                mock_commit.execute.assert_called_once_with("update API docs", "api", False)
-                mock_success.assert_called_once_with("Commit realizado exitosamente")
+            assert result == 0
+            mock_execute.assert_called_once_with("update API docs", "api", False)
     
     def test_execute_with_amend(self):
         """Test execution with amend."""
         cmd = DocsCommand()
         
-        with patch('src.commands.ggdocs.CommitCommand') as mock_commit_class:
-            mock_commit = MagicMock()
-            mock_commit.execute.return_value = 0
-            mock_commit_class.return_value = mock_commit
+        with patch.object(cmd, '_execute_manual_commit', return_value=0) as mock_execute:
+            result = cmd.execute("fix documentation", amend=True)
             
-            with patch('src.commands.ggdocs.ColorManager.success') as mock_success:
-                result = cmd.execute("fix documentation", amend=True)
-                
-                assert result == 0
-                mock_commit.execute.assert_called_once_with("fix documentation", None, True)
-                mock_success.assert_called_once_with("Commit realizado exitosamente")
+            assert result == 0
+            mock_execute.assert_called_once_with("fix documentation", None, True)
     
     def test_execute_with_ai_flag(self):
-        """Test execution with AI flag (not implemented)."""
+        """Test execution with AI generation fallback."""
         cmd = DocsCommand()
         
-        with patch('src.commands.ggdocs.ColorManager.warning') as mock_warning:
-            result = cmd.execute("", ai=True)
-            
-            assert result == 1
-            mock_warning.assert_called_once_with("AI functionality not yet implemented")
+        with patch.object(cmd, '_is_ai_configured', return_value=True):
+            with patch.object(cmd, '_generate_ai_message', return_value=0) as mock_generate:
+                result = cmd.execute(message="")
+                
+                assert result == 0
+                mock_generate.assert_called_once_with(None, False)
     
     def test_execute_commit_failure(self):
         """Test execution when commit fails."""
         cmd = DocsCommand()
         
-        with patch('src.commands.ggdocs.CommitCommand') as mock_commit_class:
-            mock_commit = MagicMock()
-            mock_commit.execute.return_value = 1
-            mock_commit_class.return_value = mock_commit
+        with patch.object(cmd, '_execute_manual_commit', return_value=1) as mock_execute:
+            result = cmd.execute("update docs")
             
-            with patch('src.commands.ggdocs.ColorManager.error') as mock_error:
-                result = cmd.execute("update docs")
-                
-                assert result == 1
-                mock_error.assert_called_once_with("Error al realizar commit")
+            assert result == 1
 
 
 class TestDocsCommandCLI:
@@ -166,20 +142,22 @@ class TestDocsCommandCLI:
         runner = CliRunner()
         
         # Test the actual behavior - Click doesn't propagate exit codes correctly in testing
-        result = runner.invoke(main, ["--ai"])
-        
-        # Check that AI warning message appears (functionality works)
-        assert "AI functionality not yet implemented" in result.output
+        with patch.object(DocsCommand, '_is_ai_configured', return_value=False):
+            result = runner.invoke(main, ["--ai"])
+            
+            # Check that AI warning message appears (functionality works)
+            assert "IA no configurada" in result.output
     
     def test_cli_error_handling(self):
         """Test CLI error handling."""
         runner = CliRunner()
         
         # Test with invalid input that should cause an error
-        result = runner.invoke(main, [""])
-        
-        # Check that error message appears (functionality works)
-        assert "Error al realizar commit" in result.output
+        with patch.object(DocsCommand, '_is_ai_configured', return_value=False):
+            result = runner.invoke(main, [""])
+            
+            # Check that error message appears (functionality works)
+            assert "IA no configurada" in result.output
 
 
 class TestDocsCommandIntegration:
@@ -189,15 +167,8 @@ class TestDocsCommandIntegration:
         """Test full workflow from CLI to commit."""
         runner = CliRunner()
         
-        with patch('src.commands.ggdocs.CommitCommand') as mock_commit_class:
-            mock_commit = MagicMock()
-            mock_commit.execute.return_value = 0
-            mock_commit_class.return_value = mock_commit
+        with patch.object(DocsCommand, '_execute_manual_commit', return_value=0) as mock_execute:
+            result = runner.invoke(main, ["update documentation"])
             
-            with patch('src.commands.ggdocs.ColorManager.success') as mock_success:
-                result = runner.invoke(main, ["update documentation"])
-                
-                assert result.exit_code == 0
-                mock_commit_class.assert_called_once_with("docs")
-                mock_commit.execute.assert_called_once_with("update documentation", None, False)
-                mock_success.assert_called_once_with("Commit realizado exitosamente")
+            assert result.exit_code == 0
+            mock_execute.assert_called_once_with("update documentation", None, False)
