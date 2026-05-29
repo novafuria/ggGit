@@ -44,7 +44,7 @@ class TestGitAdvancedCommandsExecute:
         # Mock the git method based on command type
         if command_name == "ggb":
             with patch.object(cmd.git, 'is_git_repository', return_value=True):
-                with patch.object(cmd, '_display_branches', return_value=0):
+                with patch.object(cmd, '_show_branch_options', return_value=0):
                     result = cmd.execute()
                     assert result == 0
         
@@ -62,9 +62,11 @@ class TestGitAdvancedCommandsExecute:
                     with patch.object(cmd.git, 'get_unstaged_files', return_value=[]):
                         with patch.object(cmd.git, 'stage_all_changes', return_value=True):
                             with patch.object(cmd.git, 'commit', return_value=True):
-                                # In the base execute, it tests amend=False and requires files to be staged/unstaged
-                                result = cmd.execute(message="test message", amend=False)
-                                assert result == 0
+                                # Mock the format_commit_message and validator methods properly
+                                with patch.object(cmd.validator, 'validate_commit_message', return_value=None):
+                                    with patch.object(cmd, 'format_commit_message', return_value="break: test message"):
+                                        result = cmd.execute(message="test message", amend=False)
+                                        assert result == 0
     
     @pytest.mark.parametrize("command_class,main_func,command_name", COMMAND_TEST_DATA)
     def test_execute_failure(self, command_class, main_func, command_name):
@@ -235,10 +237,11 @@ class TestGitAdvancedCommandsSpecific:
                 with patch.object(cmd.git, 'get_unstaged_files', return_value=[]):
                     with patch.object(cmd.git, 'stage_all_changes', return_value=True):
                         with patch.object(cmd.git, 'commit', return_value=True):
-                            result = cmd.execute(message="test message", amend=False)
-                            
-                            assert result == 0
-                            cmd.git.commit.assert_called_once_with("break: test message")
+                            with patch.object(cmd.validator, 'validate_commit_message', return_value=None):
+                                result = cmd.execute(message="test message", amend=False)
+                                
+                                assert result == 0
+                                cmd.git.commit.assert_called_once_with("break: test message")
     
     def test_ggbreak_commit_with_scope(self):
         """Test ggbreak commit with scope."""
@@ -248,10 +251,12 @@ class TestGitAdvancedCommandsSpecific:
             with patch.object(cmd.git, 'get_staged_files', return_value=["file.txt"]):
                 with patch.object(cmd.git, 'get_unstaged_files', return_value=[]):
                     with patch.object(cmd.git, 'commit', return_value=True):
-                        result = cmd.execute(message="test message", scope="auth", amend=False)
-                        
-                        assert result == 0
-                        cmd.git.commit.assert_called_once_with("break(auth): test message")
+                        with patch.object(cmd.validator, 'validate_commit_message', return_value=None):
+                            with patch.object(cmd.validator, 'validate_scope', return_value=None):
+                                result = cmd.execute(message="test message", scope="auth", amend=False)
+                                
+                                assert result == 0
+                                cmd.git.commit.assert_called_once_with("break(auth): test message")
     
     def test_ggbreak_empty_message(self):
         """Test ggbreak with empty message."""
