@@ -45,79 +45,55 @@ class TestBasicConventionalCommitsExecute:
         """Test successful execution for all commands."""
         cmd = command_class()
         
-        with patch(f'src.commands.{command_name}.CommitCommand') as mock_commit_class:
-            mock_commit = MagicMock()
-            mock_commit.execute.return_value = 0
-            mock_commit_class.return_value = mock_commit
+        with patch.object(cmd, '_execute_manual_commit', return_value=0) as mock_execute:
+            result = cmd.execute("test message")
             
-            with patch(f'src.commands.{command_name}.ColorManager.success') as mock_success:
-                result = cmd.execute("test message")
-                
-                assert result == 0
-                mock_commit_class.assert_called_once_with(commit_type)
-                mock_commit.execute.assert_called_once_with("test message", None, False)
-                mock_success.assert_called_once_with("Commit realizado exitosamente")
+            assert result == 0
+            mock_execute.assert_called_once_with("test message", None, False)
     
     @pytest.mark.parametrize("command_class,commit_type,main_func,command_name", COMMAND_TEST_DATA)
     def test_execute_with_scope(self, command_class, commit_type, main_func, command_name):
         """Test execution with scope for all commands."""
         cmd = command_class()
         
-        with patch(f'src.commands.{command_name}.CommitCommand') as mock_commit_class:
-            mock_commit = MagicMock()
-            mock_commit.execute.return_value = 0
-            mock_commit_class.return_value = mock_commit
+        with patch.object(cmd, '_execute_manual_commit', return_value=0) as mock_execute:
+            result = cmd.execute("test message", scope="api")
             
-            with patch(f'src.commands.{command_name}.ColorManager.success') as mock_success:
-                result = cmd.execute("test message", scope="api")
-                
-                assert result == 0
-                mock_commit.execute.assert_called_once_with("test message", "api", False)
-                mock_success.assert_called_once_with("Commit realizado exitosamente")
+            assert result == 0
+            mock_execute.assert_called_once_with("test message", "api", False)
     
     @pytest.mark.parametrize("command_class,commit_type,main_func,command_name", COMMAND_TEST_DATA)
     def test_execute_with_amend(self, command_class, commit_type, main_func, command_name):
         """Test execution with amend for all commands."""
         cmd = command_class()
         
-        with patch(f'src.commands.{command_name}.CommitCommand') as mock_commit_class:
-            mock_commit = MagicMock()
-            mock_commit.execute.return_value = 0
-            mock_commit_class.return_value = mock_commit
+        with patch.object(cmd, '_execute_manual_commit', return_value=0) as mock_execute:
+            result = cmd.execute("test message", amend=True)
             
-            with patch(f'src.commands.{command_name}.ColorManager.success') as mock_success:
-                result = cmd.execute("test message", amend=True)
-                
-                assert result == 0
-                mock_commit.execute.assert_called_once_with("test message", None, True)
-                mock_success.assert_called_once_with("Commit realizado exitosamente")
-    
+            assert result == 0
+            mock_execute.assert_called_once_with("test message", None, True)
+
     @pytest.mark.parametrize("command_class,commit_type,main_func,command_name", COMMAND_TEST_DATA)
     def test_execute_with_ai_flag(self, command_class, commit_type, main_func, command_name):
-        """Test execution with AI flag (not implemented) for all commands."""
+        """Test execution with AI generation fallback for all commands."""
         cmd = command_class()
         
-        with patch(f'src.commands.{command_name}.ColorManager.warning') as mock_warning:
-            result = cmd.execute("", ai=True)
-            
-            assert result == 1
-            mock_warning.assert_called_once_with("AI functionality not yet implemented")
+        with patch.object(cmd, '_is_ai_configured', return_value=True):
+            with patch.object(cmd, '_generate_ai_message', return_value=0) as mock_generate:
+                result = cmd.execute(message="")
+                
+                assert result == 0
+                mock_generate.assert_called_once_with(None, False)
     
     @pytest.mark.parametrize("command_class,commit_type,main_func,command_name", COMMAND_TEST_DATA)
     def test_execute_commit_failure(self, command_class, commit_type, main_func, command_name):
         """Test execution when commit fails for all commands."""
         cmd = command_class()
         
-        with patch(f'src.commands.{command_name}.CommitCommand') as mock_commit_class:
-            mock_commit = MagicMock()
-            mock_commit.execute.return_value = 1
-            mock_commit_class.return_value = mock_commit
+        with patch.object(cmd, '_execute_manual_commit', return_value=1) as mock_execute:
+            result = cmd.execute("test message")
             
-            with patch(f'src.commands.{command_name}.ColorManager.error') as mock_error:
-                result = cmd.execute("test message")
-                
-                assert result == 1
-                mock_error.assert_called_once_with("Error al realizar commit")
+            assert result == 1
 
 
 class TestBasicConventionalCommitsCLI:
@@ -189,10 +165,12 @@ class TestBasicConventionalCommitsCLI:
         runner = CliRunner()
         
         # Test the actual behavior - Click doesn't propagate exit codes correctly in testing
-        result = runner.invoke(main_func, ["--ai"])
-        
-        # Check that AI warning message appears (functionality works)
-        assert "AI functionality not yet implemented" in result.output
+        # Mock _is_ai_configured to return False to test the fallback warning
+        with patch.object(command_class, '_is_ai_configured', return_value=False):
+            result = runner.invoke(main_func, ["--ai"])
+            
+            # Check that AI warning message appears (functionality works)
+            assert "IA no configurada" in result.output
     
     @pytest.mark.parametrize("command_class,commit_type,main_func,command_name", COMMAND_TEST_DATA)
     def test_cli_error_handling(self, command_class, commit_type, main_func, command_name):
@@ -200,10 +178,12 @@ class TestBasicConventionalCommitsCLI:
         runner = CliRunner()
         
         # Test with invalid input that should cause an error
-        result = runner.invoke(main_func, [""])
-        
-        # Check that error message appears (functionality works)
-        assert "Error al realizar commit" in result.output
+        # In current design empty message with AI disabled prints warning and returns 1
+        with patch.object(command_class, '_is_ai_configured', return_value=False):
+            result = runner.invoke(main_func, [""])
+            
+            # Check that error message appears
+            assert "IA no configurada" in result.output
 
 
 class TestBasicConventionalCommitsIntegration:
@@ -214,15 +194,8 @@ class TestBasicConventionalCommitsIntegration:
         """Test full workflow from CLI to commit for all commands."""
         runner = CliRunner()
         
-        with patch(f'src.commands.{command_name}.CommitCommand') as mock_commit_class:
-            mock_commit = MagicMock()
-            mock_commit.execute.return_value = 0
-            mock_commit_class.return_value = mock_commit
+        with patch.object(command_class, '_execute_manual_commit', return_value=0) as mock_execute:
+            result = runner.invoke(main_func, ["test message"])
             
-            with patch(f'src.commands.{command_name}.ColorManager.success') as mock_success:
-                result = runner.invoke(main_func, ["test message"])
-                
-                assert result.exit_code == 0
-                mock_commit_class.assert_called_once_with(commit_type)
-                mock_commit.execute.assert_called_once_with("test message", None, False)
-                mock_success.assert_called_once_with("Commit realizado exitosamente")
+            assert result.exit_code == 0
+            mock_execute.assert_called_once_with("test message", None, False)

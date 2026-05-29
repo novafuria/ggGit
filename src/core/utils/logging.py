@@ -85,8 +85,12 @@ class LoggingManager:
         root_logger = logging.getLogger('gggit')
         root_logger.setLevel(getattr(logging, self.log_level.upper()))
         
-        # Clear any existing handlers
-        root_logger.handlers.clear()
+        # Clear any existing handlers to prevent duplicates
+        for handler in root_logger.handlers[:]:
+            root_logger.removeHandler(handler)
+            
+        # Prevent propagation to avoid duplicate logs in pytest output
+        root_logger.propagate = False
         
         # Create formatter
         formatter = logging.Formatter(
@@ -109,7 +113,8 @@ class LoggingManager:
         root_logger.addHandler(error_handler)
         
         # Console handler
-        console_handler = logging.StreamHandler()
+        import sys
+        console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setLevel(getattr(logging, self.log_level.upper()))
         console_handler.setFormatter(formatter)
         root_logger.addHandler(console_handler)
