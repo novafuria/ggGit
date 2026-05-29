@@ -354,13 +354,14 @@ class TestGetUnstagedFiles:
             # First call (git status) succeeds, second call (git diff) succeeds
             mock_run.side_effect = [
                 MagicMock(returncode=0),  # git status
-                MagicMock(returncode=0, stdout="file1.py\nfile2.py\n")  # git diff
+                MagicMock(returncode=0, stdout="file1.py\nfile2.py\n"),  # git diff
+                MagicMock(returncode=0, stdout="file3.py\n")  # git ls-files for untracked
             ]
             git = GitInterface()
             result = git.get_unstaged_files()
-            assert result == ["file1.py", "file2.py"]
+            assert result == ["file1.py", "file2.py", "file3.py"]
             # Verify git diff was called
-            assert mock_run.call_count == 2
+            assert mock_run.call_count == 3
             assert mock_run.call_args_list[1] == (
                 (['git', 'diff', '--name-only'],),
                 {'capture_output': True, 'text': True, 'timeout': 10}
