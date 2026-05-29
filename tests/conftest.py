@@ -36,6 +36,45 @@ from src.core.utils.colors import ColorManager
 from src.core.utils.logging import LoggingManager
 
 
+@pytest.fixture(autouse=True)
+def prevent_accidental_git_commits(monkeypatch):
+    """
+    Global protection to prevent accidental git operations on the host repository.
+    
+    This fixture ensures that if a mock fails or is missing in a test, 
+    any direct `subprocess.run` that attempts to modify git state 
+    (commit, checkout, branch) will be intercepted and raise an error, 
+    except if it's explicitly allowed in the isolated temp_git_repo fixture.
+    """
+    original_run = subprocess.run
+    
+    def guarded_run(*args, **kwargs):
+        command_args = args[0] if args else kwargs.get('args', [])
+        
+        # If the command is a list and starts with 'git'
+        if isinstance(command_args, list) and len(command_args) > 0 and command_args[0] == 'git':
+            
+            # Allow read-only or harmless commands if they leak (though they should be mocked)
+            dangerous_cmds = ['commit', 'add', 'checkout', 'branch', 'merge', 'reset', 'push', 'pull', 'revert']
+            
+            # Check if this command is trying to modify state
+            if len(command_args) > 1 and command_args[1] in dangerous_cmds:
+                
+                # Check if it's running inside our isolated temp directory
+                cwd = kwargs.get('cwd') or os.getcwd()
+                if not cwd or 'tmp' not in str(cwd):
+                    # We are in the host repository and a mock failed!
+                    # Prevent the execution to save the host git state
+                    raise RuntimeError(
+                        f"SECURITY: A test attempted to run real '{command_args}' on the host repo. "
+                        f"Missing mock detected!"
+                    )
+                    
+        return original_run(*args, **kwargs)
+        
+    monkeypatch.setattr(subprocess, 'run', guarded_run)
+
+
 # ============================================================================
 # Mock Fixtures for External Dependencies
 # ============================================================================

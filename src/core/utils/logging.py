@@ -85,8 +85,12 @@ class LoggingManager:
         root_logger = logging.getLogger('gggit')
         root_logger.setLevel(getattr(logging, self.log_level.upper()))
         
-        # Clear any existing handlers to prevent duplicates
+        # Clear and close any existing handlers to prevent duplicates and I/O leaks
         for handler in root_logger.handlers[:]:
+            try:
+                handler.close()
+            except Exception:
+                pass
             root_logger.removeHandler(handler)
             
         # Prevent propagation to avoid duplicate logs in pytest output
@@ -113,8 +117,7 @@ class LoggingManager:
         root_logger.addHandler(error_handler)
         
         # Console handler
-        import sys
-        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler = logging.StreamHandler()
         console_handler.setLevel(getattr(logging, self.log_level.upper()))
         console_handler.setFormatter(formatter)
         root_logger.addHandler(console_handler)
@@ -147,12 +150,11 @@ class LoggingManager:
         # Set level to match the logging manager
         logger.setLevel(getattr(logging, self.log_level.upper()))
         
-        # Don't add handlers if they already exist (prevent duplicates)
-        if not logger.handlers:
-            # Get the root gggit logger to inherit its handlers
-            root_logger = logging.getLogger('gggit')
-            for handler in root_logger.handlers:
-                logger.addHandler(handler)
+        # Refresh handlers to prevent duplicate or stale closed handlers
+        logger.handlers.clear()
+        root_logger = logging.getLogger('gggit')
+        for handler in root_logger.handlers:
+            logger.addHandler(handler)
         
         # Prevent propagation to avoid duplicate logs
         logger.propagate = False

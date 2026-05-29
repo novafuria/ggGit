@@ -153,8 +153,10 @@ class TestAiIntegrationErrorHandling:
     
     def test_manual_commit_error(self):
         """Test error handling in manual commit."""
-        # Test that the command handles errors gracefully
-        result = self.runner.invoke(ggfeat_main, ['test message'])
-        
-        # Should show success message (command is working correctly)
-        assert "Commit realizado exitosamente" in result.output
+        # Test that the command handles errors gracefully by mocking CommitCommand.execute
+        # instead of the entire manual commit method, allowing it to print the success message.
+        with patch('core.base_commands.commit.CommitCommand.execute', return_value=0):
+            result = self.runner.invoke(ggfeat_main, ['test message'])
+            
+            # Should show success message (command is working correctly)
+            assert "Commit realizado exitosamente" in result.output

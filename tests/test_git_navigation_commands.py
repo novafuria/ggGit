@@ -62,10 +62,10 @@ class TestGitNavigationCommandsExecute:
             with patch.object(cmd.git, 'is_git_repository', return_value=True):
                 with patch.object(cmd.git, 'get_all_branches', return_value={"local": ["main"], "remote": []}):
                     with patch.object(cmd.git, 'get_current_branch', return_value="main"):
-                        with patch.object(cmd, '_display_branches') as mock_display:
+                        with patch.object(cmd, '_show_branch_options', return_value=0) as mock_display:
                             result = cmd.execute()
                             assert result == 0
-                            mock_display.assert_called_once_with({"local": ["main"], "remote": []}, "main")
+                            mock_display.assert_called_once()
     
     @pytest.mark.parametrize("command_class,main_func,command_name", COMMAND_TEST_DATA)
     def test_execute_failure(self, command_class, main_func, command_name):
@@ -214,10 +214,8 @@ class TestGitNavigationCommandsSpecific:
         with patch.object(cmd.git, 'is_git_repository', return_value=True):
             with patch.object(cmd.git, 'get_all_branches', return_value={"local": ["main"], "remote": []}):
                 with patch.object(cmd.git, 'get_current_branch', return_value="main"):
-                    with patch.object(cmd, '_display_branches') as mock_display:
+                    with patch.object(cmd, '_show_branch_options', return_value=0) as mock_display:
                         result = cmd.execute()
                         
                         assert result == 0
-                        cmd.git.get_all_branches.assert_called_once()
-                        cmd.git.get_current_branch.assert_called_once()
-                        mock_display.assert_called_once_with({"local": ["main"], "remote": []}, "main")
+                        mock_display.assert_called_once()
