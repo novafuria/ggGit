@@ -97,7 +97,9 @@ class ConfigManager:
             yaml.YAMLError: If configuration files contain invalid YAML
             jsonschema.ValidationError: If configuration doesn't match schema
         """
-        merged_config = {}
+        merged_config = {
+            'version': '1.0'  # Default version to satisfy schema requirement
+        }
         
         # Load configurations in priority order (lowest to highest)
         # 1. Default configuration (lowest priority)
