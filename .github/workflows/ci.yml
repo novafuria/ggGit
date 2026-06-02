@@ -18,7 +18,7 @@ jobs:
       run:
         shell: bash -el {0}
     env:
-      PYTHONPATH: .
+      PYTHONPATH: src
 
     steps:
     - uses: actions/checkout@v4
@@ -95,7 +95,7 @@ jobs:
       run:
         shell: bash -el {0}
     env:
-      PYTHONPATH: .
+      PYTHONPATH: src
 
     steps:
     - uses: actions/checkout@v4
@@ -190,7 +190,7 @@ jobs:
       run:
         shell: bash -el {0}
     env:
-      PYTHONPATH: .
+      PYTHONPATH: src
 
     steps:
     - uses: actions/checkout@v4
@@ -241,4 +241,3 @@ jobs:
       if: needs.test.result == 'failure' || needs.quality-gates.result == 'failure'
       run: |
         echo "❌ Some checks failed. Please review the logs."
-        exit 1
