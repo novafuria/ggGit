@@ -16,6 +16,8 @@ jobs:
     defaults:
       run:
         shell: bash -el {0}
+    env:
+      PYTHONPATH: .
 
     steps:
     - uses: actions/checkout@v4
@@ -40,7 +42,6 @@ jobs:
     
     - name: Install dependencies
       run: |
-        pip install -e .
         pip install -r requirements-dev.txt
     
     - name: Lint with flake8
@@ -98,6 +99,8 @@ jobs:
     defaults:
       run:
         shell: bash -el {0}
+    env:
+      PYTHONPATH: .
 
     steps:
     - uses: actions/checkout@v4
@@ -114,7 +117,6 @@ jobs:
     
     - name: Install dependencies
       run: |
-        pip install -e .
         pip install -r requirements-dev.txt
     
     - name: Download test results
@@ -188,6 +190,8 @@ jobs:
     defaults:
       run:
         shell: bash -el {0}
+    env:
+      PYTHONPATH: .
 
     steps:
     - uses: actions/checkout@v4
@@ -204,7 +208,6 @@ jobs:
     
     - name: Install dependencies
       run: |
-        pip install -e .
         pip install safety bandit
     
     - name: Security check with safety
