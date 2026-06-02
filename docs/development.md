@@ -306,7 +306,7 @@ Cuando agregues nuevas funcionalidades:
 - **Funciones pequeñas**: Máximo 20-30 líneas por función
 - **Comentarios útiles**: Explicar el "por qué", no el "qué"
 - **Manejo de errores**: Usar excepciones apropiadas
-- **Tests completos**: Cobertura mínima del 80%
+ - **Tests completos**: Cobertura mínima del 75% (objetivo final 80%)
 
 ### Revisión de Código
 
