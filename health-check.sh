@@ -28,7 +28,7 @@ print_header() {
 
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-COMMANDS_DIR="$SCRIPT_DIR/commands"
+COMMANDS_DIR="$SCRIPT_DIR/src/commands"
 
 echo ""
 print_header "ggGit Health Check"
@@ -74,9 +74,9 @@ fi
 # Check 4: Script syntax
 print_info "4. Checking script syntax..."
 SYNTAX_ERRORS=false
-for script in "$COMMANDS_DIR"/*.sh "$COMMANDS_DIR"/gg*; do
+for script in "$COMMANDS_DIR"/*.py; do
     if [ -f "$script" ]; then
-        if ! bash -n "$script" 2>/dev/null; then
+        if ! python -m py_compile "$script" 2>/dev/null; then
             print_error "Syntax error in: $(basename "$script")"
             SYNTAX_ERRORS=true
         fi
@@ -103,14 +103,14 @@ fi
 print_info "6. Testing basic commands..."
 TEST_COMMANDS=("ggv" "ggs" "ggl" "gga")
 for cmd in "${TEST_COMMANDS[@]}"; do
-    if [ -x "$COMMANDS_DIR/$cmd" ]; then
-        if "$COMMANDS_DIR/$cmd" --help >/dev/null 2>&1; then
+    if [ -f "$COMMANDS_DIR/$cmd.py" ]; then
+        if python "$COMMANDS_DIR/$cmd.py" --help >/dev/null 2>&1; then
             print_success "$cmd works correctly"
         else
             print_warning "$cmd has issues"
         fi
     else
-        print_error "$cmd is not executable"
+        print_error "$cmd.py not found"
     fi
 done
 
@@ -154,7 +154,7 @@ echo ""
 print_header "Health Check Summary"
 echo ""
 
-if [ "$ALL_EXECUTABLE" = true ] && [ "$SYNTAX_ERRORS" = false ]; then
+if [ "$SYNTAX_ERRORS" = false ]; then
     print_success "ggGit is healthy and ready to use!"
     echo ""
     print_info "Next steps:"
@@ -165,12 +165,11 @@ else
     print_warning "ggGit has some issues that need attention"
     echo ""
     print_info "Recommended actions:"
-    echo "  1. Fix script permissions: chmod +x $COMMANDS_DIR/*"
-    echo "  2. Check script syntax for errors"
-    echo "  3. Add to PATH if not configured"
-    echo "  4. Run this health check again"
+    echo "  1. Check script syntax for errors"
+    echo "  2. Add to PATH if not configured"
+    echo "  3. Run this health check again"
 fi
 
 echo ""
 print_info "For more information, run:"
-echo "  $COMMANDS_DIR/ggconfig"
+echo "  python $COMMANDS_DIR/ggconfig.py"
