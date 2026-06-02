@@ -14,3 +14,5 @@ Este zettel de entrada agrupa todo el conocimiento relacionado con el sistema de
 ## Evolución
 
 Los zettels descendientes (11a, 11b, 11c...) documentan la evolución cronológica del conocimiento sobre testing, desde las primeras decisiones de framework hasta las implementaciones específicas de coverage y quality gates.
+
+- [[11a - Estabilización del Entorno CI/CD]]

@@ -152,7 +152,7 @@ ggGit es una suite de comandos independientes de línea de comandos que simplifi
 - **Consistencia**: Todos los comandos comparten el mismo entorno y patrones
 - **Mantenibilidad**: Un solo lenguaje reduce la complejidad de mantenimiento
 - **Capacidades de IA**: Python es ideal para integración con APIs de IA
-- **Testing**: Framework de testing unificado con pytest y coverage progresivo (60% → 70% → 80%+)
+- **Testing**: Framework de testing unificado con pytest y coverage progresivo (60% → 70% → 75% → 80%+)
 - **Dependencias**: Gestión simplificada de dependencias
 
 ## Sistema de comandos independientes
