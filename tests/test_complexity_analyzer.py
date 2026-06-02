@@ -88,7 +88,7 @@ class TestComplexityAnalyzer:
             assert result_analysis == analysis
     
     def test_should_use_ai_complex_changes(self):
-        """Test should_use_ai with complex changes."""
+        """Test should_use_ai with complex changes (should still return True)."""
         analysis = {
             'file_count': 15,
             'diff_lines': 300,
@@ -106,11 +106,11 @@ class TestComplexityAnalyzer:
             
             should_use_ai, result_analysis = self.analyzer.should_use_ai()
             
-            assert should_use_ai == False
+            assert should_use_ai == True
             assert result_analysis == analysis
     
     def test_should_use_ai_exceeds_file_count(self):
-        """Test should_use_ai when file count exceeds limit."""
+        """Test should_use_ai when file count exceeds limit (should still return True)."""
         analysis = {
             'file_count': 15,
             'diff_lines': 50,
@@ -128,11 +128,11 @@ class TestComplexityAnalyzer:
             
             should_use_ai, result_analysis = self.analyzer.should_use_ai()
             
-            assert should_use_ai == False
+            assert should_use_ai == True
             assert result_analysis == analysis
     
     def test_should_use_ai_exceeds_diff_lines(self):
-        """Test should_use_ai when diff lines exceed limit."""
+        """Test should_use_ai when diff lines exceed limit (should still return True)."""
         analysis = {
             'file_count': 5,
             'diff_lines': 300,
@@ -150,11 +150,11 @@ class TestComplexityAnalyzer:
             
             should_use_ai, result_analysis = self.analyzer.should_use_ai()
             
-            assert should_use_ai == False
+            assert should_use_ai == True
             assert result_analysis == analysis
     
     def test_should_use_ai_exceeds_file_size(self):
-        """Test should_use_ai when file size exceeds limit."""
+        """Test should_use_ai when file size exceeds limit (should still return True)."""
         analysis = {
             'file_count': 5,
             'diff_lines': 50,
@@ -172,7 +172,7 @@ class TestComplexityAnalyzer:
             
             should_use_ai, result_analysis = self.analyzer.should_use_ai()
             
-            assert should_use_ai == False
+            assert should_use_ai == True
             assert result_analysis == analysis
     
     def test_get_fallback_message_single_reason(self):
