@@ -5,16 +5,13 @@ This module contains tests for the new methods added to GitInterface
 for git utility commands.
 """
 
-import pytest
 import subprocess
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
-from src.core.git import (
-    GitInterface,
-    GitInterfaceError,
-    GitCommandError,
-    GitNotAvailableError,
-)
+import pytest
+
+from src.core.git import (GitCommandError, GitInterface, GitInterfaceError,
+                          GitNotAvailableError)
 
 
 class TestGitInterfaceExtended:

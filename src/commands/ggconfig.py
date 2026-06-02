@@ -7,8 +7,9 @@ through a command-line interface.
 """
 
 import sys
-import click
 from pathlib import Path
+
+import click
 
 # Add src to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))

@@ -5,12 +5,13 @@ This module contains comprehensive tests for the ConfigManager class,
 covering all methods and functionality as specified in the architecture.
 """
 
-import pytest
-import tempfile
 import os
-import yaml
+import tempfile
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
+import pytest
+import yaml
 
 from src.core.config import ConfigManager
 

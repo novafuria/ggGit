@@ -5,11 +5,13 @@ This module tests the ComplexityAnalyzer class and its integration
 with GitInterface and ConfigManager.
 """
 
+from unittest.mock import MagicMock, Mock, patch
+
 import pytest
-from unittest.mock import Mock, patch, MagicMock
+
 from src.core.ai.complexity_analyzer import ComplexityAnalyzer
-from src.core.git import GitInterface
 from src.core.config import ConfigManager
+from src.core.git import GitInterface
 
 
 class TestComplexityAnalyzer:
@@ -249,8 +251,8 @@ class TestComplexityAnalyzerIntegration:
     def test_integration_with_real_git_interface(self):
         """Test integration with real GitInterface (if in git repo)."""
         try:
-            from src.core.git import GitInterface
             from src.core.config import ConfigManager
+            from src.core.git import GitInterface
 
             git = GitInterface()
             config = ConfigManager()

@@ -5,10 +5,12 @@ ggb - List all branches or create new branch
 Usage: ggb [<branch_name>]
 """
 
-import click
-import sys
 import re
 import subprocess
+import sys
+
+import click
+
 from core.base_commands.base import BaseCommand
 from core.utils.colors import ColorManager
 

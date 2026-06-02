@@ -5,8 +5,10 @@ ggreset - Reset --hard HEAD
 Usage: ggreset
 """
 
-import click
 import sys
+
+import click
+
 from core.base_commands.base import BaseCommand
 from core.utils.colors import ColorManager
 

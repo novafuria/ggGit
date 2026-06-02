@@ -5,8 +5,10 @@ ggci - Commit changes adding the ci prefix to the message
 Usage: ggci [options] <message>
 """
 
-import click
 import sys
+
+import click
+
 from core.base_commands.base import BaseCommand
 from core.base_commands.commit import CommitCommand
 from core.utils.colors import ColorManager

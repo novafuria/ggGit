@@ -5,16 +5,13 @@ This module contains tests for the new merge methods added to GitInterface
 for git advanced branch management commands.
 """
 
-import pytest
 import subprocess
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
-from src.core.git import (
-    GitInterface,
-    GitInterfaceError,
-    GitCommandError,
-    NotGitRepositoryError,
-)
+import pytest
+
+from src.core.git import (GitCommandError, GitInterface, GitInterfaceError,
+                          NotGitRepositoryError)
 
 
 class TestGitInterfaceMerge:

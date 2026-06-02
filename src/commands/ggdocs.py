@@ -5,8 +5,10 @@ ggdocs - Commit changes adding the docs prefix to the message
 Usage: ggdocs [options] <message>
 """
 
-import click
 import sys
+
+import click
+
 from core.base_commands.base import BaseCommand
 from core.base_commands.commit import CommitCommand
 from core.utils.colors import ColorManager

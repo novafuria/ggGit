@@ -17,15 +17,17 @@ Usage:
             return 0
 """
 
-from abc import ABC, abstractmethod
-from typing import List, Optional, Any, Dict
 import os
+from abc import ABC, abstractmethod
+from typing import Any, Dict, List, Optional
+
 import click
-from ..utils.colors import ColorManager
+
 from ..config import ConfigManager
 from ..git import GitInterface
-from ..validation import ArgumentValidator
+from ..utils.colors import ColorManager
 from ..utils.logging import LoggingManager
+from ..validation import ArgumentValidator
 
 
 class BaseCommand(ABC):
@@ -209,7 +211,8 @@ class BaseCommand(ABC):
             int: Exit code (0 for success, 1 for failure)
         """
         try:
-            from ..ai import ComplexityAnalyzer, AiMessageGenerator, AiUsageTracker
+            from ..ai import (AiMessageGenerator, AiUsageTracker,
+                              ComplexityAnalyzer)
 
             # Create AI components
             analyzer = ComplexityAnalyzer(self.git, self.config)

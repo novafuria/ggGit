@@ -3,6 +3,7 @@ Tests for command modules.
 """
 
 import unittest
+
 from src.core.base_commands.commit import CommitCommand
 
 

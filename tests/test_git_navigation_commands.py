@@ -4,13 +4,17 @@ Parametrized tests for git navigation commands.
 This module contains parametrized tests for ggmain, ggdevelop, ggb commands.
 """
 
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 from click.testing import CliRunner
 
-from src.commands.ggmain import GgmainCommand, main as ggmain_main
-from src.commands.ggdevelop import GgdevelopCommand, main as ggdevelop_main
-from src.commands.ggb import GgbCommand, main as ggb_main
+from src.commands.ggb import GgbCommand
+from src.commands.ggb import main as ggb_main
+from src.commands.ggdevelop import GgdevelopCommand
+from src.commands.ggdevelop import main as ggdevelop_main
+from src.commands.ggmain import GgmainCommand
+from src.commands.ggmain import main as ggmain_main
 
 # Test data for parametrized tests
 COMMAND_TEST_DATA = [

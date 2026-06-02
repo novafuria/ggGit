@@ -14,18 +14,19 @@ Integration tests focus on:
 - Git operations integration
 """
 
-import pytest
-from pathlib import Path
-from unittest.mock import patch, Mock
-import tempfile
 import shutil
+import tempfile
+from pathlib import Path
+from unittest.mock import Mock, patch
+
+import pytest
 
 from src.core.base_commands.base import BaseCommand
 from src.core.config import ConfigManager
 from src.core.git import GitInterface
-from src.core.validation import ArgumentValidator
 from src.core.utils.colors import ColorManager
 from src.core.utils.logging import LoggingManager
+from src.core.validation import ArgumentValidator
 
 
 class TestBaseCommandIntegration:

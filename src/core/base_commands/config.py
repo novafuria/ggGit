@@ -4,7 +4,8 @@ Configuration command base class for ggGit.
 This module provides functionality for configuration management commands.
 """
 
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
+
 from .base import BaseCommand
 
 

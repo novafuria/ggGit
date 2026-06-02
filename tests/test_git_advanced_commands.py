@@ -4,13 +4,17 @@ Parametrized tests for git advanced commands.
 This module contains parametrized tests for ggb (extended), ggmerge, ggbreak commands.
 """
 
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 from click.testing import CliRunner
 
-from src.commands.ggb import GgbCommand, main as ggb_main
-from src.commands.ggmerge import GgmergeCommand, main as ggmerge_main
-from src.commands.ggbreak import GgbreakCommand, main as ggbreak_main
+from src.commands.ggb import GgbCommand
+from src.commands.ggb import main as ggb_main
+from src.commands.ggbreak import GgbreakCommand
+from src.commands.ggbreak import main as ggbreak_main
+from src.commands.ggmerge import GgmergeCommand
+from src.commands.ggmerge import main as ggmerge_main
 
 # Test data for parametrized tests
 COMMAND_TEST_DATA = [

@@ -4,15 +4,21 @@ Parametrized tests for basic Conventional Commits commands.
 This module contains parametrized tests for ggdocs, ggstyle, ggrefactor, ggtest, ggchore commands.
 """
 
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 from click.testing import CliRunner
 
-from src.commands.ggdocs import DocsCommand, main as docs_main
-from src.commands.ggstyle import StyleCommand, main as style_main
-from src.commands.ggrefactor import RefactorCommand, main as refactor_main
-from src.commands.ggtest import TestCommand, main as test_main
-from src.commands.ggchore import ChoreCommand, main as chore_main
+from src.commands.ggchore import ChoreCommand
+from src.commands.ggchore import main as chore_main
+from src.commands.ggdocs import DocsCommand
+from src.commands.ggdocs import main as docs_main
+from src.commands.ggrefactor import RefactorCommand
+from src.commands.ggrefactor import main as refactor_main
+from src.commands.ggstyle import StyleCommand
+from src.commands.ggstyle import main as style_main
+from src.commands.ggtest import TestCommand
+from src.commands.ggtest import main as test_main
 
 # Test data for parametrized tests
 COMMAND_TEST_DATA = [

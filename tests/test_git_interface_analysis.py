@@ -5,17 +5,15 @@ This module tests the new analysis methods added to GitInterface
 for complexity analysis functionality.
 """
 
-import pytest
 import os
-import tempfile
 import subprocess
-from unittest.mock import patch, Mock
-from src.core.git import (
-    GitInterface,
-    NotGitRepositoryError,
-    GitCommandError,
-    GitInterfaceError,
-)
+import tempfile
+from unittest.mock import Mock, patch
+
+import pytest
+
+from src.core.git import (GitCommandError, GitInterface, GitInterfaceError,
+                          NotGitRepositoryError)
 
 
 class TestGitInterfaceAnalysis:

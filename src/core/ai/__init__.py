@@ -6,7 +6,7 @@ usage tracking, and intelligent decision making for commit message generation.
 """
 
 from .complexity_analyzer import ComplexityAnalyzer
-from .usage_tracker import AiUsageTracker
 from .message_generator import AiMessageGenerator
+from .usage_tracker import AiUsageTracker
 
 __all__ = ["ComplexityAnalyzer", "AiUsageTracker", "AiMessageGenerator"]

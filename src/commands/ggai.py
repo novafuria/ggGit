@@ -10,15 +10,16 @@ Usage: ggai [command] [options]
 """
 
 import sys
-import click
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
+
+import click
 
 # Add src to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from core.ai import AiMessageGenerator, AiUsageTracker, ComplexityAnalyzer
 from core.base_commands.base import BaseCommand
-from core.ai import ComplexityAnalyzer, AiUsageTracker, AiMessageGenerator
 from core.utils.colors import ColorManager
 
 

@@ -7,9 +7,10 @@ Currently implements a mock version for MVP development.
 
 import os
 import re
-import requests
-from typing import List, Dict, Any, Optional
 from datetime import datetime
+from typing import Any, Dict, List, Optional
+
+import requests
 
 # Constants for conventional commit prefixes
 CONVENTIONAL_COMMIT_PREFIXES = (

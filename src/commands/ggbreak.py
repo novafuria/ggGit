@@ -5,8 +5,10 @@ ggbreak - Commit changes adding the break prefix to the message
 Usage: ggbreak [options] -s <scope> <message>
 """
 
-import click
 import sys
+
+import click
+
 from core.base_commands.base import BaseCommand
 from core.utils.colors import ColorManager
 

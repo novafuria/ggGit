@@ -5,8 +5,10 @@ gga - Add file contents to the index
 Usage: gga [<file>...]
 """
 
-import click
 import sys
+
+import click
+
 from core.base_commands.base import BaseCommand
 from core.utils.colors import ColorManager
 

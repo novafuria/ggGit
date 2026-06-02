@@ -5,11 +5,12 @@ This module contains end-to-end integration tests for the CommitCommand class,
 testing the complete flow with real Git operations.
 """
 
-import pytest
-import tempfile
 import os
 import subprocess
+import tempfile
 from pathlib import Path
+
+import pytest
 
 from src.core.base_commands.commit import CommitCommand
 

@@ -5,8 +5,9 @@ This module provides a unified color system for consistent
 output formatting across all commands.
 """
 
-import click
 from typing import Optional
+
+import click
 
 
 class ColorManager:

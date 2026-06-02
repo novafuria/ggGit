@@ -5,9 +5,11 @@ ggl - Show git log
 Usage: ggl [<options>] [--] [<pathspec>...]
 """
 
-import click
-import sys
 import subprocess
+import sys
+
+import click
+
 from core.base_commands.base import BaseCommand
 from core.utils.colors import ColorManager
 

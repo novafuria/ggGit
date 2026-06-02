@@ -3,6 +3,7 @@ Tests for core modules.
 """
 
 import unittest
+
 from src.core.config import ConfigManager
 from src.core.git import GitInterface
 from src.core.validation import ArgumentValidator

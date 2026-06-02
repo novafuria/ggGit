@@ -5,8 +5,10 @@ ggdevelop - Checkout develop branch
 Usage: ggdevelop
 """
 
-import click
 import sys
+
+import click
+
 from core.base_commands.base import BaseCommand
 from core.utils.colors import ColorManager
 

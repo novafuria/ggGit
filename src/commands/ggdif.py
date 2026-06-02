@@ -5,8 +5,10 @@ ggdif - Show git diff
 Usage: ggdif [<options>] [--] [<pathspec>...]
 """
 
-import click
 import sys
+
+import click
+
 from core.base_commands.base import BaseCommand
 from core.utils.colors import ColorManager
 

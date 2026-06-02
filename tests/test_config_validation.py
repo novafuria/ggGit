@@ -5,12 +5,13 @@ This module contains comprehensive tests for the validation features
 of the ConfigManager class, covering JSON Schema validation.
 """
 
-import pytest
 import tempfile
-import yaml
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
 import jsonschema
+import pytest
+import yaml
 
 from src.core.config import ConfigManager
 

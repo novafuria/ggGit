@@ -5,13 +5,15 @@ This module tests the AI configuration extensions to the ConfigManager
 and the _is_ai_configured() method in BaseCommand.
 """
 
-import pytest
 import os
 import tempfile
+from unittest.mock import MagicMock, patch
+
+import pytest
 import yaml
-from unittest.mock import patch, MagicMock
-from src.core.config import ConfigManager
+
 from src.core.base_commands.base import BaseCommand
+from src.core.config import ConfigManager
 
 
 class TestAIConfiguration:
@@ -201,8 +203,9 @@ class TestAIConfigurationIntegration:
 
     def test_ai_config_with_ggconfig_command(self):
         """Test that AI configuration works with ggconfig command."""
-        from src.commands.ggconfig import main
         from click.testing import CliRunner
+
+        from src.commands.ggconfig import main
 
         runner = CliRunner()
 

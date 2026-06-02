@@ -5,8 +5,10 @@ ggpp - Push to remote repository
 Usage: ggpp [<remote>] [<branch>]
 """
 
-import click
 import sys
+
+import click
+
 from core.base_commands.base import BaseCommand
 from core.utils.colors import ColorManager
 

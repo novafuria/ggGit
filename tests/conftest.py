@@ -13,15 +13,16 @@ The fixtures are organized by functionality:
 - Integration test fixtures for end-to-end testing
 """
 
-import pytest
-import sys
 import os
-import tempfile
 import shutil
-from pathlib import Path
-from typing import Dict, Any, List, Optional
-from unittest.mock import Mock, patch, MagicMock
 import subprocess
+import sys
+import tempfile
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+from unittest.mock import MagicMock, Mock, patch
+
+import pytest
 
 # Add src to Python path for imports
 src_path = Path(__file__).parent.parent / "src"
@@ -31,9 +32,9 @@ sys.path.insert(0, str(src_path))
 from src.core.base_commands.base import BaseCommand
 from src.core.config import ConfigManager
 from src.core.git import GitInterface
-from src.core.validation import ArgumentValidator
 from src.core.utils.colors import ColorManager
 from src.core.utils.logging import LoggingManager
+from src.core.validation import ArgumentValidator
 
 
 @pytest.fixture(autouse=True)
@@ -311,8 +312,8 @@ def mock_file_system(temp_dir):
 @pytest.fixture
 def capture_output():
     """Capture stdout and stderr for testing."""
-    import io
     import contextlib
+    import io
 
     stdout_capture = io.StringIO()
     stderr_capture = io.StringIO()

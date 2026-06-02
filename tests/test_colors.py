@@ -2,8 +2,10 @@
 Tests for ColorManager module.
 """
 
-import pytest
 from unittest.mock import patch
+
+import pytest
+
 from src.core.utils.colors import ColorManager
 
 

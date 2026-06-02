@@ -5,8 +5,10 @@ ggmerge - Merge branches without fast-forward
 Usage: ggmerge [<options>] [<branch>]
 """
 
-import click
 import sys
+
+import click
+
 from core.base_commands.base import BaseCommand
 from core.utils.colors import ColorManager
 

@@ -2,8 +2,10 @@
 Tests for BaseCommand class.
 """
 
+from unittest.mock import MagicMock, Mock, patch
+
 import pytest
-from unittest.mock import Mock, patch, MagicMock
+
 from src.core.base_commands.base import BaseCommand
 
 

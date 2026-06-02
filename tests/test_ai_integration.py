@@ -5,12 +5,17 @@ This module tests the integration of AI functionality with existing
 commit commands, including automatic activation and fallback behavior.
 """
 
+from unittest.mock import MagicMock, Mock, patch
+
 import pytest
-from unittest.mock import Mock, patch, MagicMock
 from click.testing import CliRunner
-from src.commands.ggfeat import FeatCommand, main as ggfeat_main
-from src.commands.ggfix import FixCommand, main as ggfix_main
-from src.commands.ggbreak import GgbreakCommand, main as ggbreak_main
+
+from src.commands.ggbreak import GgbreakCommand
+from src.commands.ggbreak import main as ggbreak_main
+from src.commands.ggfeat import FeatCommand
+from src.commands.ggfeat import main as ggfeat_main
+from src.commands.ggfix import FixCommand
+from src.commands.ggfix import main as ggfix_main
 
 
 class TestAiIntegration:

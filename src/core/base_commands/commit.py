@@ -6,8 +6,9 @@ like ggfeat, ggfix, ggbreak, etc.
 """
 
 from typing import Optional
-from .base import BaseCommand
+
 from ..git import GitInterface
+from .base import BaseCommand
 
 
 class CommitCommand(BaseCommand):

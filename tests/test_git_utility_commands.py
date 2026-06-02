@@ -4,19 +4,29 @@ Parametrized tests for git utility commands.
 This module contains parametrized tests for gga, ggs, ggl, ggdif, ggunstage, ggreset, ggpl, ggpp, ggv commands.
 """
 
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 from click.testing import CliRunner
 
-from src.commands.gga import GgaCommand, main as gga_main
-from src.commands.ggs import GgsCommand, main as ggs_main
-from src.commands.ggl import GglCommand, main as ggl_main
-from src.commands.ggdif import GgdifCommand, main as ggdif_main
-from src.commands.ggunstage import GgunstageCommand, main as ggunstage_main
-from src.commands.ggreset import GgresetCommand, main as ggreset_main
-from src.commands.ggpl import GgplCommand, main as ggpl_main
-from src.commands.ggpp import GgppCommand, main as ggpp_main
-from src.commands.ggv import GgvCommand, main as ggv_main
+from src.commands.gga import GgaCommand
+from src.commands.gga import main as gga_main
+from src.commands.ggdif import GgdifCommand
+from src.commands.ggdif import main as ggdif_main
+from src.commands.ggl import GglCommand
+from src.commands.ggl import main as ggl_main
+from src.commands.ggpl import GgplCommand
+from src.commands.ggpl import main as ggpl_main
+from src.commands.ggpp import GgppCommand
+from src.commands.ggpp import main as ggpp_main
+from src.commands.ggreset import GgresetCommand
+from src.commands.ggreset import main as ggreset_main
+from src.commands.ggs import GgsCommand
+from src.commands.ggs import main as ggs_main
+from src.commands.ggunstage import GgunstageCommand
+from src.commands.ggunstage import main as ggunstage_main
+from src.commands.ggv import GgvCommand
+from src.commands.ggv import main as ggv_main
 
 # Test data for parametrized tests
 COMMAND_TEST_DATA = [

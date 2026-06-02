@@ -4,9 +4,10 @@ Tests for ggdocs command.
 This module contains tests for the ggdocs command following TDD principles.
 """
 
-import pytest
+from unittest.mock import MagicMock, patch
+
 import click
-from unittest.mock import patch, MagicMock
+import pytest
 from click.testing import CliRunner
 
 from src.commands.ggdocs import DocsCommand, main

@@ -5,8 +5,10 @@ ggperf - Commit changes adding the perf prefix to the message
 Usage: ggperf [options] <message>
 """
 
-import click
 import sys
+
+import click
+
 from core.base_commands.base import BaseCommand
 from core.base_commands.commit import CommitCommand
 from core.utils.colors import ColorManager

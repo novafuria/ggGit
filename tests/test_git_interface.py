@@ -5,20 +5,16 @@ This module contains comprehensive tests for the GitInterface class,
 covering all methods and error scenarios as specified in the architecture.
 """
 
-import pytest
+import os
 import subprocess
 import tempfile
-import os
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
-from src.core.git import (
-    GitInterface,
-    GitInterfaceError,
-    GitNotAvailableError,
-    NotGitRepositoryError,
-    GitCommandError,
-)
+import pytest
+
+from src.core.git import (GitCommandError, GitInterface, GitInterfaceError,
+                          GitNotAvailableError, NotGitRepositoryError)
 
 
 class TestGitInterfaceInitialization:

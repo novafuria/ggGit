@@ -5,11 +5,13 @@ This module tests the AiUsageTracker class and its integration
 with the configuration system.
 """
 
-import pytest
 import os
 import tempfile
+from unittest.mock import MagicMock, Mock, patch
+
+import pytest
 import yaml
-from unittest.mock import Mock, patch, MagicMock
+
 from src.core.ai.usage_tracker import AiUsageTracker
 
 

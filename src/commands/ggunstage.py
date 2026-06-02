@@ -5,8 +5,10 @@ ggunstage - Unstage files from index
 Usage: ggunstage [<file>...]
 """
 
-import click
 import sys
+
+import click
+
 from core.base_commands.base import BaseCommand
 from core.utils.colors import ColorManager
 

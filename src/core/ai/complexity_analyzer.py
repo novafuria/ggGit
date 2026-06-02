@@ -6,9 +6,10 @@ and decide whether to use AI for commit message generation or show
 educational fallback messages.
 """
 
-from typing import List, Dict, Any, Tuple
-from ..git import GitInterface
+from typing import Any, Dict, List, Tuple
+
 from ..config import ConfigManager
+from ..git import GitInterface
 from ..utils.colors import ColorManager
 
 

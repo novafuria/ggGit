@@ -5,11 +5,13 @@ This module tests the GgaiCommand class and its subcommands
 including usage tracking and AI message generation.
 """
 
-import pytest
 import os
 import tempfile
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import MagicMock, Mock, patch
+
+import pytest
 from click.testing import CliRunner
+
 from src.commands.ggai import GgaiCommand, ggai
 
 

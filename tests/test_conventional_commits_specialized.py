@@ -4,13 +4,17 @@ Parametrized tests for specialized Conventional Commits commands.
 This module contains parametrized tests for ggperf, ggci, ggbuild commands.
 """
 
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 from click.testing import CliRunner
 
-from src.commands.ggperf import PerfCommand, main as perf_main
-from src.commands.ggci import CiCommand, main as ci_main
-from src.commands.ggbuild import BuildCommand, main as build_main
+from src.commands.ggbuild import BuildCommand
+from src.commands.ggbuild import main as build_main
+from src.commands.ggci import CiCommand
+from src.commands.ggci import main as ci_main
+from src.commands.ggperf import PerfCommand
+from src.commands.ggperf import main as perf_main
 
 # Test data for parametrized tests
 COMMAND_TEST_DATA = [

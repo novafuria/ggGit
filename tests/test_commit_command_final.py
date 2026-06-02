@@ -5,9 +5,10 @@ This module contains working tests for the CommitCommand class,
 focusing on the core functionality with proper mocking.
 """
 
-import pytest
 import subprocess
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
+import pytest
 
 from src.core.base_commands.commit import CommitCommand
 

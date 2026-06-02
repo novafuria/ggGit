@@ -5,8 +5,10 @@ ggrefactor - Commit changes adding the refactor prefix to the message
 Usage: ggrefactor [options] <message>
 """
 
-import click
 import sys
+
+import click
+
 from core.base_commands.base import BaseCommand
 from core.base_commands.commit import CommitCommand
 from core.utils.colors import ColorManager
