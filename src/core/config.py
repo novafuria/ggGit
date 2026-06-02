@@ -574,7 +574,7 @@ class ConfigManager:
         elif level == "module":
             # For module level, return merged module configs
             module_configs = self._load_module_configs()
-            merged = {}
+            merged: Dict[str, Any] = {}
             for module_config in module_configs:
                 merged = self._deep_merge(merged, module_config)
             return merged

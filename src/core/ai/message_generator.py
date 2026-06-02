@@ -59,7 +59,7 @@ class AiMessageGenerator:
         self.usage_tracker = usage_tracker
 
     def generate_message(
-        self, files: List[str], diff_content: str, commit_type: str = None
+        self, files: List[str], diff_content: str, commit_type: Optional[str] = None
     ) -> str:
         """
         Generate commit message using real AI.
@@ -288,7 +288,7 @@ class AiMessageGenerator:
             raise Exception(f"Error procesando respuesta de IA: {e}")
 
     def _build_context_prompt(
-        self, files: List[str], diff_content: str, commit_type: str = None
+        self, files: List[str], diff_content: str, commit_type: Optional[str] = None
     ) -> str:
         """
         Build context-aware prompt for better AI generation.
@@ -331,7 +331,7 @@ Requirements:
 
         return prompt
 
-    def _get_commit_type_context(self, commit_type: str) -> str:
+    def _get_commit_type_context(self, commit_type: Optional[str]) -> str:
         """
         Get context information for the commit type.
 
