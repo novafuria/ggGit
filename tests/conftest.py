@@ -132,11 +132,12 @@ def mock_pathlib_home():
 @pytest.fixture
 def mock_logging():
     """Mock logging module for testing LoggingManager."""
-    with patch("logging.getLogger") as mock_get_logger, patch(
-        "logging.basicConfig"
-    ) as mock_basic_config, patch("logging.FileHandler") as mock_file_handler, patch(
-        "logging.StreamHandler"
-    ) as mock_stream_handler:
+    with (
+        patch("logging.getLogger") as mock_get_logger,
+        patch("logging.basicConfig") as mock_basic_config,
+        patch("logging.FileHandler") as mock_file_handler,
+        patch("logging.StreamHandler") as mock_stream_handler,
+    ):
 
         mock_logger = Mock()
         mock_get_logger.return_value = mock_logger
@@ -299,9 +300,11 @@ def temp_git_repo(temp_dir):
 @pytest.fixture
 def mock_file_system(temp_dir):
     """Mock file system operations for testing."""
-    with patch("pathlib.Path.exists") as mock_exists, patch(
-        "pathlib.Path.mkdir"
-    ) as mock_mkdir, patch("pathlib.Path.open") as mock_open:
+    with (
+        patch("pathlib.Path.exists") as mock_exists,
+        patch("pathlib.Path.mkdir") as mock_mkdir,
+        patch("pathlib.Path.open") as mock_open,
+    ):
 
         mock_exists.return_value = True
         mock_mkdir.return_value = None
@@ -318,8 +321,9 @@ def capture_output():
     stdout_capture = io.StringIO()
     stderr_capture = io.StringIO()
 
-    with contextlib.redirect_stdout(stdout_capture), contextlib.redirect_stderr(
-        stderr_capture
+    with (
+        contextlib.redirect_stdout(stdout_capture),
+        contextlib.redirect_stderr(stderr_capture),
     ):
         yield {"stdout": stdout_capture, "stderr": stderr_capture}
 

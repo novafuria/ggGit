@@ -70,9 +70,10 @@ class TestExecuteCommitCommand:
         cmd = CommitCommand("feat")
 
         # Mock the instance attributes
-        with patch.object(cmd, "git") as mock_git, patch.object(
-            cmd, "validator"
-        ) as mock_validator:
+        with (
+            patch.object(cmd, "git") as mock_git,
+            patch.object(cmd, "validator") as mock_validator,
+        ):
 
             # Mock git interface methods
             mock_git.is_git_repository.return_value = True
@@ -91,9 +92,10 @@ class TestExecuteCommitCommand:
         """Test successful execution with scope."""
         cmd = CommitCommand("fix")
 
-        with patch.object(cmd, "git") as mock_git, patch.object(
-            cmd, "validator"
-        ) as mock_validator:
+        with (
+            patch.object(cmd, "git") as mock_git,
+            patch.object(cmd, "validator") as mock_validator,
+        ):
 
             # Mock git interface methods
             mock_git.is_git_repository.return_value = True
@@ -113,9 +115,11 @@ class TestExecuteCommitCommand:
         """Test successful execution with amend flag."""
         cmd = CommitCommand("feat")
 
-        with patch.object(cmd, "git") as mock_git, patch.object(
-            cmd, "validator"
-        ) as mock_validator, patch.object(cmd, "_execute_amend_commit") as mock_amend:
+        with (
+            patch.object(cmd, "git") as mock_git,
+            patch.object(cmd, "validator") as mock_validator,
+            patch.object(cmd, "_execute_amend_commit") as mock_amend,
+        ):
 
             # Mock git interface methods
             mock_git.is_git_repository.return_value = True
@@ -172,9 +176,10 @@ class TestExecuteCommitCommand:
         """Test execution when not in git repository."""
         cmd = CommitCommand("feat")
 
-        with patch.object(cmd, "git") as mock_git, patch.object(
-            cmd, "validator"
-        ) as mock_validator:
+        with (
+            patch.object(cmd, "git") as mock_git,
+            patch.object(cmd, "validator") as mock_validator,
+        ):
 
             mock_git.is_git_repository.return_value = False
             mock_validator.validate_commit_message.return_value = True
@@ -186,9 +191,10 @@ class TestExecuteCommitCommand:
         """Test execution when there are no changes to commit."""
         cmd = CommitCommand("feat")
 
-        with patch.object(cmd, "git") as mock_git, patch.object(
-            cmd, "validator"
-        ) as mock_validator:
+        with (
+            patch.object(cmd, "git") as mock_git,
+            patch.object(cmd, "validator") as mock_validator,
+        ):
 
             mock_git.is_git_repository.return_value = True
             mock_git.get_staged_files.return_value = []
@@ -202,9 +208,10 @@ class TestExecuteCommitCommand:
         """Test execution when staging fails."""
         cmd = CommitCommand("feat")
 
-        with patch.object(cmd, "git") as mock_git, patch.object(
-            cmd, "validator"
-        ) as mock_validator:
+        with (
+            patch.object(cmd, "git") as mock_git,
+            patch.object(cmd, "validator") as mock_validator,
+        ):
 
             mock_git.is_git_repository.return_value = True
             mock_git.get_staged_files.return_value = []
@@ -219,9 +226,10 @@ class TestExecuteCommitCommand:
         """Test execution when commit fails."""
         cmd = CommitCommand("feat")
 
-        with patch.object(cmd, "git") as mock_git, patch.object(
-            cmd, "validator"
-        ) as mock_validator:
+        with (
+            patch.object(cmd, "git") as mock_git,
+            patch.object(cmd, "validator") as mock_validator,
+        ):
 
             mock_git.is_git_repository.return_value = True
             mock_git.get_staged_files.return_value = []
@@ -237,9 +245,11 @@ class TestExecuteCommitCommand:
         """Test execution when amend commit fails."""
         cmd = CommitCommand("feat")
 
-        with patch.object(cmd, "git") as mock_git, patch.object(
-            cmd, "validator"
-        ) as mock_validator, patch.object(cmd, "_execute_amend_commit") as mock_amend:
+        with (
+            patch.object(cmd, "git") as mock_git,
+            patch.object(cmd, "validator") as mock_validator,
+            patch.object(cmd, "_execute_amend_commit") as mock_amend,
+        ):
 
             mock_git.is_git_repository.return_value = True
             mock_git.get_staged_files.return_value = ["test_file.py"]

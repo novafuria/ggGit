@@ -199,8 +199,9 @@ class TestCommit:
 
     def test_commit_success(self, temp_git_repo):
         """Test successful commit."""
-        with patch("subprocess.run") as mock_run, patch.object(
-            GitInterface, "get_staged_files", return_value=["file1.py"]
+        with (
+            patch("subprocess.run") as mock_run,
+            patch.object(GitInterface, "get_staged_files", return_value=["file1.py"]),
         ):
             # First call (git status) succeeds, second call (git commit) succeeds
             mock_run.side_effect = [
@@ -248,8 +249,9 @@ class TestCommit:
 
     def test_commit_git_command_fails(self, temp_git_repo):
         """Test raises GitCommandError when git commit fails."""
-        with patch("subprocess.run") as mock_run, patch.object(
-            GitInterface, "get_staged_files", return_value=["file1.py"]
+        with (
+            patch("subprocess.run") as mock_run,
+            patch.object(GitInterface, "get_staged_files", return_value=["file1.py"]),
         ):
             # First call (git status) succeeds, second call (git commit) fails
             mock_run.side_effect = [
