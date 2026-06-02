@@ -268,6 +268,12 @@ class TestConfigurationIntegration:
 class TestGitIntegration:
     """Integration tests for Git operations."""
     
+    @pytest.fixture(autouse=True)
+    def setup_working_directory(self, temp_git_repo, monkeypatch):
+        """Automatically change working directory to temp_git_repo for all tests in this class."""
+        monkeypatch.chdir(temp_git_repo)
+        self.repo_path = temp_git_repo
+    
     def test_git_interface_methods_exist(self, git_interface):
         """Test that all Git interface methods exist and are callable."""
         methods = [
@@ -288,13 +294,10 @@ class TestGitIntegration:
             method = getattr(git_interface, method_name)
             assert callable(method), f"Method {method_name} is not callable"
     
-    def test_git_interface_return_types(self, git_interface, temp_git_repo, monkeypatch):
+    def test_git_interface_return_types(self, git_interface):
         """Test that Git interface methods return correct types."""
-        # Isolate the test in the temporary repository to avoid host intrusion
-        monkeypatch.chdir(temp_git_repo)
-        
         # Create a dummy file to have something to stage and commit
-        dummy_file = temp_git_repo / "dummy.txt"
+        dummy_file = self.repo_path / "dummy.txt"
         dummy_file.write_text("dummy content")
         
         # Test boolean methods
