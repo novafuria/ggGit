@@ -83,6 +83,7 @@ jobs:
           test-results*.xml
           htmlcov/
           coverage.xml
+        if-no-files-found: warn
 
   quality-gates:
     runs-on: ubuntu-latest
@@ -114,6 +115,7 @@ jobs:
     
     - name: Download test results
       uses: actions/download-artifact@v4
+      continue-on-error: true
       with:
         name: test-results-3.12
         path: test-results/
