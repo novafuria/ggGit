@@ -1,5 +1,6 @@
 [run]
 source = src
+branch = True
 omit = 
     */tests/*
     */test_*
