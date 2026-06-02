@@ -211,8 +211,7 @@ class BaseCommand(ABC):
             int: Exit code (0 for success, 1 for failure)
         """
         try:
-            from ..ai import (AiMessageGenerator, AiUsageTracker,
-                              ComplexityAnalyzer)
+            from ..ai import AiMessageGenerator, AiUsageTracker, ComplexityAnalyzer
 
             # Create AI components
             analyzer = ComplexityAnalyzer(self.git, self.config)

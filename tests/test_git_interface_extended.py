@@ -10,8 +10,12 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.core.git import (GitCommandError, GitInterface, GitInterfaceError,
-                          GitNotAvailableError)
+from src.core.git import (
+    GitCommandError,
+    GitInterface,
+    GitInterfaceError,
+    GitNotAvailableError,
+)
 
 
 class TestGitInterfaceExtended:
