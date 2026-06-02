@@ -153,8 +153,9 @@ class LoggingManager:
         # Refresh handlers to prevent duplicate or stale closed handlers
         logger.handlers.clear()
         root_logger = logging.getLogger('gggit')
-        for handler in root_logger.handlers:
-            logger.addHandler(handler)
+        if isinstance(root_logger.handlers, list):
+            for handler in root_logger.handlers:
+                logger.addHandler(handler)
         
         # Prevent propagation to avoid duplicate logs
         logger.propagate = False
