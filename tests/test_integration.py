@@ -288,8 +288,15 @@ class TestGitIntegration:
             method = getattr(git_interface, method_name)
             assert callable(method), f"Method {method_name} is not callable"
     
-    def test_git_interface_return_types(self, git_interface):
+    def test_git_interface_return_types(self, git_interface, temp_git_repo, monkeypatch):
         """Test that Git interface methods return correct types."""
+        # Isolate the test in the temporary repository to avoid host intrusion
+        monkeypatch.chdir(temp_git_repo)
+        
+        # Create a dummy file to have something to stage and commit
+        dummy_file = temp_git_repo / "dummy.txt"
+        dummy_file.write_text("dummy content")
+        
         # Test boolean methods
         assert isinstance(git_interface.is_git_repository(), bool)
         assert isinstance(git_interface.stage_all_changes(), bool)
