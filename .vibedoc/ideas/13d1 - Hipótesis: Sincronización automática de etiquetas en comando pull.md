@@ -14,7 +14,7 @@ Un desarrollador espera que `ggpl` sea un sinónimo de "dejar mi espacio de trab
 
 Para probar esta hipótesis en un escenario real que emule las etiquetas móviles de la CI, se plantea el siguiente diseño de experimento:
 
-- [[13d1.1 - Experimento: Implementación de descarga de tags automática en ggpl]]
+- [[13d1a - Experimento: Implementación de descarga de tags automática en ggpl]]
 
 ## Referencias
 

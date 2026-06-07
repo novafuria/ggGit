@@ -14,7 +14,7 @@ El uso de `shell=True` en Python delega la interpretación del comando al shell 
 
 Para probar esta hipótesis, se plantea un experimento enfocado en auditar y simular las llamadas del sistema en entornos heterogéneos:
 
-- [[13b2.1 - Experimento: Auditoría y simulación de llamadas del sistema Unix en entorno Windows]]
+- [[13b2a - Experimento: Auditoría y simulación de llamadas del sistema Unix en entorno Windows]]
 
 ## Referencias
 

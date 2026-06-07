@@ -14,7 +14,7 @@ El "Patrón de Jon" ocurre por un sesgo de conveniencia temporal: documentar en 
 
 Para demostrar la validez de esta hipótesis, se ha diseñado un experimento detallado para implementar un validador automatizado:
 
-- [[13a1.1 - Experimento: Implementar validador de consistencia de comandos en CI]]
+- [[13a1a - Experimento: Implementar validador de consistencia de comandos en CI]]
 
 ## Referencias
 
