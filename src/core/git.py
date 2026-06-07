@@ -878,7 +878,25 @@ class GitInterface:
                 cmd.append(branch)
 
             result = subprocess.run(cmd, capture_output=True, text=True)
-            return result.returncode == 0
+            if result.returncode == 0:
+                if tags or force or prune:
+                    fetch_cmd = ["git", "fetch"]
+                    if all_remotes:
+                        fetch_cmd.append("--all")
+                    elif remote:
+                        fetch_cmd.append(remote)
+
+                    if tags:
+                        fetch_cmd.append("--tags")
+                    if force:
+                        fetch_cmd.append("--force")
+                    if prune:
+                        fetch_cmd.append("--prune")
+
+                    fetch_result = subprocess.run(fetch_cmd, capture_output=True, text=True)
+                    return fetch_result.returncode == 0
+                return True
+            return False
 
         except subprocess.CalledProcessError as e:
             raise GitCommandError(f"Git pull failed: {e}")

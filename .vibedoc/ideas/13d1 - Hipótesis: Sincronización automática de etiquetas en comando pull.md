@@ -16,6 +16,12 @@ Para probar esta hipótesis en un escenario real que emule las etiquetas móvile
 
 - [[13d1a - Experimento: Implementación de descarga de tags automática en ggpl]]
 
+## Conclusiones y Evolución del Aprendizaje
+
+Durante la validación en caliente de esta hipótesis en producción, se descubrió una limitación crítica del comando `git pull --force` respecto a las etiquetas móviles, lo que obligó a evolucionar el modelo hacia una estrategia de doble comando:
+
+- [[13d1b - Reflexión: Limitaciones de git pull --force y solución de doble comando]]
+
 ## Referencias
 
 - [[13d - El comando ggpl no obtiene las etiquetas o tags del remoto]]
