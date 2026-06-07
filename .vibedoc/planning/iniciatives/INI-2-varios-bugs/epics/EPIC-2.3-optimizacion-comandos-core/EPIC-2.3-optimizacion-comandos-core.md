@@ -42,7 +42,10 @@ Se implementarán de forma iterativa cuatro historias de usuario que resuelvan c
 ## 📋 Historias de la Épica
 
 ### 🔄 Historias En Proceso
-1. **STORY-2.3.1**: [Sincronización de Etiquetas Robustas en ggpl](stories/STORY-2.3.1-sincronizacion-tags-ggpl.md)
+1. **STORY-2.3.1b**: [Solución de Doble Comando para Sobreescritura de Tags en ggpl](stories/STORY-2.3.1b-sobreescritura-tags-ggpl.md)
+
+### ✅ Historias Completadas
+- **STORY-2.3.1**: [Sincronización de Etiquetas Robustas en ggpl](stories/STORY-2.3.1-sincronizacion-tags-ggpl.md)
 
 ### 📋 Historias Pendientes
 2. **STORY-2.3.2**: Remoción del sistema de tracking de uso de IA

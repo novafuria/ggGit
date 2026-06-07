@@ -187,7 +187,10 @@ class TestGitInterfaceExtended:
                 )
 
                 assert result is True
-                mock_run.assert_called_once_with(
+                assert mock_run.call_count == 2
+
+                # Verify first subprocess call (pull)
+                mock_run.assert_any_call(
                     [
                         "git",
                         "pull",
@@ -197,6 +200,20 @@ class TestGitInterfaceExtended:
                         "--prune",
                         "origin",
                         "main",
+                    ],
+                    capture_output=True,
+                    text=True,
+                )
+
+                # Verify second subprocess call (fetch for forced tag updates)
+                mock_run.assert_any_call(
+                    [
+                        "git",
+                        "fetch",
+                        "--all",
+                        "--tags",
+                        "--force",
+                        "--prune",
                     ],
                     capture_output=True,
                     text=True,
