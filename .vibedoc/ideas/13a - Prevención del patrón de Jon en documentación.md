@@ -6,22 +6,12 @@ Durante el análisis de la rama `session-bugs` (documentado en [[3b15-inconsiste
 
 La corrección de estas inconsistencias requirió una fase tardía y costosa de reoinspección manual. Necesitamos un mecanismo preventivo para evitar el desfase documental sistemático.
 
-## Hipótesis
+## Evolución e Hipótesis
 
-### Hipótesis 1 (Validación por Pipeline de CI):
-Si agregamos una validación automatizada en la CI que compare las fechas de modificación o las firmas de los comandos en `src/commands/` con sus secciones correspondientes en `docs/commands.md`, entonces el pipeline fallará si un programador introduce un nuevo comando sin documentarlo, forzando la actualización en el mismo commit.
+Para abordar este desafío conceptual, formulamos dos hipótesis de validación y gobernanza que se detallan a continuación:
 
-### Hipótesis 2 (Gobernanza de Proceso - Git Hooks / Templates):
-Si implementamos un template de Pull Request estructurado y un Git pre-push hook que escanee recursivamente los archivos `.py` modificados y pregunte interactivamente al desarrollador si actualizó los zettels y documentos correspondientes, entonces reduciremos la deriva documental en un 90% mediante autodisciplina asistida.
-
-## Experimentos Propuestos
-
-### Experimento 1 (Script de Validación de Consistencia de Comandos):
-1. Desarrollar un script simple en Python (`scripts/validate_docs_sync.py`) que:
-   - Escanee `src/commands/*.py` para listar los comandos reales.
-   - Analice `docs/commands.md` y verifique la existencia de secciones o menciones explícitas para cada comando.
-2. Integrar este script en el pipeline de GitHub Actions como un Quality Gate.
-3. **Métrica de éxito**: 100% de comandos de código tienen correspondencia documental exacta. El pipeline previene fusiones inconsistentes de manera confiable.
+- [[13a1 - Hipótesis: Validación de consistencia en pipeline de CI]]
+- [[13a2 - Hipótesis: Autodisciplina asistida mediante Git Hooks interactivos]]
 
 ## Referencias
 
