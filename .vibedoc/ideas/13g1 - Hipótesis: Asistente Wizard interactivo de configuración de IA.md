@@ -14,7 +14,7 @@ Un desarrollador valora las herramientas listas para usar (Out-of-the-box experi
 
 Para validar empíricamente esta propuesta de experiencia interactiva de usuario, se diseña un experimento detallado para implementar el Wizard:
 
-- [[13g1.1 - Experimento: Implementación de comando interactivo ggconfigia]]
+- [[13g1a - Experimento: Implementación de comando interactivo ggconfigia]]
 
 ## Referencias
 

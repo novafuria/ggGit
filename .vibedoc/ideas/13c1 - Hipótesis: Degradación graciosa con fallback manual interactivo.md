@@ -14,7 +14,7 @@ Un desarrollador no debería sufrir por las herramientas de las que depende. La 
 
 Para validar y calibrar este comportamiento de tolerancia a fallos, se propone implementar un flujo experimental interactivo detallado en el siguiente Zettel:
 
-- [[13c1.1 - Experimento: Implementación de fallback interactivo ante indisponibilidad de Ollama]]
+- [[13c1a - Experimento: Implementación de fallback interactivo ante indisponibilidad de Ollama]]
 
 ## Referencias
 

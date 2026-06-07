@@ -169,6 +169,39 @@ class TestGitInterfaceExtended:
                     ["git", "pull", "origin", "main"], capture_output=True, text=True
                 )
 
+    def test_pull_with_advanced_flags(self):
+        """Test pull with advanced flags (all_remotes, tags, force, prune)."""
+        git = GitInterface()
+
+        with patch.object(git, "is_git_repository", return_value=True):
+            with patch("subprocess.run") as mock_run:
+                mock_run.return_value.returncode = 0
+
+                result = git.pull(
+                    all_remotes=True,
+                    tags=True,
+                    force=True,
+                    prune=True,
+                    remote="origin",
+                    branch="main",
+                )
+
+                assert result is True
+                mock_run.assert_called_once_with(
+                    [
+                        "git",
+                        "pull",
+                        "--all",
+                        "--tags",
+                        "--force",
+                        "--prune",
+                        "origin",
+                        "main",
+                    ],
+                    capture_output=True,
+                    text=True,
+                )
+
     def test_pull_not_git_repo(self):
         """Test pull when not in git repository."""
         git = GitInterface()

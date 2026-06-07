@@ -14,7 +14,7 @@ Un principio guía de la ingeniería es que *"el mejor código es el código que
 
 Para validar y ejecutar la remoción de forma segura y sin romper la suite de pruebas del proyecto, se propone el siguiente diseño experimental:
 
-- [[13e1.1 - Experimento: Deprecación y remoción segura de AiUsageTracker]]
+- [[13e1a - Experimento: Deprecación y remoción segura de AiUsageTracker]]
 
 ## Referencias
 

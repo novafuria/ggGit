@@ -16,10 +16,25 @@ from core.utils.colors import ColorManager
 class GgplCommand(BaseCommand):
     """Command for git pull operations."""
 
-    def execute(self, remote=None, branch=None):
+    def execute(
+        self,
+        remote=None,
+        branch=None,
+        all_remotes=True,
+        tags=True,
+        force=True,
+        prune=True,
+    ):
         """Execute the ggpl command."""
         try:
-            result = self.git.pull(remote=remote, branch=branch)
+            result = self.git.pull(
+                remote=remote,
+                branch=branch,
+                all_remotes=all_remotes,
+                tags=tags,
+                force=force,
+                prune=prune,
+            )
 
             if result:
                 click.echo(ColorManager.success("Pull ejecutado exitosamente"))
@@ -34,14 +49,42 @@ class GgplCommand(BaseCommand):
 
 
 @click.command()
+@click.option(
+    "--all-remotes/--no-all",
+    "all_remotes",
+    default=True,
+    help="Pull from all remotes",
+)
+@click.option(
+    "--tags/--no-tags", "tags", default=True, help="Fetch all tags from remote"
+)
+@click.option(
+    "--force/--no-force",
+    "force",
+    default=True,
+    help="Force update of local tags/refs",
+)
+@click.option(
+    "--prune/--no-prune",
+    "prune",
+    default=True,
+    help="Prune remote-tracking tags/refs that no longer exist",
+)
 @click.argument("remote", required=False)
 @click.argument("branch", required=False)
-def main(remote, branch):
+def main(all_remotes, tags, force, prune, remote, branch):
     """Pull from remote repository"""
     try:
         # Create and run command
         cmd = GgplCommand()
-        return cmd.run(remote=remote, branch=branch)
+        return cmd.run(
+            remote=remote,
+            branch=branch,
+            all_remotes=all_remotes,
+            tags=tags,
+            force=force,
+            prune=prune,
+        )
 
     except Exception as e:
         click.echo(ColorManager.error(f"Error: {str(e)}"))

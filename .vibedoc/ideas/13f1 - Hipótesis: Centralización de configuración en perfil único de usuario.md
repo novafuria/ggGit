@@ -14,7 +14,7 @@ La sobreingeniería (overengineering) es la tentación de resolver problemas hip
 
 Para validar la remoción segura de la lógica jerárquica de configuración y unificar los tests asociados, se propone el siguiente diseño experimental:
 
-- [[13f1.1 - Experimento: Refactorización y unificación de ConfigManager en un solo nivel de usuario]]
+- [[13f1a - Experimento: Refactorización y unificación de ConfigManager en un solo nivel de usuario]]
 
 ## Referencias
 
