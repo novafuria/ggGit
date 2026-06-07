@@ -21,7 +21,7 @@ jobs:
       PYTHONPATH: src
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     
     - name: Set up Conda
       uses: conda-incubator/setup-miniconda@v3
@@ -34,7 +34,7 @@ jobs:
         activate-environment: gggit
     
     - name: Cache conda dependencies
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ~/.conda/pkgs
         key: ${{ runner.os }}-conda-${{ hashFiles('environment.yml') }}
@@ -76,7 +76,7 @@ jobs:
         fail_ci_if_error: false
     
     - name: Upload test results
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       if: always()
       with:
         name: test-results-${{ matrix.python-version }}
@@ -98,7 +98,7 @@ jobs:
       PYTHONPATH: src
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     
     - name: Set up Conda
       uses: conda-incubator/setup-miniconda@v3
@@ -116,7 +116,7 @@ jobs:
     
     - name: Download test results
       id: download-artifact
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v7
       continue-on-error: true
       with:
         name: test-results-3.12
@@ -193,7 +193,7 @@ jobs:
       PYTHONPATH: src
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     
     - name: Set up Conda
       uses: conda-incubator/setup-miniconda@v3
@@ -218,7 +218,7 @@ jobs:
         bandit -r src -f json -o bandit-report.json || true
     
     - name: Upload security reports
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       if: always()
       with:
         name: security-reports
