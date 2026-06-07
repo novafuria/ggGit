@@ -893,7 +893,9 @@ class GitInterface:
                     if prune:
                         fetch_cmd.append("--prune")
 
-                    fetch_result = subprocess.run(fetch_cmd, capture_output=True, text=True)
+                    fetch_result = subprocess.run(
+                        fetch_cmd, capture_output=True, text=True
+                    )
                     return fetch_result.returncode == 0
                 return True
             return False

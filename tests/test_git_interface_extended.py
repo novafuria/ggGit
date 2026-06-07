@@ -188,7 +188,7 @@ class TestGitInterfaceExtended:
 
                 assert result is True
                 assert mock_run.call_count == 2
-                
+
                 # Verify first subprocess call (pull)
                 mock_run.assert_any_call(
                     [
