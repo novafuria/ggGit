@@ -311,7 +311,14 @@ class TestGitUtilityCommandsSpecific:
                 result = cmd.execute(remote="origin", branch="main")
 
                 assert result == 0
-                cmd.git.pull.assert_called_once_with(remote="origin", branch="main")
+                cmd.git.pull.assert_called_once_with(
+                    remote="origin",
+                    branch="main",
+                    all_remotes=True,
+                    tags=True,
+                    force=True,
+                    prune=True,
+                )
                 mock_success.assert_called_once_with("Pull ejecutado exitosamente")
 
     def test_ggpp_with_remote_and_branch(self):

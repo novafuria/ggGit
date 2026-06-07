@@ -828,7 +828,15 @@ class GitInterface:
         except Exception as e:
             raise GitInterfaceError(f"Unexpected error in reset_hard: {e}")
 
-    def pull(self, remote: Optional[str] = None, branch: Optional[str] = None) -> bool:
+    def pull(
+        self,
+        remote: Optional[str] = None,
+        branch: Optional[str] = None,
+        all_remotes: bool = False,
+        tags: bool = False,
+        force: bool = False,
+        prune: bool = False,
+    ) -> bool:
         """
         Pull from remote repository.
 
@@ -838,6 +846,10 @@ class GitInterface:
         Args:
             remote (Optional[str]): Remote name to pull from
             branch (Optional[str]): Branch name to pull
+            all_remotes (bool): If True, fetch from all remotes
+            tags (bool): If True, fetch all tags from remote
+            force (bool): If True, force update of tags and references
+            prune (bool): If True, prune remote-tracking references that no longer exist
 
         Returns:
             bool: True if pull was successful, False otherwise
@@ -851,6 +863,15 @@ class GitInterface:
                 raise NotGitRepositoryError("Not a git repository")
 
             cmd = ["git", "pull"]
+            if all_remotes:
+                cmd.append("--all")
+            if tags:
+                cmd.append("--tags")
+            if force:
+                cmd.append("--force")
+            if prune:
+                cmd.append("--prune")
+
             if remote:
                 cmd.append(remote)
             if branch:
